@@ -1,101 +1,93 @@
-import Image from "next/image";
+"use client";
+import { useState } from 'react';
+import AppointmentCalendar from '@/components/Calendar';
+import Navbar from '@/components/topNavbar';
+import BookingModal from '@/components/Booking';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedAppointment, setSelectedAppointment] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  // Sample data for appointments
+  const [appointments, setAppointments] = useState([
+    { id: '1', start: '2024-09-15T10:00:00', end: '2024-09-15T11:00:00', title: 'Available', status: 'available' as const },
+    { id: '2', start: '2024-09-15T14:00:00', end: '2024-09-15T15:00:00', title: 'Booked', status: 'booked' as const },
+    { id: '3', start: '2024-09-16T11:00:00', end: '2024-09-16T12:00:00', title: 'Available', status: 'available' as const },
+    { id: '4', start: '2024-09-17T13:00:00', end: '2024-09-17T14:00:00', title: 'Booked', status: 'booked' as const },
+    { id: '5', start: '2024-09-13T15:00:00', end: '2024-09-13T16:00:00', title: 'Booked', status: 'booked' as const },
+  ]);
+
+  const handleVacantDateClick = (date: string) => {
+    setSelectedDate(date);
+    setIsModalOpen(true);
+  };
+
+  const handleBookedAppointmentClick = (appointmentId: string) => {
+    setSelectedAppointment(appointmentId);
+    // You can add more logic here, like showing appointment details
+    console.log('Booked appointment clicked:', appointmentId);
+  };
+
+  const handleBookAppointment = (data: { date: string; time: string; natureOfRequest: string; fullName: string }) => {
+    // Here you would typically send this data to your backend/Firebase
+    console.log('Booking appointment:', data);
+
+    // For now, let's just add it to our local state
+    const newAppointment = {
+      id: String(appointments.length + 1),
+      start: `${data.date}T${data.time}:00`,
+      end: `${data.date}T${data.time.split(':')[0]}:59:59`,
+      title: `${data.natureOfRequest} - ${data.fullName}`,
+      status: 'booked' as const
+    };
+
+    setAppointments([...appointments, newAppointment]);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-800">
+      <Navbar />
+      <main className="container mx-auto mt-8 p-4">
+        <h1 className="text-3xl font-bold mb-8 text-center text-blue-600">
+          Appointment Calendar
+        </h1>
+        <div className="grid md:grid-cols-2 gap-8">
+          <div>
+            <h2 className="text-2xl font-semibold mb-4 text-white">Appointment Information</h2>
+            {selectedAppointment && (
+              <p className="mb-4 text-white">
+                Selected appointment: {appointments.find(a => a.id === selectedAppointment)?.title}
+              </p>
+            )}
+            {!selectedAppointment && (
+              <p className="text-white">Click on an appointment to view details</p>
+            )}
+            <h2 className="text-2xl font-semibold mt-8 mb-4 text-white">Calendar Guide</h2>
+            <ul className="list-disc list-inside space-y-2 text-white">
+              <li>Green slots are available for booking</li>
+              <li>Red slots are already booked</li>
+              <li>Click on a vacant date to book an appointment</li>
+              <li>Click on a booked appointment to view details</li>
+            </ul>
+          </div>
+          <div className="h-[600px]">
+            <AppointmentCalendar
+              appointments={appointments}
+              onVacantDateClick={handleVacantDateClick}
+              onBookedAppointmentClick={handleBookedAppointmentClick}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      {selectedDate && (
+        <BookingModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onBook={handleBookAppointment}
+          selectedDate={selectedDate}
+        />
+      )}
     </div>
   );
 }
