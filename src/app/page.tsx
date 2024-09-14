@@ -1,22 +1,38 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { db } from '@/firebase';
 import AppointmentCalendar from '@/components/Calendar';
 import Navbar from '@/components/topNavbar';
 import BookingModal from '@/components/Booking';
+
+interface Appointment {
+  id: string;
+  start: string;
+  end: string;
+  title: string;
+  status: 'available' | 'booked';
+}
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedAppointment, setSelectedAppointment] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
 
-  // Sample data for appointments
-  const [appointments, setAppointments] = useState([
-    { id: '1', start: '2024-09-15T10:00:00', end: '2024-09-15T11:00:00', title: 'Available', status: 'available' as const },
-    { id: '2', start: '2024-09-15T14:00:00', end: '2024-09-15T15:00:00', title: 'Booked', status: 'booked' as const },
-    { id: '3', start: '2024-09-16T11:00:00', end: '2024-09-16T12:00:00', title: 'Available', status: 'available' as const },
-    { id: '4', start: '2024-09-17T13:00:00', end: '2024-09-17T14:00:00', title: 'Booked', status: 'booked' as const },
-    { id: '5', start: '2024-09-13T15:00:00', end: '2024-09-13T16:00:00', title: 'Booked', status: 'booked' as const },
-  ]);
+  useEffect(() => {
+    fetchAppointments();
+  }, []);
+
+  const fetchAppointments = async () => {
+    const appointmentsCol = collection(db, 'appointments');
+    const appointmentSnapshot = await getDocs(appointmentsCol);
+    const appointmentList = appointmentSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as Appointment[];
+    setAppointments(appointmentList);
+  };
 
   const handleVacantDateClick = (date: string) => {
     setSelectedDate(date);
@@ -25,24 +41,22 @@ export default function Home() {
 
   const handleBookedAppointmentClick = (appointmentId: string) => {
     setSelectedAppointment(appointmentId);
-    // You can add more logic here, like showing appointment details
     console.log('Booked appointment clicked:', appointmentId);
   };
 
-  const handleBookAppointment = (data: { date: string; time: string; natureOfRequest: string; fullName: string }) => {
-    // Here you would typically send this data to your backend/Firebase
-    console.log('Booking appointment:', data);
-
-    // For now, let's just add it to our local state
-    const newAppointment = {
-      id: String(appointments.length + 1),
-      start: `${data.date}T${data.time}:00`,
-      end: `${data.date}T${data.time.split(':')[0]}:59:59`,
-      title: `${data.natureOfRequest} - ${data.fullName}`,
-      status: 'booked' as const
-    };
-
-    setAppointments([...appointments, newAppointment]);
+  const handleBookAppointment = async (data: { date: string; time: string; natureOfRequest: string; fullName: string }) => {
+    try {
+      const newAppointment = {
+        start: `${data.date}T${data.time}:00`,
+        end: `${data.date}T${data.time.split(':')[0]}:59:59`,
+        title: `${data.natureOfRequest} - ${data.fullName}`,
+        status: 'booked' as const
+      };
+      const docRef = await addDoc(collection(db, 'appointments'), newAppointment);
+      setAppointments([...appointments, { ...newAppointment, id: docRef.id }]);
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
   };
 
   return (
