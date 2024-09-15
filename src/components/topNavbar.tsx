@@ -8,10 +8,10 @@ const Navbar = () => {
           OMSC APP-iontment
         </Link>
         <div>
-          <Link href="/signin" className="text-white mr-4 hover:underline">
+          <Link href="/log-in" className="text-white mr-4 hover:underline">
             Sign In
           </Link>
-          <Link href="/signup" className="bg-white text-blue-600 px-4 py-2 rounded hover:bg-blue-100">
+          <Link href="/sign-up" className="bg-white text-blue-600 px-4 py-2 rounded hover:bg-blue-100">
             Sign Up
           </Link>
         </div>

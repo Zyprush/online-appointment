@@ -8,12 +8,22 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-      },
     },
   },
-  plugins: [],
+  daisyui: {
+    themes: [
+      {
+        mytheme: {
+          primary: "#43766C",
+          secondary: "#B19470",
+          accent: "#F8FAE5",
+          neutral: "#76453B",
+          "base-100": "#ffffff",
+        },
+      },
+      "corporate",
+    ],
+  },
+  plugins: [require("daisyui")],
 };
 export default config;
