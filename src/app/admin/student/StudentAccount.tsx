@@ -80,7 +80,7 @@ const StudentAccount = () => {
       <input
         type="text"
         placeholder="Search by name or student ID"
-        className="mb-4 p-2 border border-gray-300 rounded-md w-full max-w-md"
+        className="mb-4 p-2 border border-gray-300 rounded-md w-full max-w-xs"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />

@@ -130,8 +130,8 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen py-8 bg-gray-100">
-      <form onSubmit={handleSubmit} className="bg-white p-10 rounded-lg shadow-md w-full max-w-2xl">
+    <div className="flex justify-center items-center h-full overflow-scroll fixed top-0 bottom-0 right-0 left-0 p-5 bg-[url('/img/omsc.jpg')] ">
+      <form onSubmit={handleSubmit} className="bg-white p-5 md:p-10 mt-80 rounded-lg shadow-md w-full max-w-2xl">
         <h2 className="text-2xl font-bold mb-6">Signup</h2>
         <div className="grid grid-cols-2 gap-4">
           {/* Personal Details */}

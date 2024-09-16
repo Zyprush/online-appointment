@@ -90,8 +90,8 @@ const VerifiedClient = () => {
   };
 
   return (
-    <div className="flex justify-center items-start min-h-screen">
-      <div className="bg-white p-10 rounded-lg shadow-md w-full">
+    <div className="flex justify-center items-start">
+      <div className="p-10 w-full">
         <h2 className="text-xl text-neutral font-bold mb-3">Verified Clients</h2>
 
         {/* Search Input */}
@@ -101,14 +101,14 @@ const VerifiedClient = () => {
             value={searchTerm}
             onChange={handleSearchChange}
             placeholder="Search by name..."
-            className="input input-bordered input-sm input-primary w-48"
+            className="mb-4 p-2 border border-gray-300 rounded-md w-full max-w-xs"
           />
         </div>
 
         {loading ? (
           <p>Loading...</p>
         ) : filteredClients.length > 0 ? (
-          <table className="min-w-full divide-y divide-gray-200">
+          <table className="min-w-full divide-y divide-gray-200 border shadow-sm">
             <thead className="bg-gray-50">
               <tr className='text-neutral'>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Last Name</th>

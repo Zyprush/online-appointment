@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Mulish } from 'next/font/google';
+import { Montserrat } from 'next/font/google'; // Import Montserrat font
 import "./globals.css";
 
-const mulish = Mulish({
+const montserrat = Montserrat({
   subsets: ['latin'],
-  weight: ['200', '300', '400', '500', '600', '700', '800', '900'],
+  weight: ['300', '400', '500', '600', '700', '800', '900'], // Include weights as needed
 });
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang="en">
-      <body className={`${mulish.className} antialiased text-gray-700`}>
+      <body className={`${montserrat.className} antialiased text-gray-700`}> {/* Use Montserrat */}
         {children}
       </body>
     </html>

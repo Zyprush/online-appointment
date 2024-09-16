@@ -101,8 +101,8 @@ const UnverifiedClient = () => {
   };
 
   return (
-    <div className="flex justify-center items-start min-h-screen w-full">
-      <div className="bg-white p-10 rounded-lg shadow-md w-full">
+    <div className="flex justify-center items-start w-full">
+      <div className="p-10 w-full">
         <h2 className="text-xl text-neutral font-bold mb-3">Unverified Clients</h2>
 
         {/* Search Input */}
@@ -112,7 +112,7 @@ const UnverifiedClient = () => {
             value={searchTerm}
             onChange={handleSearchChange}
             placeholder="Search by name..."
-            className="input input-bordered input-sm input-primary w-48"
+            className="mb-4 p-2 border border-gray-300 rounded-md w-full max-w-xs"
           />
         </div>
 
