@@ -118,7 +118,6 @@ const SignupPage = () => {
         });
 
         alert("Signup successful");
-        // Redirect or clear form after successful signup
         window.location.href = "/";
       }
     } catch (error) {
