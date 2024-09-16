@@ -117,7 +117,7 @@ const AlumniAccount = () => {
                   <td className="py-2 px-4 border-b border-gray-200">{alumnus.course}</td>
                   <td className="py-2 px-4 border-b border-gray-200">
                     <button
-                      className={`ml-2 px-4 py-2 bg-green-500 text-white rounded ${loading === alumnus.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      className={`ml-2 px-4 py-2 bg-secondary text-white rounded ${loading === alumnus.id ? 'opacity-50 cursor-not-allowed' : ''}`}
                       onClick={() => restoreStudent(alumnus)}
                       disabled={loading === alumnus.id}
                     >

@@ -111,7 +111,7 @@ const StudentAccount = () => {
                   <td className="py-2 px-4 border-b border-gray-200 text-sm text-left">{student.course}</td>
                   <td className="py-2 px-4 border-b border-gray-200 text-sm text-left">
                     <button
-                      className={`px-4 py-2 bg-blue-500 text-white rounded ${loading === student.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      className={`px-4 py-2 bg-primary text-white rounded ${loading === student.id ? 'opacity-50 cursor-not-allowed' : ''}`}
                       onClick={() => archiveStudent(student)}
                       disabled={loading === student.id}
                     >

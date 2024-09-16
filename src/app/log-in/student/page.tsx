@@ -42,8 +42,8 @@ export default function LogIn() {
   }
 
   return (
-    <div className="min-h-screen  w-full flex items-center bg">
-      <div className='w-2/3 h-screen'></div>
+    <div className="flex justify-center items-center h-full overflow-scroll fixed top-0 bottom-0 right-0 left-0 p-5 bg-[url('/img/omsc.jpg')]">
+      <div className='w-2/3 h-full'></div>
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -122,7 +122,7 @@ export default function LogIn() {
                   type="submit"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex-1 bg-gradient-to-r from-green-600 to-emerald-500 text-white py-2 rounded-md hover:from-green-700 hover:to-emerald-600 transition duration-300"
+                  className="flex-1 bg-primary text-white py-2 rounded-md transition duration-300"
                 >
                   Sign in
                 </motion.button>
