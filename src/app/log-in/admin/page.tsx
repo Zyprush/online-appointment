@@ -2,16 +2,14 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Calendar, Lock, BookOpen, User, Mail } from 'lucide-react'
+import { Lock, BookOpen, Mail } from 'lucide-react'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth, db } from '@/firebase'
-import { doc, getDoc } from 'firebase/firestore'
 import Link from 'next/link'
+import { getDoc, doc } from 'firebase/firestore'
 
 export default function LogIn() {
-  const [studentNo, setStudentNo] = useState('')
   const [email, setEmail] = useState('')
-  const [birthday, setBirthday] = useState('')
   const [password, setPassword] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,19 +20,12 @@ export default function LogIn() {
       const uid = userCredential.user.uid
 
       // Fetch student data from Firestore
-      const studentDoc = await getDoc(doc(db, 'students', uid))
+      const studentDoc = await getDoc(doc(db, 'admin', uid))
       if (studentDoc.exists()) {
-        const studentData = studentDoc.data()
-        // Check if student ID and birthday match
-        if (studentData.studentId === studentNo && studentData.birthday === birthday) {
-          console.log('Sign in successful:', { studentNo, email, birthday })
-          //navigate to dashboard
-          window.location.href = '/student/dashboard'
-        } else {
-          alert('Student ID or birthday does not match.')
-        }
+        //navigate to dashboard
+        window.location.href = '/admin/dashboard'
       } else {
-        alert('No student record found.')
+        alert('No Admin or Staff record found.')
       }
     } catch (err) {
       alert('Error signing in: ' + (err as Error).message)
@@ -42,7 +33,7 @@ export default function LogIn() {
   }
 
   return (
-    <div className="min-h-screen  w-full flex items-center bg">
+    <div className="min-h-screen w-full flex items-center bg">
       <div className='w-2/3 h-screen'></div>
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -62,20 +53,8 @@ export default function LogIn() {
               </motion.div>
             </div>
             <h2 className="text-2xl font-bold text-center text-gray-800 mb-1">OMSC Appointment System</h2>
-            <p className="text-sm text-center text-gray-600 mb-8">Sign in as OMSC Student</p>
+            <p className="text-sm text-center font-semibold text-gray-600 mb-8">Sign in as Admin or Staff</p>
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="relative">
-                <User className="absolute top-3 left-3 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Student ID"
-                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  value={studentNo}
-                  onChange={(e) => setStudentNo(e.target.value)}
-                  required
-                  aria-label="Student ID"
-                />
-              </div>
               <div className="relative">
                 <Mail className="absolute top-3 left-3 text-gray-400" />
                 <input
@@ -86,17 +65,6 @@ export default function LogIn() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   aria-label="Email Address"
-                />
-              </div>
-              <div className="relative">
-                <Calendar className="absolute top-3 left-3 text-gray-400" />
-                <input
-                  type="date"
-                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  value={birthday}
-                  onChange={(e) => setBirthday(e.target.value)}
-                  required
-                  aria-label="Birth Date"
                 />
               </div>
               <div className="relative">

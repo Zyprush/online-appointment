@@ -12,7 +12,7 @@ interface StudentData {
   studentId: string;
 }
 
-// Custom hook to fetch and save student data
+
 export function useStudentData(uid: string) {
   const [studentData, setStudentData] = useState<StudentData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
