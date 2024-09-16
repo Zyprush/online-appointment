@@ -101,9 +101,9 @@ const UnverifiedClient = () => {
   };
 
   return (
-    <div className="flex justify-center items-start min-h-screen bg-gray-100 w-full">
+    <div className="flex justify-center items-start min-h-screen w-full">
       <div className="bg-white p-10 rounded-lg shadow-md w-full">
-        <h2 className="text-2xl font-bold mb-6">Unverified Clients</h2>
+        <h2 className="text-xl text-neutral font-bold mb-3">Unverified Clients</h2>
 
         {/* Search Input */}
         <div className="mb-6">
@@ -112,35 +112,35 @@ const UnverifiedClient = () => {
             value={searchTerm}
             onChange={handleSearchChange}
             placeholder="Search by name..."
-            className="input input-bordered input-sm w-full"
+            className="input input-bordered input-sm input-primary w-48"
           />
         </div>
 
         {loading ? (
           <p>Loading...</p>
-        ) : (
+        ) : filteredClients.length > 0 ? (
           <table className="min-w-full divide-y divide-gray-200 w-full">
             <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <tr className="text-neutral">
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
                   Last Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
                   First Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
                   Email
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
                   Contact Number
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
                   Birthdate
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
                   Sex
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -148,36 +148,38 @@ const UnverifiedClient = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredClients.map((client) => (
                 <tr key={client.uid} onClick={() => handleClientClick(client)} className="cursor-pointer">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-600">
                     {client.lastName}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-600">
                     {client.firstName}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-600">
                     {client.email}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-600">
                     {client.contactNumber}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-600">
                     {client.birthdate}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-600">
                     {client.sex}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-600">
                     <button
                       onClick={() => handleVerifyClient(client.uid)}
-                      className="btn btn-primary"
+                      className="btn btn-primary btn-sm rounded-sm text-white"
                     >
-                      Verify
+                      Enable
                     </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        ) : (
+          <p className="text-center font-semibold text-gray-600 mt-4">No Unverified Clients</p>
         )}
       </div>
 

@@ -14,10 +14,10 @@ const config: Config = {
     themes: [
       {
         mytheme: {
-          primary: "#43766C",
-          secondary: "#B19470",
-          accent: "#F8FAE5",
-          neutral: "#76453B",
+          primary: "#244E8A",
+          secondary: "#6F7D42",
+          accent: "#CDCDCA",
+          neutral: "#384758",
           "base-100": "#ffffff",
         },
       },

@@ -90,9 +90,9 @@ const VerifiedClient = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen py-8 bg-gray-100">
+    <div className="flex justify-center items-start min-h-screen">
       <div className="bg-white p-10 rounded-lg shadow-md w-full">
-        <h2 className="text-2xl font-bold mb-6">Verified Clients</h2>
+        <h2 className="text-xl text-neutral font-bold mb-3">Verified Clients</h2>
 
         {/* Search Input */}
         <div className="mb-6">
@@ -101,51 +101,39 @@ const VerifiedClient = () => {
             value={searchTerm}
             onChange={handleSearchChange}
             placeholder="Search by name..."
-            className="input input-bordered input-sm w-full"
+            className="input input-bordered input-sm input-primary w-48"
           />
         </div>
 
         {loading ? (
           <p>Loading...</p>
-        ) : (
+        ) : filteredClients.length > 0 ? (
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">First Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Number</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Birthdate</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Home Address</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Province</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">City</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Barangay</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Zip Code</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sex</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <tr className='text-neutral'>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Last Name</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">First Name</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Contact Number</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Sex</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredClients.map((client) => (
                 <tr key={client.uid} onClick={() => handleClientClick(client)} className="cursor-pointer">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{client.lastName}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.firstName}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.contactNumber}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.birthdate}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.homeAddress}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.province}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.city}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.barangay}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.zipCode}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.sex}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-500">{client.lastName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-500">{client.firstName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-500">{client.email}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-500">{client.contactNumber}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-500">{client.sex}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-500">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleRestrictClient(client.uid);
                       }}
-                      className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+                      className="btn btn-error text-white btn-sm rounded-sm"
                     >
                       Restrict
                     </button>
@@ -154,6 +142,8 @@ const VerifiedClient = () => {
               ))}
             </tbody>
           </table>
+        ) : (
+          <p className="text-center font-semibold text-gray-600 mt-4">No client to show</p>
         )}
       </div>
 
