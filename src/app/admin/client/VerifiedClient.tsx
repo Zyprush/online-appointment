@@ -114,23 +114,23 @@ const VerifiedClient = () => {
           <table className="min-w-full divide-y divide-gray-200 border shadow-sm">
             <thead className="bg-gray-50">
               <tr className='text-neutral'>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Last Name</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">First Name</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Contact Number</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Sex</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Last Name</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">First Name</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Email</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Contact Number</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Sex</th>
+                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredClients.map((client) => (
                 <tr key={client.uid} onClick={() => handleClientClick(client)} className="cursor-pointer">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-500">{client.lastName}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-500">{client.firstName}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-500">{client.email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-500">{client.contactNumber}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-500">{client.sex}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.lastName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.firstName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.email}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.contactNumber}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.sex}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();

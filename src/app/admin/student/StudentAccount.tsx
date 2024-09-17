@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from 'react'
 import { collection, getDocs, doc, updateDoc, query, where } from 'firebase/firestore'
 import { db } from '@/firebase'
+import ViewStudent from './ViewStudent' // Import the ViewStudent modal
+import EditStudent from './EditStudent' // Import the EditStudent modal
 
 // Define a type for user data
 interface User {
@@ -15,10 +17,14 @@ interface User {
   role: string;
 }
 
-const StudentAccount = () => {
+const StudentAccount: React.FC = () => {
   const [students, setStudents] = useState<User[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState<string | null>(null)
+  const [selectedStudent, setSelectedStudent] = useState<User | null>(null)
+  const [showModal, setShowModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [studentToEdit, setStudentToEdit] = useState<User | null>(null)
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -70,6 +76,28 @@ const StudentAccount = () => {
     student.studentId.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
+  // Function to handle opening the modal
+  const handleOpenModal = (student: User) => {
+    setSelectedStudent(student)
+    setShowModal(true)
+  }
+
+  // Function to handle closing the modal
+  const handleCloseModal = () => {
+    setSelectedStudent(null)
+    setShowModal(false)
+  }
+
+  const handleEditClick = (e: React.MouseEvent, student: User) => {
+    e.stopPropagation()
+    setStudentToEdit(student)
+    setShowEditModal(true)
+  }
+
+  const handleUpdateStudent = (updatedStudent: User) => {
+    setStudents(students.map(s => s.id === updatedStudent.id ? updatedStudent : s))
+  }
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Student Accounts</h1>
@@ -100,7 +128,7 @@ const StudentAccount = () => {
           <tbody>
             {filteredStudents.length > 0 ? (
               filteredStudents.map((student) => (
-                <tr key={student.id}>
+                <tr key={student.id} className="cursor-pointer hover:bg-gray-100" onClick={() => handleOpenModal(student)}>
                   <td className="py-2 px-4 border-b border-gray-200 text-sm text-left">{student.studentId}</td>
                   <td className="py-2 px-4 border-b border-gray-200 text-sm text-left">{student.fullName}</td>
                   <td className="py-2 px-4 border-b border-gray-200 text-sm text-left">{student.email}</td>
@@ -109,8 +137,17 @@ const StudentAccount = () => {
                   <td className="py-2 px-4 border-b border-gray-200 text-sm text-left">{student.course}</td>
                   <td className="py-2 px-4 border-b border-gray-200 text-sm text-left">
                     <button
+                      className="px-4 py-2 bg-blue-500 text-white rounded mr-2"
+                      onClick={(e) => handleEditClick(e, student)}
+                    >
+                      Edit
+                    </button>
+                    <button
                       className={`px-4 py-2 bg-primary text-white rounded ${loading === student.id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      onClick={() => archiveStudent(student)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        archiveStudent(student);
+                      }}
                       disabled={loading === student.id}
                     >
                       {loading === student.id ? 'Archiving...' : 'Archive'}
@@ -126,6 +163,20 @@ const StudentAccount = () => {
           </tbody>
         </table>
       </div>
+
+      {/* ViewStudent Modal */}
+      {showModal && selectedStudent && (
+        <ViewStudent student={selectedStudent} onClose={handleCloseModal} />
+      )}
+
+      {/* EditStudent Modal */}
+      {showEditModal && studentToEdit && (
+        <EditStudent
+          student={studentToEdit}
+          onClose={() => setShowEditModal(false)}
+          onUpdate={handleUpdateStudent}
+        />
+      )}
     </div>
   )
 }

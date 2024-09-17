@@ -28,7 +28,7 @@ interface Client {
   uid: string;
 }
 
-const UnverifiedClient = () => {
+const UnverifiedClient: React.FC = () => {
   const [clients, setClients] = useState<Client[]>([]);
   const [filteredClients, setFilteredClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -72,9 +72,10 @@ const UnverifiedClient = () => {
     setSearchTerm(e.target.value);
   };
 
-  const handleVerifyClient = async (uid: string) => {
+  const handleVerifyClient = async (e: React.MouseEvent, uid: string) => {
+    e.stopPropagation(); // Prevent event bubbling to parent row
     const isConfirmed = window.confirm(
-      "Are you sure you want to verify this client?"
+      "Are you sure you want to enable this client?"
     );
     if (!isConfirmed) return;
 
@@ -148,27 +149,27 @@ const UnverifiedClient = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredClients.map((client) => (
                 <tr key={client.uid} onClick={() => handleClientClick(client)} className="cursor-pointer">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-600">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {client.lastName}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-600">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {client.firstName}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-600">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {client.email}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-600">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {client.contactNumber}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-600">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {client.birthdate}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-600">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {client.sex}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-600">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <button
-                      onClick={() => handleVerifyClient(client.uid)}
+                      onClick={(e) => handleVerifyClient(e, client.uid)}
                       className="btn btn-primary btn-sm rounded-sm text-white"
                     >
                       Enable
