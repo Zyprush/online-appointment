@@ -28,7 +28,7 @@ interface Client {
   uid: string;
 }
 
-const UnverifiedClient: React.FC = () => {
+const RestrictedClient: React.FC = () => {
   const [clients, setClients] = useState<Client[]>([]);
   const [filteredClients, setFilteredClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -104,7 +104,7 @@ const UnverifiedClient: React.FC = () => {
   return (
     <div className="flex justify-center items-start w-full">
       <div className="p-10 w-full">
-        <h2 className="text-xl text-neutral font-bold mb-3">Unverified Clients</h2>
+        <h2 className="text-xl text-neutral font-bold mb-3">Restricted Clients</h2>
 
         {/* Search Input */}
         <div className="mb-6">
@@ -180,7 +180,7 @@ const UnverifiedClient: React.FC = () => {
             </tbody>
           </table>
         ) : (
-          <p className="text-center font-semibold text-gray-600 mt-4">No Unverified Clients</p>
+          <p className="text-center font-semibold text-gray-600 mt-4">No Restricted Clients</p>
         )}
       </div>
 
@@ -191,4 +191,4 @@ const UnverifiedClient: React.FC = () => {
   );
 };
 
-export default UnverifiedClient;
+export default RestrictedClient;

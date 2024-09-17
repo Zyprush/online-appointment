@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import VerifiedClient from "./VerifiedClient";
-import UnverifiedClient from "./UnverfiedClient";
+import RestrictedClient from "./RestrictedClient"; // Updated import statement
 import NavLayout from "@/components/NavLayout";
 
 export default function Page() {
@@ -26,13 +26,13 @@ export default function Page() {
               !showVerified ? "btn-primary text-white" : "btn-ghost"
             }`}
           >
-            Unverified Clients
+            Restricted Clients
           </button>
         </div>
 
         <div className="">
           <div className="transition-opacity duration-300 ease-in-out">
-            {showVerified ? <VerifiedClient /> : <UnverifiedClient />}
+            {showVerified ? <VerifiedClient /> : <RestrictedClient />} 
           </div>
         </div>
       </div>

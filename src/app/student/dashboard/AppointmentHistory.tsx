@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/firebase';
 
 interface Appointment {
   id: string;
@@ -10,41 +12,41 @@ interface Appointment {
 }
 
 const AppointmentHistory: React.FC = () => {
-  // Dummy data for appointments
-  const appointments: Appointment[] = [
-    {
-      id: '1',
-      date: '2023-06-01',
-      time: '10:00 AM',
-      type: 'Pay Fees',
-      status: 'Completed',
-      details: 'Tuition fee payment'
-    },
-    {
-      id: '2',
-      date: '2023-06-15',
-      time: '2:00 PM',
-      type: 'Submit Requirements',
-      status: 'Cancelled',
-      details: 'Submission of medical certificate'
-    },
-    {
-      id: '3',
-      date: '2023-07-01',
-      time: '11:30 AM',
-      type: 'Meet with Dean',
-      status: 'Completed',
-      details: 'Discussion about academic performance'
-    },
-    {
-      id: '4',
-      date: '2023-07-10',
-      time: '3:00 PM',
-      type: 'Claim Documents',
-      status: 'Completed',
-      details: 'Claiming of transcript of records'
-    },
-  ];
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const appointmentsRef = collection(db, 'appointments');
+        const snapshot = await getDocs(appointmentsRef);
+        const appointmentsList = snapshot.docs.map(doc => ({
+          id: doc.id,
+          date: doc.data().selectedDate || '',
+          time: doc.data().timeRange || '',
+          type: doc.data().appointmentType || '',
+          status: 'Pending', // You can modify this based on your logic
+          details: doc.data().otherReason || 'N/A', // Example for details
+        }));
+        setAppointments(appointmentsList);
+      } catch (err) {
+        setError('Error fetching appointments: ' + (err as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAppointments();
+  }, []);
+
+  if (loading) {
+    return <div>Loading appointments...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">

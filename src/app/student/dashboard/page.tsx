@@ -5,6 +5,7 @@ import Appointment from "./Appointment";
 import RequestAppointment from "./RequestAppointment";
 import AppointmentHistory from "./AppointmentHistory";
 import NavLayout from "@/components/NavLayout";
+import { PlusCircle, Folder, FileText } from "lucide-react"; // Import Lucide icons
 
 const StudentDashboard: React.FC = () => {
   const [activeComponent, setActiveComponent] = useState<string>("dashboard");
@@ -18,26 +19,38 @@ const StudentDashboard: React.FC = () => {
           <ul>
             <li className="mb-2">
               <button
-                className="w-full flex items-center justify-center bg-primary text-white py-2 px-4 rounded hover:bg-blue-600"
+                className={`w-full flex items-center justify-start py-2 px-4 rounded ${
+                  activeComponent === "requestAppointment"
+                    ? "bg-primary text-white"
+                    : "text-gray-600 hover:bg-gray-200"
+                }`}
                 onClick={() => setActiveComponent("requestAppointment")}
               >
-                + Request Appointment
+                <PlusCircle className="mr-2" /> Request Appointment
               </button>
             </li>
             <li className="mb-2">
               <button
-                className="w-full flex items-center justify-start text-gray-600 py-2 px-4 rounded hover:bg-gray-200"
+                className={`w-full flex items-center justify-start py-2 px-4 rounded ${
+                  activeComponent === "appointments"
+                    ? "bg-primary text-white"
+                    : "text-gray-600 hover:bg-gray-200"
+                }`}
                 onClick={() => setActiveComponent("appointments")}
               >
-                📁 Your Appointments
+                <Folder className="mr-2" /> Your Appointments
               </button>
             </li>
             <li className="mb-2">
               <button
-                className="w-full flex items-center justify-start text-gray-600 py-2 px-4 rounded hover:bg-gray-200"
+                className={`w-full flex items-center justify-start py-2 px-4 rounded ${
+                  activeComponent === "appointmentHistory"
+                    ? "bg-primary text-white"
+                    : "text-gray-600 hover:bg-gray-200"
+                }`}
                 onClick={() => setActiveComponent("appointmentHistory")}
               >
-                📄 Appointment History
+                <FileText className="mr-2" /> Appointment History
               </button>
             </li>
           </ul>
@@ -45,9 +58,9 @@ const StudentDashboard: React.FC = () => {
 
         {/* Main Content */}
         <div className="w-full md:w-3/4 p-4 md:p-6">
+          {activeComponent === "requestAppointment" && <RequestAppointment />}
           <Reminder />
           {activeComponent === "dashboard" && <Appointment />}
-          {activeComponent === "requestAppointment" && <RequestAppointment />}
           {activeComponent === "appointments" && <Appointment />}
           {activeComponent === "appointmentHistory" && <AppointmentHistory />}
         </div>

@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 
-const Personnel = () => { // New component for managing personnel
-  const [personnel, setPersonnel] = useState< // Changed from offices to personnel
+const Personnel = () => { // Renamed component
+  const [personnel, setPersonnel] = useState<
     {
       name: string;
-      position: string; // Added position field
-    }[]
+    }[] // Removed price from the type
   >([]);
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -16,9 +15,9 @@ const Personnel = () => { // New component for managing personnel
   // Fetch personnel from Firestore on component mount
   useEffect(() => {
     const fetchPersonnel = async () => {
-      const personnelDoc = await getDoc(doc(db, "settings", "personnel")); // Changed from offices to personnel
+      const personnelDoc = await getDoc(doc(db, "settings", "personnel"));
       if (personnelDoc.exists()) {
-        setPersonnel(personnelDoc.data().personnel || []); // Changed from offices to personnel
+        setPersonnel(personnelDoc.data().personnel || []);
       }
     };
     fetchPersonnel();
@@ -33,30 +32,29 @@ const Personnel = () => { // New component for managing personnel
 
     setError(null); // Clear error
     setLoading(true); // Set loading to true
-    await setDoc(doc(db, "settings", "personnel"), { personnel }); // Changed from offices to personnel
+    await setDoc(doc(db, "settings", "personnel"), { personnel });
     setLoading(false); // Set loading to false after saving
     setIsEditing(false); // Exit editing mode after saving
   };
 
   const isFormValid = () => {
-    return personnel.every(person => person.name.trim() !== "" && person.position.trim() !== ""); // Validate both name and position
+    return personnel.every(service => service.name.trim() !== "");
   };
 
-  const handlePersonnelChange = (index: number, field: keyof typeof personnel[number], value: string) => {
+  const handleServiceChange = (index: number, field: keyof typeof personnel[number], value: string) => {
     setPersonnel((prevPersonnel) =>
-      prevPersonnel.map((p, i) => (i === index ? { ...p, [field]: value } : p))
+      prevPersonnel.map((s, i) => (i === index ? { ...s, [field]: value } : s))
     );
   };
 
-  const deletePersonnel = (index: number) =>
+  const deleteService = (index: number) =>
     setPersonnel(personnel.filter((_, i) => i !== index));
 
-  const addPersonnel = () =>
+  const addService = () =>
     setPersonnel([
       ...personnel,
       {
         name: "",
-        position: "", // Initialize position field
       },
     ]);
 
@@ -79,30 +77,21 @@ const Personnel = () => { // New component for managing personnel
       {error && <div className="text-red-500">{error}</div>}
 
       {personnel.length > 0 &&
-        personnel.map((person, index) => (
+        personnel.map((service, index) => (
           <div key={index} className="flex gap-3">
             {isEditing ? (
               <div className="flex gap-3 items-center">
                 <input
                   type="text"
                   placeholder="Personnel Name"
-                  value={person.name}
+                  value={service.name}
                   onChange={(e) =>
-                    handlePersonnelChange(index, "name", e.target.value)
+                    handleServiceChange(index, "name", e.target.value)
                   }
                   className="p-2 text-sm border-primary border-2 rounded-sm w-80"
                 />
-                <input
-                  type="text"
-                  placeholder="Position"
-                  value={person.position} // Added position input
-                  onChange={(e) =>
-                    handlePersonnelChange(index, "position", e.target.value)
-                  }
-                  className="p-2 text-sm border-primary border-2 rounded-sm"
-                />
                 <button
-                  onClick={() => deletePersonnel(index)}
+                  onClick={() => deleteService(index)}
                   className="btn btn-sm rounded-sm text-white btn-error"
                 >
                   Delete
@@ -110,8 +99,7 @@ const Personnel = () => { // New component for managing personnel
               </div>
             ) : (
               <div className="flex gap-3">
-                <span>{person.name}</span>
-                <span>{person.position}</span> {/* Display position */}
+                <span>{service.name}</span>
               </div>
             )}
           </div>
@@ -120,7 +108,7 @@ const Personnel = () => { // New component for managing personnel
       {isEditing && (
         <div className="mx-auto flex gap-5">
           <button
-            onClick={addPersonnel}
+            onClick={addService}
             className="btn btn-sm rounded-none text-primary btn-outline"
           >
             Add Personnel
