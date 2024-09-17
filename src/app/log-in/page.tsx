@@ -3,20 +3,22 @@ import React from "react";
 
 const page = () => {
   return (
-    <div className="flex justify-center items-center h-full overflow-scroll fixed top-0 bottom-0 right-0 left-0 p-5 bg-[url('/img/omsc.jpg')]">
-      <div className="justify-center items-center h-screen hidden w-2/3 md:flex"></div>
+    <div className="flex justify-center items-center h-full overflow-scroll fixed top-0  bottom-0 right-0 left-0 p-5 bg-[url('/img/omsc.jpg')]">
+      <div className="justify-center items-center h-full hidden w-full md:flex"></div>
 
-      <div className="bg-white rounded-lg shadow-lg p-8 text-center flex flex-col justify-center w-1/3">
-
-        <h1 className="text-2xl font-bold text-primary mb-2">
-          Login to OMSC Appointment System{" "}
+      <div className="bg-white rounded-lg shadow-lg p-8 text-center flex flex-col border justify-center w-1/3">
+      <h1 className="text-3xl font-bold text-primary mb-2">
+          Login
         </h1>
-        <p className="text-primary mb-6">
+        <h1 className="text-xl font-bold text-primary mb-2">
+          OMSC Appointment System
+        </h1>
+        <p className="text-primary mb-6 text-sm">
           Please click or tap the appropriate button.
         </p>
         <Link
           href={"/log-in/student"}
-          className="bg-blue-500 text-white rounded-lg p-4 w-full hover:bg-blue-600 transition duration-300 mb-4"
+          className="bg-primary text-white rounded-lg p-4 w-full hover:bg-blue-600 transition duration-300 mb-4"
         >
           Student
         </Link>
@@ -28,7 +30,7 @@ const page = () => {
         </Link>
         <Link
           href={"/log-in/admin"}
-          className="bg-green-500 text-white rounded-lg p-4 w-full hover:bg-green-600 transition duration-300"
+          className="bg-secondary text-white rounded-lg p-4 w-full transition duration-300"
         >
           College/Office Administrator
         </Link>

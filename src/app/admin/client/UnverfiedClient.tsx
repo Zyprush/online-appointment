@@ -39,8 +39,8 @@ const UnverifiedClient = () => {
   useEffect(() => {
     const fetchClients = async () => {
       try {
-        const clientsCollection = collection(db, "clients");
-        const q = query(clientsCollection, where("verified", "==", false));
+        const clientsCollection = collection(db, "users");
+        const q = query(clientsCollection, where("verified", "==", false), where("role", "==", "client"));
         const querySnapshot = await getDocs(q);
         const clientsData: Client[] = querySnapshot.docs.map((doc) => ({
           ...(doc.data() as Client),
@@ -79,7 +79,7 @@ const UnverifiedClient = () => {
     if (!isConfirmed) return;
 
     try {
-      const clientDoc = doc(db, "clients", uid);
+      const clientDoc = doc(db, "users", uid);
       await updateDoc(clientDoc, { verified: true });
       setClients((prev) => prev.filter((client) => client.uid !== uid));
       setFilteredClients((prev) => prev.filter((client) => client.uid !== uid));

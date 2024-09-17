@@ -1,10 +1,10 @@
 "use client"
 import React, { useEffect, useState } from 'react'
-import { collection, getDocs, doc, deleteDoc, setDoc } from 'firebase/firestore'
+import { collection, getDocs, doc, updateDoc, query, where } from 'firebase/firestore'
 import { db } from '@/firebase'
 
-// Define a type for student data
-interface Student {
+// Define a type for user data
+interface User {
   id: string;
   fullName: string;
   studentId: string;
@@ -12,24 +12,23 @@ interface Student {
   birthday: string;
   phone: string;
   course: string;
+  role: string;
 }
 
 const StudentAccount = () => {
-  const [students, setStudents] = useState<Student[]>([])
+  const [students, setStudents] = useState<User[]>([])
   const [searchQuery, setSearchQuery] = useState('')
-  const [loading, setLoading] = useState<string | null>(null) // Loading state for specific student
+  const [loading, setLoading] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, 'students'))
-        const studentList: Student[] = querySnapshot.docs.map((doc) => {
-          const data = doc.data() as Student;
-          return {
-            ...data, // Document data
-            id: doc.id, // Document ID
-          };
-        })
+        const q = query(collection(db, 'users'), where("role", "==", "student"))
+        const querySnapshot = await getDocs(q)
+        const studentList: User[] = querySnapshot.docs.map((doc) => ({
+          ...doc.data() as User,
+          id: doc.id,
+        }))
         setStudents(studentList)
       } catch (err) {
         console.error('Error fetching student data: ', err)
@@ -40,7 +39,7 @@ const StudentAccount = () => {
   }, [])
 
   // Function to archive a student
-  const archiveStudent = async (student: Student) => {
+  const archiveStudent = async (student: User) => {
     if (!window.confirm(`Are you sure you want to archive ${student.fullName}'s account?`)) {
       return
     }
@@ -48,11 +47,10 @@ const StudentAccount = () => {
     setLoading(student.id)
 
     try {
-      // Add the student to the 'alumni' collection
-      await setDoc(doc(db, 'alumni', student.id), student)
-
-      // Remove the student from the 'students' collection
-      await deleteDoc(doc(db, 'students', student.id))
+      const userRef = doc(db, 'users', student.id)
+      
+      // Update the role to "alumni"
+      await updateDoc(userRef, { role: 'alumni' })
 
       // Update the local state to remove the archived student
       setStudents((prev) => prev.filter((s) => s.id !== student.id))

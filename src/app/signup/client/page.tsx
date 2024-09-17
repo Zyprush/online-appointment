@@ -100,7 +100,7 @@ const SignupPage = () => {
 
       if (user) {
         // Save user details in Firestore
-        await setDoc(doc(db, "clients", user.uid), {
+        await setDoc(doc(db, "users", user.uid), {
           lastName: formData.lastName,
           firstName: formData.firstName,
           middleName: formData.middleName,
@@ -114,7 +114,8 @@ const SignupPage = () => {
           barangay: formData.barangay,
           zipCode: formData.zipCode,
           email: formData.email,
-          verified: true
+          verified: true,
+          role: "client"
         });
 
         alert("Signup successful");

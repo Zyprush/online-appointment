@@ -22,7 +22,7 @@ export default function LogIn() {
       const uid = userCredential.user.uid
 
       // Fetch student data from Firestore
-      const studentDoc = await getDoc(doc(db, 'students', uid))
+      const studentDoc = await getDoc(doc(db, 'users', uid))
       if (studentDoc.exists()) {
         const studentData = studentDoc.data()
         // Check if student ID and birthday match
@@ -56,7 +56,7 @@ export default function LogIn() {
               <motion.div
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className="w-20 h-20 rounded-full bg-gradient-to-r from-green-600 to-emerald-500 flex items-center justify-center"
+                className="w-20 h-20 rounded-full bg-primary flex items-center justify-center"
               >
                 <BookOpen className="text-white w-10 h-10" />
               </motion.div>

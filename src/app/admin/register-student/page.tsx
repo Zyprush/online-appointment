@@ -31,20 +31,14 @@ export default function StudentRegistration() {
         password
       );
       const uid = userCredential.user.uid;
-      await setDoc(doc(db, "students", uid), {
+      await setDoc(doc(db, "users", uid), {
         studentId, // Added student ID to the document
         fullName,
         email,
         birthday,
         phone,
         course,
-      });
-      console.log("Form submitted:", {
-        fullName,
-        email,
-        birthday,
-        phone,
-        course,
+        role: "student"
       });
 
       // Clear all input fields upon successful submission

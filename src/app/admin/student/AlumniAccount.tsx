@@ -1,10 +1,10 @@
 "use client"
 import React, { useEffect, useState } from 'react'
-import { collection, deleteDoc, doc, getDoc, getDocs, setDoc } from 'firebase/firestore'
+import { collection, doc, getDocs, updateDoc, query, where } from 'firebase/firestore'
 import { db } from '@/firebase'
 
-// Define a type for alumni data
-interface Alumni {
+// Define a type for user data
+interface User {
   id: string;
   fullName: string;
   studentId: string;
@@ -12,77 +12,65 @@ interface Alumni {
   birthday: string;
   phone: string;
   course: string;
+  role: string;
 }
 
 const AlumniAccount = () => {
-  const [alumni, setAlumni] = useState<Alumni[]>([])
+  const [students, setStudents] = useState<User[]>([])
   const [searchQuery, setSearchQuery] = useState('')
-  const [loading, setLoading] = useState<string | null>(null) // State to manage loading
+  const [loading, setLoading] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchAlumni = async () => {
+    const fetchStudents = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, 'alumni'))
-        const alumniList: Alumni[] = querySnapshot.docs.map((doc) => {
-          const data = doc.data() as Alumni
-          return {
-            ...data, // Document data
-            id: doc.id, // Document ID
-          }
-        })
-        setAlumni(alumniList)
+        const q = query(collection(db, 'users'), where("role", "==", "alumni"))
+        const querySnapshot = await getDocs(q)
+        const studentList: User[] = querySnapshot.docs.map((doc) => ({
+          ...doc.data() as User,
+          id: doc.id,
+        }))
+        setStudents(studentList)
       } catch (err) {
-        console.error('Error fetching alumni data: ', err)
+        console.error('Error fetching student data: ', err)
       }
     }
 
-    fetchAlumni()
+    fetchStudents()
   }, [])
 
-  // Filter alumni by name or student ID
-  const filteredAlumni = alumni.filter((alumnus) =>
-    alumnus.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    alumnus.studentId.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredStudents = students.filter((student) =>
+    student.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    student.studentId.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  const restoreStudent = async (student: Alumni) => {
-    if (!window.confirm(`Are you sure you want to restore ${student.fullName}'s account?`)) {
+  const archiveStudent = async (student: User) => {
+    if (!window.confirm(`Are you sure you want to archive ${student.fullName}'s account?`)) {
       return
     }
 
-    setLoading(student.id) // Set loading for this student
+    setLoading(student.id)
     try {
-      // Get the student from the 'alumni' collection
-      const studentDoc = await getDoc(doc(db, 'alumni', student.id))
-      if (studentDoc.exists()) {
-        const data = studentDoc.data() as Alumni;
+      const userRef = doc(db, 'users', student.id)
+      
+      // Update the role to "alumni"
+      await updateDoc(userRef, { role: 'student' })
 
-        // Add the student back to the 'students' collection
-        await setDoc(doc(db, 'students', student.id), data)
-
-        // Remove the student from the 'alumni' collection
-        await deleteDoc(doc(db, 'alumni', student.id))
-
-        alert(`${student.fullName}'s account has been restored successfully.`)
-
-        // Refresh the page to show updated data
-        window.location.reload()
-      } else {
-        alert(`No archived record found for ${student.fullName}.`)
-      }
+      alert(`${student.fullName}'s account has been archived successfully.`)
+      
+      // Update the local state
+      setStudents(students.filter(s => s.id !== student.id))
     } catch (err) {
-      console.error('Error restoring student: ', err)
-      alert(`Failed to restore ${student.fullName}'s account. Please try again.`)
+      console.error('Error archiving student: ', err)
+      alert(`Failed to archive ${student.fullName}'s account. Please try again.`)
     } finally {
-      setLoading(null) // Reset loading state
+      setLoading(null)
     }
   }
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Alumni Accounts</h1>
+      <h1 className="text-2xl font-bold mb-4">Student Accounts</h1>
 
-      {/* Search input */}
       <input
         type="text"
         placeholder="Search by name or student ID"
@@ -91,7 +79,6 @@ const AlumniAccount = () => {
         onChange={(e) => setSearchQuery(e.target.value)}
       />
 
-      {/* Alumni Table */}
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200">
           <thead>
@@ -106,29 +93,29 @@ const AlumniAccount = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredAlumni.length > 0 ? (
-              filteredAlumni.map((alumnus) => (
-                <tr key={alumnus.id}>
-                  <td className="py-2 px-4 border-b border-gray-200">{alumnus.studentId}</td>
-                  <td className="py-2 px-4 border-b border-gray-200">{alumnus.fullName}</td>
-                  <td className="py-2 px-4 border-b border-gray-200">{alumnus.email}</td>
-                  <td className="py-2 px-4 border-b border-gray-200">{alumnus.birthday}</td>
-                  <td className="py-2 px-4 border-b border-gray-200">{alumnus.phone}</td>
-                  <td className="py-2 px-4 border-b border-gray-200">{alumnus.course}</td>
+            {filteredStudents.length > 0 ? (
+              filteredStudents.map((student) => (
+                <tr key={student.id}>
+                  <td className="py-2 px-4 border-b border-gray-200">{student.studentId}</td>
+                  <td className="py-2 px-4 border-b border-gray-200">{student.fullName}</td>
+                  <td className="py-2 px-4 border-b border-gray-200">{student.email}</td>
+                  <td className="py-2 px-4 border-b border-gray-200">{student.birthday}</td>
+                  <td className="py-2 px-4 border-b border-gray-200">{student.phone}</td>
+                  <td className="py-2 px-4 border-b border-gray-200">{student.course}</td>
                   <td className="py-2 px-4 border-b border-gray-200">
                     <button
-                      className={`ml-2 px-4 py-2 bg-secondary text-white rounded ${loading === alumnus.id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      onClick={() => restoreStudent(alumnus)}
-                      disabled={loading === alumnus.id}
+                      className={`ml-2 px-4 py-2 bg-secondary text-white rounded ${loading === student.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      onClick={() => archiveStudent(student)}
+                      disabled={loading === student.id}
                     >
-                      {loading === alumnus.id ? 'Restoring...' : 'Restore'}
+                      {loading === student.id ? 'Archiving...' : 'Archive'}
                     </button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={7} className="py-4 text-center text-gray-500">No alumni found</td> {/* Updated colSpan */}
+                <td colSpan={7} className="py-4 text-center text-gray-500">No students found</td>
               </tr>
             )}
           </tbody>
