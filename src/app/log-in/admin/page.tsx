@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Lock, BookOpen, Mail } from 'lucide-react'
+import { Lock, BookOpen, Mail, Loader } from 'lucide-react'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth, db } from '@/firebase'
 import Link from 'next/link'
@@ -11,24 +11,36 @@ import { getDoc, doc } from 'firebase/firestore'
 export default function LogIn() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError('')
+    
+    if (!email || !password) {
+      setError('Email and password are required.')
+      return
+    }
+
+    setLoading(true)
     try {
       // Sign in the user
       const userCredential = await signInWithEmailAndPassword(auth, email, password)
       const uid = userCredential.user.uid
+      console.log('uid', uid)
 
       // Fetch student data from Firestore
       const studentDoc = await getDoc(doc(db, 'users', uid))
-      if (studentDoc.exists()) {
-        //navigate to dashboard
-        window.location.href = '/admin/dashboard'
+      if (studentDoc.exists() && studentDoc.data().role === 'admin') {
+        window.location.href = '/admin/appointment'
       } else {
-        alert('No Admin or Staff record found.')
+        setError('No Admin or Staff record found.')
       }
     } catch (err) {
-      alert('Error signing in: ' + (err as Error).message)
+      setError('Error signing in: ' + (err as Error).message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -54,6 +66,7 @@ export default function LogIn() {
             </div>
             <h2 className="text-2xl font-bold text-center text-gray-800 mb-1">OMSC Appointment System</h2>
             <p className="text-sm text-center font-semibold text-gray-600 mb-8">Sign in as Admin or Staff</p>
+            {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="relative">
                 <Mail className="absolute top-3 left-3 text-gray-400" />
@@ -90,9 +103,17 @@ export default function LogIn() {
                   type="submit"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex-1 bg-primary text-white py-2 rounded-md transition duration-300"
+                  className={`flex-1 bg-primary text-white py-2 rounded-md transition duration-300 flex items-center justify-center ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  disabled={loading}
                 >
-                  Sign in
+                  {loading ? (
+                    <>
+                      <Loader className="animate-spin mr-2" size={20} />
+                      Signing in...
+                    </>
+                  ) : (
+                    'Sign in'
+                  )}
                 </motion.button>
               </div>
             </form>

@@ -1,36 +1,10 @@
-import { useState, useEffect } from "react";
 import Image from "next/image";
-import AdminNavLink from "@/components/AdminNavLink";
 import StudentNavLink from "@/components/StudentNavLink";
+import { useState } from "react";
 import { Menu } from "lucide-react";
-import { auth, db } from "@/firebase";
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
 
-const Header = () => {
+const StudentHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [userRole, setUserRole] = useState<string | null>(null);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
-          const userDoc = await getDoc(doc(db, 'users', user.uid));
-          if (userDoc.exists()) {
-            setUserRole(userDoc.data().role);
-          }
-        } catch (error) {
-          console.error('Error fetching user role:', error);
-        }
-      } else {
-        setUserRole(null);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  const NavLink = userRole === 'admin' ? AdminNavLink : StudentNavLink;
 
   return (
     <>
@@ -53,7 +27,7 @@ const Header = () => {
             </summary>
           </details>
         </div>
-        {userRole && <NavLink />}
+        <StudentNavLink />
       </span>
 
       {/* Mobile Header */}
@@ -73,9 +47,9 @@ const Header = () => {
             <Menu size={24} />
           </button>
         </div>
-        {isMenuOpen && userRole && (
+        {isMenuOpen && (
           <div className="bg-white border-b border-zinc-300 shadow-md">
-            <NavLink isMobile={true} />
+            <StudentNavLink isMobile={true} />
           </div>
         )}
       </div>
@@ -83,4 +57,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default StudentHeader;

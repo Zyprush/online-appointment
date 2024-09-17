@@ -6,7 +6,7 @@ const page = () => {
     <div className="flex justify-center items-center h-full overflow-scroll fixed top-0  bottom-0 right-0 left-0 p-5 bg-[url('/img/omsc.jpg')]">
       <div className="justify-center items-center h-full hidden w-full md:flex"></div>
 
-      <div className="bg-white rounded-lg shadow-lg p-8 text-center flex flex-col border justify-center w-1/3">
+      <div className="bg-white rounded-lg shadow-lg p-8 text-center flex flex-col border justify-center max-w-sm md:max-w-md">
       <h1 className="text-3xl font-bold text-primary mb-2">
           Login
         </h1>
@@ -35,7 +35,7 @@ const page = () => {
           College/Office Administrator
         </Link>
         <p className="text-gray-500 text-sm mt-4">
-          By using this service, you understand and agree to the PUP Online
+          By using this service, you understand and agree to the OMSC Online
           Services{" "}
           <a href="#" className="text-blue-600 underline">
             Terms of Use

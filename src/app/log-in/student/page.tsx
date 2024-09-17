@@ -13,9 +13,11 @@ export default function LogIn() {
   const [email, setEmail] = useState('')
   const [birthday, setBirthday] = useState('')
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false) // New loading state
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setLoading(true) // Set loading to true
     try {
       // Sign in the user
       const userCredential = await signInWithEmailAndPassword(auth, email, password)
@@ -28,7 +30,6 @@ export default function LogIn() {
         // Check if student ID and birthday match
         if (studentData.studentId === studentNo && studentData.birthday === birthday) {
           console.log('Sign in successful:', { studentNo, email, birthday })
-          //navigate to dashboard
           window.location.href = '/student/dashboard'
         } else {
           alert('Student ID or birthday does not match.')
@@ -38,6 +39,8 @@ export default function LogIn() {
       }
     } catch (err) {
       alert('Error signing in: ' + (err as Error).message)
+    } finally {
+      setLoading(false) // Reset loading state
     }
   }
 
@@ -80,7 +83,7 @@ export default function LogIn() {
                 <Mail className="absolute top-3 left-3 text-gray-400" />
                 <input
                   type="email"
-                  placeholder="student@omsc.edu.ph"
+                  placeholder="student@gmail.com"
                   className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -123,8 +126,9 @@ export default function LogIn() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="flex-1 bg-primary text-white py-2 rounded-md transition duration-300"
+                  disabled={loading} // Disable button while loading
                 >
-                  Sign in
+                  {loading ? 'Signing in...' : 'Sign in'} {/* Change button text based on loading state */}
                 </motion.button>
               </div>
             </form>
@@ -134,8 +138,8 @@ export default function LogIn() {
               By using this service, you understood and agree to the OMSC Online Services{' '}
               <a href="#" className="text-green-600 hover:underline">
                 Terms of Use
-              </a>{' '}
-              and{' '}
+              </a>
+              and
               <a href="#" className="text-green-600 hover:underline">
                 Privacy Statement
               </a>
