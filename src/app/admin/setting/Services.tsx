@@ -36,19 +36,19 @@ const Services = () => {
   };
 
   const isFormValid = () => {
-    return services.every(office => office.name.trim() !== "");
+    return services.every(service => service.name.trim() !== "");
   };
 
-  const handleOfficeChange = (index: number, field: keyof typeof services[number], value: string) => {
+  const handleServiceChange = (index: number, field: keyof typeof services[number], value: string) => {
     setServices((prevServices) =>
       prevServices.map((o, i) => (i === index ? { ...o, [field]: value } : o))
     );
   };
 
-  const deleteOffice = (index: number) =>
+  const deleteService = (index: number) =>
     setServices(services.filter((_, i) => i !== index));
 
-  const addOffice = () =>
+  const addService = () =>
     setServices([
       ...services,
       {
@@ -75,21 +75,21 @@ const Services = () => {
       {error && <div className="text-red-500">{error}</div>}
 
       {services.length > 0 &&
-        services.map((office, index) => (
+        services.map((service, index) => (
           <div key={index} className="flex gap-3">
             {isEditing ? (
               <div className="flex gap-3 items-center">
                 <input
                   type="text"
-                  placeholder="Office Name"
-                  value={office.name}
+                  placeholder="Service Name"
+                  value={service.name}
                   onChange={(e) =>
-                    handleOfficeChange(index, "name", e.target.value)
+                    handleServiceChange(index, "name", e.target.value)
                   }
                   className="p-2 text-sm border-primary border-2 rounded-sm w-80"
                 />
                 <button
-                  onClick={() => deleteOffice(index)}
+                  onClick={() => deleteService(index)}
                   className="btn btn-sm rounded-sm text-white btn-error"
                 >
                   Delete
@@ -97,7 +97,7 @@ const Services = () => {
               </div>
             ) : (
               <div className="flex gap-3">
-                <span>{office.name}</span>
+                <span>{service.name}</span>
               </div>
             )}
           </div>
@@ -106,10 +106,10 @@ const Services = () => {
       {isEditing && (
         <div className="mx-auto flex gap-5">
           <button
-            onClick={addOffice}
+            onClick={addService}
             className="btn btn-sm rounded-none text-primary btn-outline"
           >
-            Add Office
+            Add Service
           </button>
           <button
             onClick={saveServices}

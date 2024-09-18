@@ -12,7 +12,7 @@ export default function LogIn() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [error, setError] = useState<string | null>(null); // State for error messages
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,12 +25,8 @@ export default function LogIn() {
 
     setLoading(true)
     try {
-      // Sign in the user
       const userCredential = await signInWithEmailAndPassword(auth, email, password)
       const uid = userCredential.user.uid
-      console.log('uid', uid)
-
-      // Fetch student data from Firestore
       const studentDoc = await getDoc(doc(db, 'users', uid))
       if (studentDoc.exists() && studentDoc.data().role === 'admin') {
         window.location.href = '/admin/appointment'
@@ -38,7 +34,26 @@ export default function LogIn() {
         setError('No Admin or Staff record found.')
       }
     } catch (err) {
-      setError('Error signing in: ' + (err as Error).message)
+      const errorCode = (err as Error).message;
+      switch (errorCode) {
+        case 'auth/invalid-credential':
+          setError('Invalid email or password. Please try again.');
+          break;
+        case 'auth/user-disabled':
+          setError('This account has been disabled. Please contact support.');
+          break;
+        case 'auth/too-many-requests':
+          setError('Too many failed login attempts. Please try again later.');
+          break;
+        case 'auth/wrong-password':
+          setError('The password is incorrect. Please try again.');
+          break;
+        case 'auth/user-not-found':
+          setError('No user found with this email. Please check and try again.');
+          break;
+        default:
+          setError('An unexpected error occurred. Please try again.');
+      }
     } finally {
       setLoading(false)
     }
@@ -66,13 +81,13 @@ export default function LogIn() {
             </div>
             <h2 className="text-2xl font-bold text-center text-gray-800 mb-1">OMSC Appointment System</h2>
             <p className="text-sm text-center font-semibold text-gray-600 mb-8">Sign in as Admin or Staff</p>
-            {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
+            {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>} {/* Display error message */}
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="relative">
                 <Mail className="absolute top-3 left-3 text-gray-400" />
                 <input
                   type="email"
-                  placeholder="student@omsc.edu.ph"
+                  placeholder="admin@gmail.com"
                   className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}

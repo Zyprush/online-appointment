@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { collection, getDocs, query, where, doc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "@/firebase";
 import ViewAppointment from "@/app/student/dashboard/ViewAppointment"; // Import the ViewAppointment modal
+import axios from 'axios'; // Import axios
 
 type AppointmentType = {
   id: string;
@@ -24,7 +32,8 @@ const PendingAppointments: React.FC = () => {
   const [appointments, setAppointments] = useState<AppointmentType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedAppointment, setSelectedAppointment] = useState<AppointmentType | null>(null); // State for selected appointment
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<AppointmentType | null>(null); // State for selected appointment
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // State for modal visibility
 
   useEffect(() => {
@@ -65,24 +74,61 @@ const PendingAppointments: React.FC = () => {
       try {
         const appointmentRef = doc(db, "appointments", id);
         await updateDoc(appointmentRef, { status: "declined" }); // Update status to declined
-        setAppointments(appointments.map((appointment) => 
-          appointment.id === id ? { ...appointment, status: "declined" } : appointment
-        ));
+        setAppointments(
+          appointments.map((appointment) =>
+            appointment.id === id
+              ? { ...appointment, status: "declined" }
+              : appointment
+          )
+        );
       } catch (err) {
         setError("Error declining appointment: " + (err as Error).message);
       }
     }
   };
 
-  const handleApprove = async (id: string) => {
-    try {
-      const appointmentRef = doc(db, "appointments", id);
-      await updateDoc(appointmentRef, { status: "approved" }); // Update status to approved
-      setAppointments(appointments.map((appointment) => 
-        appointment.id === id ? { ...appointment, status: "approved" } : appointment
-      ));
-    } catch (err) {
-      setError("Error approving appointment: " + (err as Error).message);
+  const handleApprove = async (id: string, appointment: AppointmentType) => {
+    if (window.confirm("Do you want to approve this appointment?")) {
+      try {
+        console.log('appointment.phone', appointment.phone)
+        // Call the API to send SMS using axios
+        const response = await axios.post(
+          `/pages/api/send-sms`, // Use relative path for API call
+          {
+            appointmentId: appointment.id,
+            phone: appointment.phone,
+            selectedDate: appointment.selectedDate,
+            timeRange: appointment.timeRange,
+            selectedOffice: appointment.selectedOffice,
+            selectedPersonnel: appointment.selectedPersonnel,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const appointmentRef = doc(db, "appointments", id);
+
+        // Update status to approved in Firestore
+        await updateDoc(appointmentRef, { status: "approved" });
+
+        // Update local state
+        setAppointments(
+          appointments.map((appt) =>
+            appt.id === id ? { ...appt, status: "approved" } : appt
+          )
+        );
+
+        if (response.data.success) {
+          console.log("SMS sent successfully!");
+        } else {
+          console.error("Failed to send SMS:", response.data.error);
+        }
+      } catch (err) {
+        setError("Error approving appointment: " + (err as Error).message);
+      }
     }
   };
 
@@ -114,7 +160,8 @@ const PendingAppointments: React.FC = () => {
             <th className="px-4 py-2 text-left">Date</th>
             <th className="px-4 py-2 text-left">Time</th>
             <th className="px-4 py-2 text-left">Status</th>
-            <th className="px-4 py-2 text-left">Actions</th> {/* New Actions Column */}
+            <th className="px-4 py-2 text-left">Actions</th>
+            {/* New Actions Column */}
           </tr>
         </thead>
         <tbody>
@@ -146,10 +193,11 @@ const PendingAppointments: React.FC = () => {
                 </button>
                 <button
                   className="text-green-500 hover:underline ml-2"
-                  onClick={() => handleApprove(appointment.id)}
+                  onClick={() => handleApprove(appointment.id, appointment)} // Pass the appointment object
                 >
                   Approve
                 </button>
+
                 <button
                   className="text-red-500 hover:underline ml-2"
                   onClick={() => handleDecline(appointment.id)}
@@ -164,7 +212,10 @@ const PendingAppointments: React.FC = () => {
 
       {/* Modal for viewing appointment details */}
       {isModalOpen && selectedAppointment && (
-        <ViewAppointment appointment={selectedAppointment} onClose={closeModal} />
+        <ViewAppointment
+          appointment={selectedAppointment}
+          onClose={closeModal}
+        />
       )}
     </div>
   );

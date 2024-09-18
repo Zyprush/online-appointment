@@ -2,58 +2,56 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Calendar, Lock, BookOpen, User, Mail } from 'lucide-react'
+import { Lock, BookOpen, Mail } from 'lucide-react'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth, db } from '@/firebase'
 import { doc, getDoc } from 'firebase/firestore'
 import Link from 'next/link'
 
-export default function LogIn() {
-  const [studentNo, setStudentNo] = useState('')
+export default function ClientLogIn() {
   const [email, setEmail] = useState('')
-  const [birthday, setBirthday] = useState('')
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false) // New loading state
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null); // State for error messages
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true) // Set loading to true
+    setLoading(true)
+    setError(null); // Reset error state
     try {
-      // Sign in the user
       const userCredential = await signInWithEmailAndPassword(auth, email, password)
       const uid = userCredential.user.uid
-
-      // Fetch student data from Firestore
-      const studentDoc = await getDoc(doc(db, 'users', uid))
-      if (studentDoc.exists()) {
-        const studentData = studentDoc.data()
-        // Check if student ID and birthday match
-        if (studentData.studentId === studentNo && studentData.birthday === birthday) {
-          console.log('Sign in successful:', { studentNo, email, birthday })
-          // Redirect based on user role
-          const role = studentData.role; // Assuming role is stored in Firestore
-          if (role === 'admin') {
-            window.location.href = '/admin/dashboard';
-          } else {
-            window.location.href = '/student/dashboard';
-          }
-        } else {
-          alert('Student ID or birthday does not match.')
-        }
+      const clientDoc = await getDoc(doc(db, 'users', uid))
+      if (clientDoc.exists()) {
+        console.log('Sign in successful:', { email })
+        window.location.href = '/client/dashboard';
       } else {
-        alert('No student record found.')
+        setError('No client record found.')
       }
     } catch (err) {
-      const errorMessage = (err as Error).message;
-      if (errorMessage.includes('wrong-password')) {
-        alert('Incorrect password. Please try again.')
-      } else if (errorMessage.includes('user-not-found')) {
-        alert('No account found with this email address.')
-      } else {
-        alert('Error signing in: ' + errorMessage)
+      const errorCode = (err as Error).message;
+      alert(errorCode); // Alert the error message
+      switch (errorCode) {
+        case 'auth/invalid-credential':
+          setError('Invalid email or password. Please try again.');
+          break;
+        case 'auth/user-disabled':
+          setError('This account has been disabled. Please contact support.');
+          break;
+        case 'auth/too-many-requests':
+          setError('Too many failed login attempts. Please try again later.');
+          break;
+        case 'auth/wrong-password':
+          setError('The password is incorrect. Please try again.');
+          break;
+        case 'auth/user-not-found':
+          setError('No user found with this email. Please check and try again.');
+          break;
+        default:
+          setError('An unexpected error occurred. Please try again.');
       }
     } finally {
-      setLoading(false) // Reset loading state
+      setLoading(false)
     }
   }
 
@@ -78,41 +76,19 @@ export default function LogIn() {
               </motion.div>
             </div>
             <h2 className="text-2xl font-bold text-center text-gray-800 mb-1">OMSC Appointment System</h2>
-            <p className="text-sm text-center text-gray-600 mb-8">Sign in as OMSC Student</p>
+            <p className="text-sm text-center text-gray-600 mb-8">Sign in as OMSC Client</p>
+            {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>} {/* Display error message */}
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="relative">
-                <User className="absolute top-3 left-3 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Student ID"
-                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  value={studentNo}
-                  onChange={(e) => setStudentNo(e.target.value)}
-                  required
-                  aria-label="Student ID"
-                />
-              </div>
               <div className="relative">
                 <Mail className="absolute top-3 left-3 text-gray-400" />
                 <input
                   type="email"
-                  placeholder="student@gmail.com"
+                  placeholder="client@gmail.com"
                   className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   aria-label="Email Address"
-                />
-              </div>
-              <div className="relative">
-                <Calendar className="absolute top-3 left-3 text-gray-400" />
-                <input
-                  type="date"
-                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  value={birthday}
-                  onChange={(e) => setBirthday(e.target.value)}
-                  required
-                  aria-label="Birth Date"
                 />
               </div>
               <div className="relative">
