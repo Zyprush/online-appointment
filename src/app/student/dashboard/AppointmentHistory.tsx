@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/firebase';
+import {useUserData} from "@/hooks/useUserData"; // Import useUserData
 
 interface Appointment {
   id: string;
@@ -12,6 +13,7 @@ interface Appointment {
 }
 
 const AppointmentHistory: React.FC = () => {
+  const { userData } = useUserData(); // Get current user data
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,13 +22,14 @@ const AppointmentHistory: React.FC = () => {
     const fetchAppointments = async () => {
       try {
         const appointmentsRef = collection(db, 'appointments');
-        const snapshot = await getDocs(appointmentsRef);
+        const q = query(appointmentsRef, where("submittedUid", "==", userData?.uid)); // Query to filter by submittedUid
+        const snapshot = await getDocs(q);
         const appointmentsList = snapshot.docs.map(doc => ({
           id: doc.id,
           date: doc.data().selectedDate || '',
           time: doc.data().timeRange || '',
           type: doc.data().appointmentType || '',
-          status: 'Pending', // You can modify this based on your logic
+          status: doc.data().status || '',
           details: doc.data().otherReason || 'N/A', // Example for details
         }));
         setAppointments(appointmentsList);
@@ -37,8 +40,10 @@ const AppointmentHistory: React.FC = () => {
       }
     };
 
-    fetchAppointments();
-  }, []);
+    if (userData?.uid) { // Ensure user UID is available before fetching
+      fetchAppointments();
+    }
+  }, [userData]); // Dependency on userData
 
   if (loading) {
     return <div>Loading appointments...</div>;

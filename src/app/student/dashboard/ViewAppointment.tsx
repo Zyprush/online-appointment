@@ -11,7 +11,7 @@ interface AppointmentProps {
     selectedOffice: string;
     otherReason: string;
     name: string;
-    phone: string;
+    contact: string;
     email: string;
     role: string;
     dateCreated: string;
@@ -33,7 +33,7 @@ const ViewAppointment: React.FC<AppointmentProps> = ({ appointment, onClose }) =
         <p><strong>Office:</strong> {appointment.selectedOffice}</p>
         <p><strong>Other Reason:</strong> {appointment.otherReason}</p>
         <p><strong>Name:</strong> {appointment.name}</p>
-        <p><strong>Phone:</strong> {appointment.phone}</p>
+        <p><strong>Contact:</strong> {appointment.contact}</p>
         <p><strong>Email:</strong> {appointment.email}</p>
         <p><strong>Role:</strong> {appointment.role}</p>
         <p><strong>Date Created:</strong> {appointment.dateCreated}</p>

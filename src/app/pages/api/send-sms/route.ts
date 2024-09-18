@@ -4,7 +4,7 @@ import twilio from "twilio";
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = twilio(accountSid, authToken);
-
+console.log('process.env.TWILIO_PHONE_NUMBER', process.env.TWILIO_PHONE_NUMBER)
 export async function POST(req: Request) {
 
   if (!accountSid || !authToken) {
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     console.log("TRY SENDING MESS")
     const {
       appointmentId,
-      phone,
+      // phone,
       selectedDate,
       timeRange,
       selectedOffice,
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     const message = await client.messages.create({
       body: messageBody,
       from: process.env.TWILIO_PHONE_NUMBER, // Make sure this is set
-      to: phone,
+      to: "+639084953288",
     });
     if (message) {
       console.log("MESSAGE SENT OK");

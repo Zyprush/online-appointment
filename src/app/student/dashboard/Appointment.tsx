@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { collection, getDocs, deleteDoc, doc, query, where } from 'firebase/firestore';
 import { db } from '@/firebase';
 import ViewAppointment from './ViewAppointment'; // Import the modal component
+import {useUserData} from "@/hooks/useUserData"; // Import useUserData
 
 type AppointmentType = {
   id: string;
@@ -13,7 +14,7 @@ type AppointmentType = {
   selectedOffice: string;
   otherReason: string;
   name: string;
-  phone: string;
+  contact: string;
   email: string;
   role: string;
   dateCreated: string;
@@ -21,6 +22,7 @@ type AppointmentType = {
 };
 
 const Appointment = () => {
+  const { userData } = useUserData(); // Get current user data
   const [appointments, setAppointments] = useState<AppointmentType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +32,7 @@ const Appointment = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const appointmentsRef = query(collection(db, 'appointments'), where("status", "==", "pending"));
+        const appointmentsRef = query(collection(db, 'appointments'), where("submittedUid", "==", userData?.uid), where("status", "==", "pending")); // Filter by submittedUid and status
         const snapshot = await getDocs(appointmentsRef);
         const appointmentsList = snapshot.docs.map(doc => ({
           id: doc.id,
@@ -42,7 +44,7 @@ const Appointment = () => {
           selectedOffice: doc.data().selectedOffice || '',
           otherReason: doc.data().otherReason || '',
           name: doc.data().name || '',
-          phone: doc.data().phone || '',
+          contact: doc.data().contact || '',
           email: doc.data().email || '',
           role: doc.data().role || '',
           dateCreated: doc.data().dateCreated || '',
@@ -56,8 +58,10 @@ const Appointment = () => {
       }
     };
 
-    fetchAppointments();
-  }, []);
+    if (userData?.uid) { // Ensure user UID is available before fetching
+      fetchAppointments();
+    }
+  }, [userData]); // Dependency on userData
 
   const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this appointment?")) {

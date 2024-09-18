@@ -26,7 +26,7 @@ const useFirestoreData = (docId: string, field: string) => {
   return data;
 };
 
-const RequestAppointment: React.FC = () => {
+const ClientRequestAppointment: React.FC = () => {
   const [appointmentType, setAppointmentType] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
@@ -71,12 +71,12 @@ const RequestAppointment: React.FC = () => {
           ? "Meet OMSC Official"
           : "Avail OMSC services",
       selectedDate,
-      timeRange: selectedTime, // Save time as a range
+      timeRange: selectedTime, 
       selectedService,
       selectedPersonnel,
       selectedOffice,
       otherReason,
-      name: userData?.fullName,
+      name: `${userData?.firstName} ${userData?.lastName}` || userData?.fullName,
       contact: userData?.contact,
       email: userData?.email,
       role: userData?.role,
@@ -110,30 +110,10 @@ const RequestAppointment: React.FC = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Appointment Type Section */}
         <div className="grid grid-cols-2 gap-5">
-          <input
-            type="text"
-            className="input input-disabled input-sm"
-            value={userData?.fullName}
-            disabled
-          />
-          <input
-            type="text"
-            className="input input-disabled input-sm capitalize"
-            value={userData?.role}
-            disabled
-          />
-          <input
-            type="text"
-            className="input input-disabled input-sm"
-            value={userData?.email}
-            disabled
-          />
-          <input
-            type="text"
-            className="input input-disabled input-sm"
-            value={userData?.contact}
-            disabled
-          />
+          <input type="text" className="input input-disabled input-sm" value={`${userData?.firstName} ${userData?.lastName}`} disabled />
+          <input type="text" className="input input-disabled input-sm capitalize" value={userData?.role} disabled />
+          <input type="text" className="input input-disabled input-sm" value={userData?.email} disabled />
+          <input type="text" className="input input-disabled input-sm" value={userData?.contact} disabled />
         </div>
         <div>
           <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -277,4 +257,4 @@ const RequestAppointment: React.FC = () => {
   );
 };
 
-export default RequestAppointment;
+export default ClientRequestAppointment;

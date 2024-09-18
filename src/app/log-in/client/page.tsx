@@ -24,7 +24,7 @@ export default function ClientLogIn() {
       const clientDoc = await getDoc(doc(db, 'users', uid))
       if (clientDoc.exists()) {
         console.log('Sign in successful:', { email })
-        window.location.href = '/client/dashboard';
+        window.location.href = '/client/appointment';
       } else {
         setError('No client record found.')
       }

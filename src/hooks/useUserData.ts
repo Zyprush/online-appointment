@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
-import { db,  } from '@/firebase';
+import { db } from '@/firebase';
 import { getAuth } from 'firebase/auth';
 
 // Define the interface for user data
@@ -8,7 +8,7 @@ interface UserData {
   barangay?: string;
   birthdate?: string;
   city?: string;
-  contactNumber?: string;
+  contact?: string;
   email?: string;
   extensionName?: string;
   firstName?: string;
@@ -17,13 +17,12 @@ interface UserData {
   lastName?: string;
   middleName?: string;
   province?: string;
-  phone?: string;
   role?: string;
   sex?: string;
   verified?: boolean;
   zipCode?: string;
+  uid?: string;
 }
-
 
 export function useUserData() {
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -38,12 +37,14 @@ export function useUserData() {
       setUid(user.uid); // Set the user ID
     }
   }, []);
+
   const fetchUserData = async () => {
     try {
       if (!uid) throw new Error('User ID is null'); // Check for null uid
       const userDoc = await getDoc(doc(db, 'users', uid));
       if (userDoc.exists()) {
-        setUserData(userDoc.data() as UserData);
+        const userDataWithUid = { ...userDoc.data(), uid } as UserData; // Add uid to userData
+        setUserData(userDataWithUid);
       } else {
         setError('No user record found.');
       }
@@ -55,7 +56,7 @@ export function useUserData() {
   };
 
   // Call fetchUserData when uid changes
-  useEffect(() => {  // Changed useState to useEffect
+  useEffect(() => {
     if (uid) {
       fetchUserData();
     }
