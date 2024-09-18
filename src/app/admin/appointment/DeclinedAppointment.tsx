@@ -13,7 +13,7 @@ type AppointmentType = {
   selectedOffice: string;
   otherReason: string;
   name: string;
-  phone: string;
+  contact: string;
   email: string;
   role: string;
   dateCreated: string;
@@ -43,7 +43,7 @@ const DeclinedAppointments: React.FC = () => {
           selectedOffice: doc.data().selectedOffice || "",
           otherReason: doc.data().otherReason || "",
           name: doc.data().name || "",
-          phone: doc.data().phone || "",
+          contact: doc.data().contact || "",
           email: doc.data().email || "",
           role: doc.data().role || "",
           dateCreated: doc.data().dateCreated || "",
