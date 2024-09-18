@@ -10,7 +10,7 @@ const SignupPage = () => {
     firstName: "",
     middleName: "",
     extensionName: "",
-    contactNumber: "",
+    c: "",
     birthdate: "",
     sex: "",
     homeAddress: "",
@@ -35,7 +35,7 @@ const SignupPage = () => {
         ...prevData,
         [name]: numericValue,
       }));
-    } else if (name === 'contactNumber') {
+    } else if (name === 'c') {
       // Only allow numeric input and limit to 11 digits
       const numericValue = value.replace(/\D/g, '').slice(0, 11);
       setFormData(prevData => ({
@@ -54,8 +54,8 @@ const SignupPage = () => {
     return /^\d{4}$/.test(zipCode);
   };
 
-  const validateContactNumber = (contactNumber: string): boolean => {
-    return /^\d{11}$/.test(contactNumber);
+  const validateC = (c: string): boolean => {
+    return /^\d{11}$/.test(c);
   };
 
   const validateForm = () => {
@@ -71,7 +71,7 @@ const SignupPage = () => {
       return false;
     }
     
-    if (!validateContactNumber(formData.contactNumber)) {
+    if (!validateC(formData.c)) {
       alert("Please enter a valid 11-digit contact number.");
       return false;
     }
@@ -105,7 +105,7 @@ const SignupPage = () => {
           firstName: formData.firstName,
           middleName: formData.middleName,
           extensionName: formData.extensionName,
-          contactNumber: formData.contactNumber,
+          contact: formData.c,
           birthdate: formData.birthdate,
           sex: formData.sex,
           homeAddress: formData.homeAddress,
@@ -182,9 +182,9 @@ const SignupPage = () => {
             <label className="label text-sm">Contact Number *</label>
             <input
               type="tel"
-              name="contactNumber"
+              name="c"
               className="input input-bordered input-sm"
-              value={formData.contactNumber}
+              value={formData.c}
               onChange={handleInputChange}
               required
               maxLength={11}
