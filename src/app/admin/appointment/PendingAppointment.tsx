@@ -21,7 +21,7 @@ type AppointmentType = {
   selectedOffice: string;
   otherReason: string;
   name: string;
-  phone: string;
+  contact: string;
   email: string;
   role: string;
   dateCreated: string;
@@ -52,7 +52,7 @@ const PendingAppointments: React.FC = () => {
           selectedOffice: doc.data().selectedOffice || "",
           otherReason: doc.data().otherReason || "",
           name: doc.data().name || "",
-          phone: doc.data().phone || "",
+          contact: doc.data().contact || "",
           email: doc.data().email || "",
           role: doc.data().role || "",
           dateCreated: doc.data().dateCreated || "",
@@ -90,13 +90,13 @@ const PendingAppointments: React.FC = () => {
   const handleApprove = async (id: string, appointment: AppointmentType) => {
     if (window.confirm("Do you want to approve this appointment?")) {
       try {
-        console.log('appointment.phone', appointment.phone)
+        console.log('appointment.contact', appointment.contact)
         // Call the API to send SMS using axios
         const response = await axios.post(
           `/pages/api/send-sms`, // Use relative path for API call
           {
             appointmentId: appointment.id,
-            phone: appointment.phone,
+            contact: appointment.contact,
             selectedDate: appointment.selectedDate,
             timeRange: appointment.timeRange,
             selectedOffice: appointment.selectedOffice,
