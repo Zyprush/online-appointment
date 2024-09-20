@@ -54,7 +54,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
   }));
 
   return (
-    <div className="bg-blue-900 rounded-lg shadow-md p-4 h-[calc(100%-5rem)]">
+    <div className="bg-gray-100 rounded-lg shadow-md p-4 h-[calc(100%-5rem)]">
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="timeGridWeek"
