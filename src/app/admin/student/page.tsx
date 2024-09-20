@@ -45,7 +45,7 @@ const Page = () => {
           </button>
           <Link
             href={"/admin/register-student"}
-            className={`btn btn-sm w-full rounded-sm sm:w-auto hover:bg-primary hover:text-white btn-ghost`}
+            className={`btn btn-sm w-full rounded-sm sm:w-auto hover:bg-primary text-white btn-secondary`}
           >
             Register Student
           </Link>

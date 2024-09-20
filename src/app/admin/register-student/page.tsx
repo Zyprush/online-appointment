@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { User, Mail, Calendar, Lock, Phone, GraduationCap } from "lucide-react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -8,40 +9,51 @@ import { auth, db } from "@/firebase";
 import Link from "next/link";
 import NavLayout from "@/components/NavLayout";
 
-export default function StudentRegistration() {
-  const [studentId, setStudentId] = useState(""); // Added state for student ID
+export default function CreateStudent() {
+  const [studentId, setStudentId] = useState("");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [birthday, setBirthday] = useState("");
-  const [phone, setPhone] = useState("");
+  const [contact, setPhone] = useState("");
   const [course, setCourse] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false); // Loading state
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (password !== confirmPassword) {
       alert("Passwords don't match");
       return;
     }
+
+    const currentUser = auth.currentUser;
+    setLoading(true); // Set loading to true when starting
+
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
-      const uid = userCredential.user.uid;
+      const newUser = userCredential.user;
+      const uid = newUser.uid;
+
+      // Save the user data to Firestore
       await setDoc(doc(db, "users", uid), {
-        studentId, // Added student ID to the document
+        studentId,
         fullName,
         email,
         birthday,
-        phone,
+        contact,
         course,
-        role: "student"
+        role: "student",
       });
 
       // Clear all input fields upon successful submission
+      setStudentId("");
       setFullName("");
       setEmail("");
       setBirthday("");
@@ -50,10 +62,16 @@ export default function StudentRegistration() {
       setPassword("");
       setConfirmPassword("");
 
-      // Navigate to admin/dashboard
-      window.location.href = "/admin/student"; // Adjust the path as necessary
+      if (currentUser) {
+        await auth.updateCurrentUser(currentUser);
+      }
+
+      // Navigate to admin/student page
+      router.push("/admin/student");
     } catch (err) {
       alert("Error creating account: " + (err as Error).message);
+    } finally {
+      setLoading(false); // Set loading to false after the process completes
     }
   };
 
@@ -77,7 +95,7 @@ export default function StudentRegistration() {
                   <User className="absolute top-3 left-3 text-gray-400" />
                   <input
                     type="text"
-                    placeholder="Student ID" // New input for Student ID
+                    placeholder="Student ID"
                     className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
                     value={studentId}
                     onChange={(e) => setStudentId(e.target.value)}
@@ -126,7 +144,7 @@ export default function StudentRegistration() {
                     type="tel"
                     placeholder="Phone Number"
                     className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
-                    value={phone}
+                    value={contact}
                     onChange={(e) => setPhone(e.target.value)}
                     required
                     aria-label="Phone Number"
@@ -179,9 +197,14 @@ export default function StudentRegistration() {
                     type="submit"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex-1 bg-gradient-to-r from-primary to-primary text-white py-2 rounded-md hover:from-primary hover:to-primary transition duration-300"
+                    disabled={loading} // Disable when loading
+                    className={`flex-1 py-2 rounded-md transition duration-300 ${
+                      loading
+                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        : "bg-gradient-to-r from-primary to-primary text-white"
+                    }`}
                   >
-                    Register
+                    {loading ? "Submitting..." : "Submit"}
                   </motion.button>
                 </div>
               </form>

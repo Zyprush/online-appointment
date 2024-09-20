@@ -83,7 +83,7 @@ const RequestAppointment: React.FC = () => {
       dateCreated: new Date().toISOString(),
       status: "pending",
     };
-
+    console.log("contact", userData?.contact);
     try {
       // Save appointment data to Firestore
       const appointmentsRef = collection(db, "appointments");

@@ -9,7 +9,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/firebase";
 import ViewAppointment from "@/app/student/dashboard/ViewAppointment"; // Import the ViewAppointment modal
-import axios from 'axios'; // Import axios
+// import axios from 'axios'; // Import axios
 
 type AppointmentType = {
   id: string;
@@ -92,22 +92,22 @@ const PendingAppointments: React.FC = () => {
       try {
         console.log('appointment.contact', appointment.contact)
         // Call the API to send SMS using axios
-        const response = await axios.post(
-          `/pages/api/send-sms`, // Use relative path for API call
-          {
-            appointmentId: appointment.id,
-            contact: appointment.contact,
-            selectedDate: appointment.selectedDate,
-            timeRange: appointment.timeRange,
-            selectedOffice: appointment.selectedOffice,
-            selectedPersonnel: appointment.selectedPersonnel,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        // const response = await axios.post(
+        //   `/pages/api/send-sms`, // Use relative path for API call
+        //   {
+        //     appointmentId: appointment.id,
+        //     contact: appointment.contact,
+        //     selectedDate: appointment.selectedDate,
+        //     timeRange: appointment.timeRange,
+        //     selectedOffice: appointment.selectedOffice,
+        //     selectedPersonnel: appointment.selectedPersonnel,
+        //   },
+        //   {
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //     },
+        //   }
+        // );
 
         const appointmentRef = doc(db, "appointments", id);
 
@@ -121,11 +121,11 @@ const PendingAppointments: React.FC = () => {
           )
         );
 
-        if (response.data.success) {
-          console.log("SMS sent successfully!");
-        } else {
-          console.error("Failed to send SMS:", response.data.error);
-        }
+        // if (response.data.success) {
+        //   console.log("SMS sent successfully!");
+        // } else {
+        //   console.error("Failed to send SMS:", response.data.error);
+        // }
       } catch (err) {
         setError("Error approving appointment: " + (err as Error).message);
       }
