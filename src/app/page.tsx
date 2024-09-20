@@ -4,7 +4,7 @@ import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase';
 import AppointmentCalendar from '@/components/Calendar';
 import Navbar from '@/components/topNavbar';
-import BookingModal from '@/components/Booking';
+import BookingModal from '@/components/Booking'; 
 
 interface Appointment {
   id: string;
