@@ -74,13 +74,7 @@ const PendingAppointments: React.FC = () => {
       try {
         const appointmentRef = doc(db, "appointments", id);
         await updateDoc(appointmentRef, { status: "declined" }); // Update status to declined
-        setAppointments(
-          appointments.map((appointment) =>
-            appointment.id === id
-              ? { ...appointment, status: "declined" }
-              : appointment
-          )
-        );
+        window.location.reload(); // Refresh page
       } catch (err) {
         setError("Error declining appointment: " + (err as Error).message);
       }
@@ -126,6 +120,7 @@ const PendingAppointments: React.FC = () => {
         // } else {
         //   console.error("Failed to send SMS:", response.data.error);
         // }
+        window.location.reload(); // Refresh page
       } catch (err) {
         setError("Error approving appointment: " + (err as Error).message);
       }
@@ -222,3 +217,4 @@ const PendingAppointments: React.FC = () => {
 };
 
 export default PendingAppointments;
+

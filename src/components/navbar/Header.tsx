@@ -6,6 +6,7 @@ import { Menu } from "lucide-react";
 import { auth, db } from "@/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
+import ClientNavLink from "../ClientNavLink";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -30,7 +31,11 @@ const Header = () => {
     return () => unsubscribe();
   }, []);
 
-  const NavLink = userRole === 'admin' ? AdminNavLink : StudentNavLink;
+  const NavLink = userRole === 'admin'
+    ? AdminNavLink
+    : userRole === 'client'
+      ? ClientNavLink
+      : StudentNavLink;
 
   return (
     <>

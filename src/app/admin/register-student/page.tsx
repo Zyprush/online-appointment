@@ -23,9 +23,17 @@ export default function CreateStudent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    // Phone number validation function
+    const validatePhoneNumber = (phone: string) => {
+      const phoneRegex = /^9\d{9}$/; // Must be 10 digits and start with 9
+      return phoneRegex.test(phone);
+    };
     if (password !== confirmPassword) {
       alert("Passwords don't match");
+      return;
+    }
+    if (!validatePhoneNumber(contact)) {
+      alert("Phone number must be a 10-digit number starting with 9.");
       return;
     }
 
@@ -47,7 +55,7 @@ export default function CreateStudent() {
         fullName,
         email,
         birthday,
-        contact,
+        contact: `+63${contact}`,
         course,
         role: "student",
       });

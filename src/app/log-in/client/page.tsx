@@ -133,6 +133,9 @@ export default function ClientLogIn() {
                 Privacy Statement
               </a>
             </p>
+            <p className="text-xs text-center text-gray-600 mt-2">
+              Dont have an account? <Link href="/signup/client" className='underline text-blue-500'>Sign up</Link>
+            </p>
           </div>
         </div>
       </motion.div>

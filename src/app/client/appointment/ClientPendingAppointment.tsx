@@ -1,48 +1,45 @@
 import React, { useEffect, useState } from "react";
 import { db } from "@/firebase"; // Import Firestore
-import { collection, getDocs, query, where } from "firebase/firestore"; // Import query and where
+import { collection, getDocs, query, where, deleteDoc, doc } from "firebase/firestore"; // Import deleteDoc
 import { useUserData } from "@/hooks/useUserData";
 import ViewAppointment from "@/app/student/dashboard/ViewAppointment";
 
 interface Appointment {
-  id: string;
-  selectedDate: string;
-  timeRange: string;
-  appointmentType: string;
-  status: string;
-  otherReason: string;
-  selectedService: string;
-  selectedPersonnel: string;
-  selectedOffice: string;
-  name: string;
-  contact: string;
-  email: string;
-  role: string;
-  dateCreated: string;
-}
+    id: string;
+    selectedDate: string;
+    timeRange: string;
+    appointmentType: string;
+    status: string;
+    otherReason: string;
+    selectedService: string;
+    selectedPersonnel: string;
+    selectedOffice: string;
+    name: string;
+    contact: string;
+    email: string;
+    role: string;
+    dateCreated: string;
+  }
 
-const ClientAppointmentHistory: React.FC = () => {
+const ClientPendingAppointment: React.FC = () => {
   const { userData } = useUserData(); // Get current user data
   const [appointments, setAppointments] = useState<Appointment[]>([]); // State to hold appointments
-  const [filteredAppointments, setFilteredAppointments] = useState<Appointment[]>([]); // State to hold filtered appointments
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState<string | null>(null); // Error state
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null); // State for selected appointment
-
-  // Filter state
-  const [statusFilter, setStatusFilter] = useState<string>(""); // State for status filter
-  const [dateFilter, setDateFilter] = useState<string>(""); // State for date filter
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null); // State for selected appointment in modal
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to handle modal visibility
+  const [filterDate, setFilterDate] = useState(""); // State for filtering by date
 
   useEffect(() => {
     const fetchAppointments = async () => {
       setLoading(true); // Set loading to true
       try {
         const appointmentsRef = collection(db, "appointments");
-        const q = query(appointmentsRef, 
+        const q = query(
+          appointmentsRef,
           where("submittedUid", "==", userData?.uid),
-          where("status", "in", ["declined", "approved"])
-        ); 
+          where("status", "==", "pending") // Only fetch pending appointments
+        );
         const snapshot = await getDocs(q);
         const appointmentList = snapshot.docs.map((doc) => ({
           id: doc.id,
@@ -60,8 +57,15 @@ const ClientAppointmentHistory: React.FC = () => {
           role: doc.data().role || "",
           dateCreated: doc.data().dateCreated || "",
         }));
-        setAppointments(appointmentList);
-        setFilteredAppointments(appointmentList); // Initially, show all appointments
+
+        // Filter appointments by date if filterDate is set
+        const filteredAppointments = filterDate
+          ? appointmentList.filter((appointment) =>
+              appointment.selectedDate.includes(filterDate)
+            )
+          : appointmentList;
+
+        setAppointments(filteredAppointments as Appointment[]);
       } catch (error) {
         setError("Error fetching appointments: " + (error as Error).message);
       } finally {
@@ -72,35 +76,34 @@ const ClientAppointmentHistory: React.FC = () => {
     if (userData?.uid) { // Ensure user UID is available before fetching
       fetchAppointments();
     }
-  }, [userData]);
+  }, [userData, filterDate]); // Also re-run the effect when the filterDate changes
 
-  // Handler to open the modal
+  // Handler to delete an appointment
+  const handleDelete = async (appointmentId: string) => {
+    if (confirm("Are you sure you want to delete this appointment?")) {
+      try {
+        const appointmentDocRef = doc(db, "appointments", appointmentId);
+        await deleteDoc(appointmentDocRef); // Delete the appointment from Firestore
+        // Update the state by filtering out the deleted appointment
+        setAppointments((prevAppointments) =>
+          prevAppointments.filter((appointment) => appointment.id !== appointmentId)
+        );
+      } catch (error) {
+        alert("Error deleting appointment: " + (error as Error).message);
+      }
+    }
+  };
+
+  // Handler to open the ViewAppointment modal
   const handleView = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
-    setIsModalOpen(true);
+    setIsModalOpen(true); // Open modal
   };
 
-  // Handler to close the modal
+  // Handler to close the ViewAppointment modal
   const closeModal = () => {
-    setSelectedAppointment(null);
-    setIsModalOpen(false);
-  };
-
-  // Filter appointments based on date and status
-  const handleFilter = () => {
-    let filtered = appointments;
-
-    // Filter by status if a status is selected
-    if (statusFilter) {
-      filtered = filtered.filter((appointment) => appointment.status === statusFilter);
-    }
-
-    // Filter by date if a date is selected
-    if (dateFilter) {
-      filtered = filtered.filter((appointment) => appointment.selectedDate === dateFilter);
-    }
-
-    setFilteredAppointments(filtered);
+    setIsModalOpen(false); // Close modal
+    setSelectedAppointment(null); // Reset selected appointment
   };
 
   if (loading) {
@@ -113,33 +116,17 @@ const ClientAppointmentHistory: React.FC = () => {
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">Appointment History</h2>
+      <h2 className="text-xl font-bold mb-4">Pending Appointments</h2>
 
-      {/* Filter Section */}
+      {/* Date Filter */}
       <div className="mb-4">
-        <label className="mr-2">Filter by Status:</label>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="mr-4 p-2 border"
-        >
-          <option value="">All</option>
-          <option value="pending">Pending</option>
-          <option value="completed">Completed</option>
-          <option value="declined">Declined</option>
-        </select>
-
-        <label className="mr-2">Filter by Date:</label>
+        <label className="block mb-2 font-bold">Filter by Date:</label>
         <input
           type="date"
-          value={dateFilter}
-          onChange={(e) => setDateFilter(e.target.value)}
-          className="mr-4 p-2 border"
+          className="border border-gray-300 px-4 py-2 rounded"
+          value={filterDate}
+          onChange={(e) => setFilterDate(e.target.value)} // Update filter date state
         />
-
-        <button onClick={handleFilter} className="bg-primary text-white py-2 px-4 rounded">
-          Apply Filter
-        </button>
       </div>
 
       {/* Appointments Table */}
@@ -155,27 +142,19 @@ const ClientAppointmentHistory: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredAppointments.length === 0 ? (
+          {appointments.length === 0 ? (
             <tr>
-              <td colSpan={6} className="px-4 py-2 text-center">No appointment history found.</td>
+              <td colSpan={6} className="px-4 py-2 text-center">No pending appointments found.</td>
             </tr>
           ) : (
-            filteredAppointments.map((appointment) => (
+            appointments.map((appointment) => (
               <tr key={appointment.id} className="border-b">
-                <td className="px-4 py-2 uppercase">{appointment.id}</td>
-                <td className="px-4 py-2 capitalize">{appointment.appointmentType}</td>
+                <td className="px-4 py-2">{appointment.id}</td>
+                <td className="px-4 py-2">{appointment.appointmentType}</td>
                 <td className="px-4 py-2">{appointment.selectedDate}</td>
                 <td className="px-4 py-2">{appointment.timeRange}</td>
                 <td className="px-4 py-2">
-                  <span
-                    className={`px-2 py-1 rounded ${
-                      appointment.status === "declined"
-                        ? "bg-red-200 text-red-800"
-                        : appointment.status === "approved"
-                        ? "bg-green-200 text-green-800"
-                        : "bg-yellow-200 text-yellow-800"
-                    }`}
-                  >
+                  <span className="px-2 py-1 rounded bg-yellow-200 text-zinc-800">
                     {appointment.status}
                   </span>
                 </td>
@@ -185,6 +164,13 @@ const ClientAppointmentHistory: React.FC = () => {
                     onClick={() => handleView(appointment)}
                   >
                     View
+                  </button>{" "}
+                  |{" "}
+                  <button
+                    className="text-red-500 hover:underline"
+                    onClick={() => handleDelete(appointment.id)}
+                  >
+                    Delete
                   </button>
                 </td>
               </tr>
@@ -201,4 +187,4 @@ const ClientAppointmentHistory: React.FC = () => {
   );
 };
 
-export default ClientAppointmentHistory;
+export default ClientPendingAppointment;

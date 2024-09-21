@@ -97,6 +97,7 @@ const ClientRequestAppointment: React.FC = () => {
       setSelectedOffice("");
       setSelectedPersonnel("");
       setOtherReason("");
+      alert("Appointment request submitted successfully.");
     } catch (error) {
       console.error("Error saving appointment:", error);
     } finally {

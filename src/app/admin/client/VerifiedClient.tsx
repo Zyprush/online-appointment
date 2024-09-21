@@ -8,7 +8,7 @@ interface Client {
   firstName: string;
   middleName?: string;
   extensionName?: string;
-  contactNumber: string;
+  contact: string;
   birthdate: string;
   sex: string;
   homeAddress: string;
@@ -128,7 +128,7 @@ const VerifiedClient = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.lastName}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.firstName}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.contactNumber}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.contact}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{client.sex}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <button

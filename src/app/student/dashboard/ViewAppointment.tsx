@@ -20,6 +20,7 @@ interface AppointmentProps {
 }
 
 const ViewAppointment: React.FC<AppointmentProps> = ({ appointment, onClose }) => {
+  console.log('appointment', appointment)
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white p-6 rounded shadow-lg">
@@ -29,9 +30,10 @@ const ViewAppointment: React.FC<AppointmentProps> = ({ appointment, onClose }) =
         <p><strong>Date:</strong> {appointment.selectedDate}</p>
         <p><strong>Time:</strong> {appointment.timeRange}</p>
         <p><strong>Service:</strong> {appointment.selectedService}</p>
-        <p><strong>Personnel:</strong> {appointment.selectedPersonnel}</p>
+        {appointment.selectedPersonnel && (
+          <p><strong>Personnel:</strong> {appointment.selectedPersonnel}</p>
+        )}
         <p><strong>Office:</strong> {appointment.selectedOffice}</p>
-        <p><strong>Other Reason:</strong> {appointment.otherReason}</p>
         <p><strong>Name:</strong> {appointment.name}</p>
         <p><strong>Contact:</strong> {appointment.contact}</p>
         <p><strong>Email:</strong> {appointment.email}</p>

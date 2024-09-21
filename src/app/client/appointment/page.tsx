@@ -2,11 +2,11 @@
 import React, { useState } from "react";
 import ClientRequestAppointment from "./ClientRequestAppointment";
 import ClientAppointmentHistory from "./ClientAppointmentHistory";
+import ClientPendingAppointment from "./ClientPendingAppointment"; // Import ClientPendingAppointment component
 import NavLayout from "@/components/NavLayout";
 
 const Page: React.FC = () => {
-  const [activeComponent, setActiveComponent] =
-    useState<string>("requestAppointment");
+  const [activeComponent, setActiveComponent] = useState<string>("pendingAppointments");
 
   return (
     <NavLayout>
@@ -29,6 +29,18 @@ const Page: React.FC = () => {
             <li className="mb-2">
               <button
                 className={`w-full flex items-center justify-start py-2 px-4 rounded ${
+                  activeComponent === "pendingAppointments"
+                    ? "bg-primary text-white"
+                    : "text-gray-600 hover:bg-gray-200"
+                }`}
+                onClick={() => setActiveComponent("pendingAppointments")} // Add button for pending appointments
+              >
+                Pending Appointments
+              </button>
+            </li>
+            <li className="mb-2">
+              <button
+                className={`w-full flex items-center justify-start py-2 px-4 rounded ${
                   activeComponent === "appointmentHistory"
                     ? "bg-primary text-white"
                     : "text-gray-600 hover:bg-gray-200"
@@ -43,12 +55,9 @@ const Page: React.FC = () => {
 
         {/* Main Content */}
         <div className="w-full md:w-3/4 p-4 md:p-6">
-          {activeComponent === "requestAppointment" && (
-            <ClientRequestAppointment />
-          )}
-          {activeComponent === "appointmentHistory" && (
-            <ClientAppointmentHistory />
-          )}
+          {activeComponent === "requestAppointment" && <ClientRequestAppointment />}
+          {activeComponent === "pendingAppointments" && <ClientPendingAppointment />} {/* Add the ClientPendingAppointment component */}
+          {activeComponent === "appointmentHistory" && <ClientAppointmentHistory />}
         </div>
       </div>
     </NavLayout>

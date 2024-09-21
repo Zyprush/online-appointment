@@ -22,7 +22,7 @@ const ClientNavLink: React.FC<ClientNavLinkProps> = ({ isMobile = false }) => {
 
   return (
     <div className={isMobile ? "flex flex-col" : "flex gap-5 ml-auto mr-5"}>
-      <Link href="/client/appointments" className={linkClass}>
+      <Link href="/client/appointment" className={linkClass}>
         Appointments
       </Link>
       <Link href="/client/profile" className={linkClass}>

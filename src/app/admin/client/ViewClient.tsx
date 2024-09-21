@@ -4,7 +4,7 @@ interface Client {
   firstName: string;
   middleName?: string;
   extensionName?: string;
-  contactNumber: string;
+  contact: string;
   birthdate: string;
   sex: string;
   homeAddress: string;
@@ -49,7 +49,7 @@ const ViewClient: React.FC<ViewClientProps> = ({ client, onClose }) => {
             <strong>Extension Name:</strong> {client.extensionName || "-"}
           </div>
           <div>
-            <strong>Contact Number:</strong> {client.contactNumber}
+            <strong>Contact Number:</strong> {client.contact}
           </div>
           <div>
             <strong>Birthdate:</strong> {client.birthdate}
