@@ -27,11 +27,26 @@ const DeclinedAppointments: React.FC = () => {
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentType | null>(null); // State for selected appointment
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // State for modal visibility
 
+  // States for filtering
+  const [filterType, setFilterType] = useState<string>(""); // State for appointment type filter
+  const [filterDate, setFilterDate] = useState<string>(""); // State for date filter
+
   useEffect(() => {
     const fetchDeclinedAppointments = async () => {
       try {
         const appointmentsRef = collection(db, "appointments");
-        const q = query(appointmentsRef, where("status", "==", "declined")); // Query for declined appointments
+        let q = query(appointmentsRef, where("status", "==", "declined"));
+
+        // Apply type filter if selected
+        if (filterType) {
+          q = query(q, where("appointmentType", "==", filterType));
+        }
+
+        // Apply date filter if selected
+        if (filterDate) {
+          q = query(q, where("selectedDate", "==", filterDate));
+        }
+
         const snapshot = await getDocs(q);
         const appointmentsList = snapshot.docs.map((doc) => ({
           id: doc.id,
@@ -58,7 +73,7 @@ const DeclinedAppointments: React.FC = () => {
     };
 
     fetchDeclinedAppointments();
-  }, []);
+  }, [filterType, filterDate]); // Fetch data again when filters change
 
   const handleView = (appointment: AppointmentType) => {
     setSelectedAppointment(appointment);
@@ -80,6 +95,28 @@ const DeclinedAppointments: React.FC = () => {
 
   return (
     <div className="overflow-x-auto">
+      {/* Filter section */}
+      <div className="mb-4">
+        <label className="mr-2">Filter by Type:</label>
+        <select
+          value={filterType}
+          onChange={(e) => setFilterType(e.target.value)}
+          className="border rounded p-2"
+        >
+          <option value="">All Types</option>
+          <option value="service">Service</option>
+          <option value="meet">Meeting</option>
+        </select>
+
+        <label className="ml-4 mr-2">Filter by Date:</label>
+        <input
+          type="date"
+          value={filterDate}
+          onChange={(e) => setFilterDate(e.target.value)}
+          className="border rounded p-2"
+        />
+      </div>
+
       <table className="min-w-full">
         <thead>
           <tr className="bg-gray-100">
@@ -88,7 +125,7 @@ const DeclinedAppointments: React.FC = () => {
             <th className="px-4 py-2 text-left">Date</th>
             <th className="px-4 py-2 text-left">Time</th>
             <th className="px-4 py-2 text-left">Status</th>
-            <th className="px-4 py-2 text-left">Actions</th> {/* New Actions Column */}
+            <th className="px-4 py-2 text-left">Actions</th>
           </tr>
         </thead>
         <tbody>

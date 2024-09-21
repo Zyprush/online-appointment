@@ -10,7 +10,7 @@ const AdminAppointments: React.FC = () => {
 
   return (
     <NavLayout>
-      <div className="bg-white p-6 rounded-lg mt-5 shadow-md">
+      <div className="bg-white p-6 rounded-lg pt-5 flex flex-col h-full justify-start">
         <h2 className="text-2xl font-bold mb-4">Appointments</h2>
         <div className="mb-4">
           <button

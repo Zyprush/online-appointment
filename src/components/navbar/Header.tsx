@@ -57,6 +57,7 @@ const Header = () => {
               />
             </summary>
           </details>
+          <p className="capitalize">{userRole}</p>
         </div>
         {userRole && <NavLink />}
       </span>

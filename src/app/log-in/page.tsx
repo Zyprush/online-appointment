@@ -3,47 +3,43 @@ import React from "react";
 
 const page = () => {
   return (
-    <div className="flex justify-center items-center h-full overflow-scroll fixed top-0  bottom-0 right-0 left-0 p-5 bg-[url('/img/omsc.jpg')]">
-      <div className="justify-center items-center h-full hidden w-full md:flex"></div>
+    <div className="flex justify-center items-center min-h-screen p-5 bg-[url('/img/omsc.jpg')] bg-cover bg-center fixed inset-0">
+      <div className="w-full md:w-auto h-full hidden md:flex justify-center items-center"></div>
 
-      <div className="bg-white rounded-lg shadow-lg p-8 text-center flex flex-col border justify-center max-w-sm md:max-w-md">
-      <h1 className="text-3xl font-bold text-primary mb-2">
+      <div className="bg-white rounded-lg shadow-lg p-6 md:p-8 text-center flex flex-col border w-full max-w-sm md:max-w-sm">
+        <h1 className="text-2xl md:text-3xl font-bold text-primary mb-2">
           Login
         </h1>
-        <h1 className="text-xl font-bold text-primary mb-2">
+        <h2 className="text-lg md:text-xl font-bold text-primary mb-4">
           OMSC Appointment System
-        </h1>
-        <p className="text-primary mb-6 text-sm">
+        </h2>
+        <p className="text-primary mb-6 text-sm md:text-base">
           Please click or tap the appropriate button.
         </p>
         <Link
           href={"/log-in/student"}
-          className="bg-primary text-white rounded-lg p-4 w-full hover:bg-blue-600 transition duration-300 mb-4"
+          className="bg-primary text-white rounded-lg py-3 w-full hover:bg-blue-600 transition duration-300 mb-4"
         >
           Student
         </Link>
         <Link
           href={"/log-in/client"}
-          className="bg-gray-500 text-white rounded-lg p-4 w-full hover:bg-gray-600 transition duration-300 mb-4"
+          className="bg-gray-500 text-white rounded-lg py-3 w-full hover:bg-gray-600 transition duration-300 mb-4"
         >
           Client
         </Link>
         <Link
           href={"/log-in/admin"}
-          className="bg-secondary text-white rounded-lg p-4 w-full transition duration-300"
+          className="bg-secondary text-white rounded-lg py-3 w-full transition duration-300"
         >
           College/Office Administrator
         </Link>
-        <p className="text-gray-500 text-sm mt-4">
+        <p className="text-gray-500 text-xs md:text-sm mt-4">
           By using this service, you understand and agree to the OMSC Online
           Services{" "}
-          <a href="#" className="text-blue-600 underline">
+          <Link href="/etc/terms" className="text-blue-600 underline">
             Terms of Use
-          </a>{" "}
-          and{" "}
-          <a href="#" className="text-blue-600 underline">
-            Privacy Statement
-          </a>
+          </Link>
           .
         </p>
       </div>

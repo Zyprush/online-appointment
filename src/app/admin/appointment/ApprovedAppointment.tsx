@@ -24,14 +24,28 @@ const ApprovedAppointments: React.FC = () => {
   const [appointments, setAppointments] = useState<AppointmentType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedAppointment, setSelectedAppointment] = useState<AppointmentType | null>(null); // State for selected appointment
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // State for modal visibility
+  const [selectedAppointment, setSelectedAppointment] = useState<AppointmentType | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  const [filterType, setFilterType] = useState<string>(""); // State for appointment type filter
+  const [filterDate, setFilterDate] = useState<string>(""); // State for date filter
 
   useEffect(() => {
     const fetchApprovedAppointments = async () => {
       try {
         const appointmentsRef = collection(db, "appointments");
-        const q = query(appointmentsRef, where("status", "==", "approved")); // Query for approved appointments
+        let q = query(appointmentsRef, where("status", "==", "approved"));
+
+        // Apply type filter if selected
+        if (filterType) {
+          q = query(q, where("appointmentType", "==", filterType));
+        }
+
+        // Apply date filter if selected
+        if (filterDate) {
+          q = query(q, where("selectedDate", "==", filterDate));
+        }
+
         const snapshot = await getDocs(q);
         const appointmentsList = snapshot.docs.map((doc) => ({
           id: doc.id,
@@ -58,7 +72,7 @@ const ApprovedAppointments: React.FC = () => {
     };
 
     fetchApprovedAppointments();
-  }, []);
+  }, [filterType, filterDate]); // Fetch data again when filters change
 
   const handleView = (appointment: AppointmentType) => {
     setSelectedAppointment(appointment);
@@ -80,6 +94,28 @@ const ApprovedAppointments: React.FC = () => {
 
   return (
     <div className="overflow-x-auto">
+      <div className="mb-4">
+        {/* Filter section */}
+        <label className="mr-2">Filter by Type:</label>
+        <select
+          value={filterType}
+          onChange={(e) => setFilterType(e.target.value)}
+          className="border rounded p-2"
+        >
+          <option value="">All Types</option>
+          <option value="meet">Meeting</option>
+          <option value="service">Service</option>
+        </select>
+
+        <label className="ml-4 mr-2">Filter by Date:</label>
+        <input
+          type="date"
+          value={filterDate}
+          onChange={(e) => setFilterDate(e.target.value)}
+          className="border rounded p-2"
+        />
+      </div>
+
       <table className="min-w-full">
         <thead>
           <tr className="bg-gray-100">
@@ -88,7 +124,7 @@ const ApprovedAppointments: React.FC = () => {
             <th className="px-4 py-2 text-left">Date</th>
             <th className="px-4 py-2 text-left">Time</th>
             <th className="px-4 py-2 text-left">Status</th>
-            <th className="px-4 py-2 text-left">Actions</th> {/* New Actions Column */}
+            <th className="px-4 py-2 text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
