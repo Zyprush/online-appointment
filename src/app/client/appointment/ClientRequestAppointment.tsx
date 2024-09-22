@@ -88,8 +88,6 @@ const ClientRequestAppointment: React.FC = () => {
       // Save appointment data to Firestore
       const appointmentsRef = collection(db, "appointments");
       await setDoc(doc(appointmentsRef), appointmentData); // Use addDoc if you want to auto-generate IDs
-
-      // Reset form after submission
       setAppointmentType(null);
       setSelectedDate("");
       setSelectedTime("");

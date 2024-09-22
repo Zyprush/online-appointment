@@ -63,5 +63,5 @@ export function useUserData() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uid]);
 
-  return { userData, loading, error };
+  return { userData, loading, error, uid };
 }
