@@ -22,8 +22,8 @@ interface AppointmentProps {
 const ViewAppointment: React.FC<AppointmentProps> = ({ appointment, onClose }) => {
   console.log('appointment', appointment)
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded shadow-lg">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"  style={{ zIndex: 1000 }}>
+      <div className="bg-white p-6 rounded shadow-lg z-50">
         <h2 className="text-2xl font-bold mb-4">Appointment Details</h2>
         <p><strong>Appointment Code:</strong> {appointment.id}</p>
         <p><strong>Type:</strong> {appointment.appointmentType}</p>

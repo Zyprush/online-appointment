@@ -28,7 +28,7 @@ interface Appointment {
   dateCreated: string;
 }
 
-const ClientCalendar: React.FC = () => {
+const StudentCalendar: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null); // State for selected appointment
   const { uid } = useUserData(); // Get the user data including submittedUid
@@ -153,4 +153,4 @@ const ClientCalendar: React.FC = () => {
   );
 };
 
-export default ClientCalendar;
+export default StudentCalendar;

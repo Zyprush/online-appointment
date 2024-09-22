@@ -1,6 +1,6 @@
-import Link from 'next/link';
-import { signOut } from 'firebase/auth';
-import { auth } from '@/firebase';
+import Link from "next/link";
+import { signOut } from "firebase/auth";
+import { auth } from "@/firebase";
 
 interface AdminNavLinkProps {
   isMobile?: boolean;
@@ -10,9 +10,9 @@ const AdminNavLink: React.FC<AdminNavLinkProps> = ({ isMobile = false }) => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      window.location.href = '/log-in';
+      window.location.href = "/log-in";
     } catch (error) {
-      console.error('Error logging out:', error);
+      console.error("Error logging out:", error);
     }
   };
 
@@ -24,6 +24,9 @@ const AdminNavLink: React.FC<AdminNavLinkProps> = ({ isMobile = false }) => {
     <div className={isMobile ? "flex flex-col" : "flex gap-5 ml-auto mr-5"}>
       <Link href="/admin/appointment" className={linkClass}>
         Appointment
+      </Link>
+      <Link href="/admin/calendar" className={linkClass}>
+        Calendar
       </Link>
       <Link href="/admin/client" className={linkClass}>
         Client

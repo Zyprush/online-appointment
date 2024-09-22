@@ -20,7 +20,7 @@ const page = () => {
           href={"/log-in/student"}
           className="bg-primary text-white rounded-lg py-3 w-full hover:bg-blue-600 transition duration-300 mb-4"
         >
-          Student
+          Student/Alumni
         </Link>
         <Link
           href={"/log-in/client"}

@@ -16,7 +16,7 @@ const StudentRouteGuard: React.FC<StudentRouteGuardProps> = ({ children }) => {
       if (user) {
         try {
           const userDoc = await getDoc(doc(db, 'users', user.uid));
-          if (userDoc.exists() && userDoc.data().role === 'student') {
+          if (userDoc.exists() && (userDoc.data().role === 'student' || userDoc.data().role === 'alumni') ) {
             setIsLoading(false);
           } else {
             window.location.href = '/log-in';

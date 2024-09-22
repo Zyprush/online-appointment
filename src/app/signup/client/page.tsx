@@ -10,7 +10,7 @@ const SignupPage = () => {
     firstName: "",
     middleName: "",
     extensionName: "",
-    c: "",
+    contact: "",
     birthdate: "",
     sex: "",
     homeAddress: "",
@@ -54,8 +54,8 @@ const SignupPage = () => {
     return /^\d{4}$/.test(zipCode);
   };
 
-  const validateC = (c: string): boolean => {
-    return /^\d{11}$/.test(c);
+  const validateContact = (c: string): boolean => {
+    return /^9\d{11}$/.test(c);
   };
 
   const validateForm = () => {
@@ -71,8 +71,8 @@ const SignupPage = () => {
       return false;
     }
     
-    if (!validateC(formData.c)) {
-      alert("Please enter a valid 11-digit contact number.");
+    if (!validateContact(formData.contact)) {
+      alert("Please enter a valid 10-digit contact number.");
       return false;
     }
     
@@ -105,7 +105,7 @@ const SignupPage = () => {
           firstName: formData.firstName,
           middleName: formData.middleName,
           extensionName: formData.extensionName,
-          contact: formData.c,
+          contact: formData.contact,
           birthdate: formData.birthdate,
           sex: formData.sex,
           homeAddress: formData.homeAddress,
@@ -184,11 +184,11 @@ const SignupPage = () => {
               type="tel"
               name="c"
               className="input input-bordered input-sm"
-              value={formData.c}
+              value={formData.contact}
               onChange={handleInputChange}
               required
-              maxLength={11}
-              pattern="\d{11}"
+              maxLength={10}
+              pattern="\d{10}"
               title="Please enter an 11-digit contact number"
             />
           </div>

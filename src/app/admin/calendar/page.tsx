@@ -28,7 +28,7 @@ interface Appointment {
   dateCreated: string;
 }
 
-const ClientCalendar: React.FC = () => {
+const AdminCalendar: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null); // State for selected appointment
   const { uid } = useUserData(); // Get the user data including submittedUid
@@ -44,7 +44,7 @@ const ClientCalendar: React.FC = () => {
         const appointmentsRef = collection(db, "appointments");
         const q = query(
           appointmentsRef,
-          where("submittedUid", "==", uid),
+        //   where("submittedUid", "==", uid),
           where("status", "==", "approved")
         );
 
@@ -153,4 +153,4 @@ const ClientCalendar: React.FC = () => {
   );
 };
 
-export default ClientCalendar;
+export default AdminCalendar;

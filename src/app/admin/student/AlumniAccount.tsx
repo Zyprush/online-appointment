@@ -12,7 +12,7 @@ interface User {
   studentId: string;
   email: string;
   birthday: string;
-  phone: string;
+  contact: string;
   course: string;
   role: string;
 }
@@ -118,7 +118,7 @@ const AlumniAccount: React.FC = () => {
               <th className="py-2 px-4 border-b border-gray-200">Full Name</th>
               <th className="py-2 px-4 border-b border-gray-200">Email</th>
               <th className="py-2 px-4 border-b border-gray-200">Birthday</th>
-              <th className="py-2 px-4 border-b border-gray-200">Phone</th>
+              <th className="py-2 px-4 border-b border-gray-200">Contact</th>
               <th className="py-2 px-4 border-b border-gray-200">Course</th>
               <th className="py-2 px-4 border-b border-gray-200">Actions</th>
             </tr>
@@ -131,7 +131,7 @@ const AlumniAccount: React.FC = () => {
                   <td className="py-2 px-4 border-b border-gray-200">{student.fullName}</td>
                   <td className="py-2 px-4 border-b border-gray-200">{student.email}</td>
                   <td className="py-2 px-4 border-b border-gray-200">{student.birthday}</td>
-                  <td className="py-2 px-4 border-b border-gray-200">{student.phone}</td>
+                  <td className="py-2 px-4 border-b border-gray-200">{student.contact}</td>
                   <td className="py-2 px-4 border-b border-gray-200">{student.course}</td>
                   <td className="py-2 px-4 border-b border-gray-200">
                     <button

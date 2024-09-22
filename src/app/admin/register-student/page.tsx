@@ -55,7 +55,7 @@ export default function CreateStudent() {
         fullName,
         email,
         birthday,
-        contact: `+63${contact}`,
+        contact,
         course,
         role: "student",
       });
@@ -150,11 +150,13 @@ export default function CreateStudent() {
                   <Phone className="absolute top-3 left-3 text-gray-400" />
                   <input
                     type="tel"
-                    placeholder="Phone Number"
                     className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
                     value={contact}
                     onChange={(e) => setPhone(e.target.value)}
                     required
+                    placeholder="Contact Number"
+                    maxLength={10}
+                    pattern="[0-9]{10}"
                     aria-label="Phone Number"
                   />
                 </div>

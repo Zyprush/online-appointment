@@ -6,7 +6,7 @@ interface Student {
   studentId: string;
   email: string;
   birthday: string;
-  phone: string;
+  contact: string;
   course: string;
   role: string;
 }
@@ -43,7 +43,7 @@ const ViewStudent: React.FC<ViewStudentProps> = ({ student, onClose }) => {
             <strong>Birthday:</strong> {student.birthday}
           </div>
           <div>
-            <strong>Phone:</strong> {student.phone}
+            <strong>Contact:</strong> {student.contact}
           </div>
           <div>
             <strong>Course:</strong> {student.course}

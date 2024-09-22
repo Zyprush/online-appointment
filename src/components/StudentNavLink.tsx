@@ -25,6 +25,9 @@ const StudentNavLink: React.FC<StudentNavLinkProps> = ({ isMobile = false }) => 
       <Link href="/student/dashboard" className={linkClass}>
         Dashboard
       </Link>
+      <Link href="/student/calendar" className={linkClass}>
+        Calendar
+      </Link>
       <Link href="/student/profile" className={linkClass}>
         Profile
       </Link>
