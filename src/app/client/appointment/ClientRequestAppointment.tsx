@@ -45,6 +45,11 @@ const ClientRequestAppointment: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true); // Set loading to true
+    if(userData?.verified === false) {
+      alert("Your account is restricted. Please contact the system admin f you have any questions: mambuappoint@gmail.com.");
+      setLoading(false);
+      return;
+    }
 
     // Validate required fields
     if (!appointmentType || !selectedDate || !selectedTime || !selectedOffice) {

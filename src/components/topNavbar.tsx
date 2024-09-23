@@ -11,12 +11,6 @@ const Navbar = () => {
           <Link href="/log-in" className="text-white mr-4 hover:underline">
             Sign In
           </Link>
-          <Link
-            href="/sign-up"
-            className="bg-white text-blue-600 px-4 py-2 rounded hover:bg-blue-100"
-          >
-            Sign Up
-          </Link>
         </div>
       </div>
     </nav>

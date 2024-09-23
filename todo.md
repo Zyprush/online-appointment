@@ -1,0 +1,8 @@
+- [ ] Admin Appointment:
+    - [ ] Show submitted name
+    - [ ] Search by submitted name
+- [ ] Admin Calendar:
+    - [ ] Display submitted name
+- [ ] Admin Settings:
+    - [ ] Designated personnel per office
+    - [ ] Services can have associated office
