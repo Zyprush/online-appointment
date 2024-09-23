@@ -178,7 +178,7 @@ const RestrictedClient: React.FC = () => {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table>  
         ) : (
           <p className="text-center font-semibold text-gray-600 mt-4">No Restricted Clients</p>
         )}
