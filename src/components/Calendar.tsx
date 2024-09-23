@@ -50,7 +50,7 @@ const AppointmentCalendar: React.FC<AppointmentCalendarProps> = ({
     textColor: 'white',
     extendedProps: {
       status: appointment.status
-    }
+    }  
   }));
 
   return (
