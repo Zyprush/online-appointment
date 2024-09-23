@@ -15,7 +15,7 @@ interface Client {
   firstName: string;
   middleName?: string;
   extensionName?: string;
-  contactNumber: string;
+  contact: string;
   birthdate: string;
   sex: string;
   homeAddress: string;
@@ -159,7 +159,7 @@ const RestrictedClient: React.FC = () => {
                     {client.email}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {client.contactNumber}
+                    {client.contact}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {client.birthdate}

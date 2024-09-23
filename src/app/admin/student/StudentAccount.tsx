@@ -12,7 +12,7 @@ interface User {
   studentId: string;
   email: string;
   birthday: string;
-  phone: string;
+  contact: string;
   course: string;
   role: string;
 }
@@ -120,7 +120,7 @@ const StudentAccount: React.FC = () => {
               <th className="py-2 px-4 border-b border-gray-200 text-left">Full Name</th>
               <th className="py-2 px-4 border-b border-gray-200 text-left">Email</th>
               <th className="py-2 px-4 border-b border-gray-200 text-left">Birthday</th>
-              <th className="py-2 px-4 border-b border-gray-200 text-left">Phone</th>
+              <th className="py-2 px-4 border-b border-gray-200 text-left">Contact</th>
               <th className="py-2 px-4 border-b border-gray-200 text-left">Course</th>
               <th className="py-2 px-4 border-b border-gray-200 text-left">Actions</th>
             </tr>
@@ -133,7 +133,7 @@ const StudentAccount: React.FC = () => {
                   <td className="py-2 px-4 border-b border-gray-200 text-sm text-left">{student.fullName}</td>
                   <td className="py-2 px-4 border-b border-gray-200 text-sm text-left">{student.email}</td>
                   <td className="py-2 px-4 border-b border-gray-200 text-sm text-left">{student.birthday}</td>
-                  <td className="py-2 px-4 border-b border-gray-200 text-sm text-left">{student.phone}</td>
+                  <td className="py-2 px-4 border-b border-gray-200 text-sm text-left">{student.contact}</td>
                   <td className="py-2 px-4 border-b border-gray-200 text-sm text-left">{student.course}</td>
                   <td className="py-2 px-4 border-b border-gray-200 text-sm text-left">
                     <button
