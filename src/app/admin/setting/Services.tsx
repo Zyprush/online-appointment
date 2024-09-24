@@ -6,22 +6,31 @@ const Services = () => {
   const [services, setServices] = useState<
     {
       name: string;
+      office: string;
     }[]
   >([]);
+  const [offices, setOffices] = useState<string[]>([]); // State to store offices
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Fetch services and offices from Firestore on component mount
   useEffect(() => {
-    const fetchServices = async () => {
+    const fetchServicesAndOffices = async () => {
       const servicesDoc = await getDoc(doc(db, "settings", "services"));
+      const officesDoc = await getDoc(doc(db, "settings", "offices"));
+
       if (servicesDoc.exists()) {
         setServices(servicesDoc.data().services || []);
       }
+      if (officesDoc.exists()) {
+        setOffices(officesDoc.data().offices.map((office: { name: string }) => office.name) || []);
+      }
     };
-    fetchServices();
+    fetchServicesAndOffices();
   }, []);
 
+  // Save services to Firestore
   const saveServices = async () => {
     if (!isFormValid()) {
       setError("Please complete all fields.");
@@ -35,27 +44,41 @@ const Services = () => {
     setIsEditing(false);
   };
 
+  // Validate form
   const isFormValid = () => {
-    return services.every(service => service.name.trim() !== "");
-  };
-
-  const handleServiceChange = (index: number, field: keyof typeof services[number], value: string) => {
-    setServices((prevServices) =>
-      prevServices.map((o, i) => (i === index ? { ...o, [field]: value } : o))
+    return services.every(
+      (service) => service.name?.trim() !== "" && service.office?.trim() !== ""
     );
   };
 
+  // Handle changes in service name or office selection
+  const handleServiceChange = (
+    index: number,
+    field: keyof typeof services[number],
+    value: string
+  ) => {
+    setServices((prevServices) =>
+      prevServices.map((s, i) =>
+        i === index ? { ...s, [field]: value } : s
+      )
+    );
+  };
+
+  // Delete a service
   const deleteService = (index: number) =>
     setServices(services.filter((_, i) => i !== index));
 
+  // Add a new service
   const addService = () =>
     setServices([
       ...services,
       {
         name: "",
+        office: "",
       },
     ]);
 
+  // Toggle edit mode
   const toggleEdit = () => {
     setIsEditing(!isEditing);
   };
@@ -74,6 +97,7 @@ const Services = () => {
 
       {error && <div className="text-red-500">{error}</div>}
 
+      {/* Display services */}
       {services.length > 0 &&
         services.map((service, index) => (
           <div key={index} className="flex gap-3">
@@ -88,6 +112,20 @@ const Services = () => {
                   }
                   className="p-2 text-sm border-primary border-2 rounded-sm w-80"
                 />
+                <select
+                  value={service.office}
+                  onChange={(e) =>
+                    handleServiceChange(index, "office", e.target.value)
+                  }
+                  className="p-2 text-sm border-primary border-2 rounded-sm"
+                >
+                  <option value="">Select Office</option>
+                  {offices.map((office, i) => (
+                    <option key={i} value={office}>
+                      {office}
+                    </option>
+                  ))}
+                </select>
                 <button
                   onClick={() => deleteService(index)}
                   className="btn btn-sm rounded-sm text-white btn-error"
@@ -96,13 +134,19 @@ const Services = () => {
                 </button>
               </div>
             ) : (
-              <div className="flex gap-3">
-                <span>{service.name}</span>
-              </div>
+              <table className="table w-full">
+                <tbody>
+                  <tr>
+                    <td className="w-80">{service.name}</td>
+                    <td>{service.office}</td>
+                  </tr>
+                </tbody>
+              </table>
             )}
           </div>
         ))}
 
+      {/* Add service and save changes */}
       {isEditing && (
         <div className="mx-auto flex gap-5">
           <button

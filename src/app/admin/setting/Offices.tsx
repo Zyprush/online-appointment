@@ -2,15 +2,15 @@ import React, { useState, useEffect } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 
-const Offices = () => { // Renamed component
+const Offices = () => {
   const [offices, setOffices] = useState<
     {
       name: string;
-    }[] // Removed price from the type
+    }[]
   >([]);
-  const [isEditing, setIsEditing] = useState(false);
+  const [newOffices, setNewOffices] = useState<{ name: string }[]>([]); // New state for unsaved offices
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false); // New loading state
+  const [loading, setLoading] = useState(false);
 
   // Fetch offices from Firestore on component mount
   useEffect(() => {
@@ -23,107 +23,85 @@ const Offices = () => { // Renamed component
     fetchOffices();
   }, []);
 
-  // Save offices to Firestore
+  // Save new offices to Firestore
   const saveOffices = async () => {
     if (!isFormValid()) {
       setError("Please complete all fields.");
       return;
     }
 
-    setError(null); // Clear error
-    setLoading(true); // Set loading to true
-    await setDoc(doc(db, "settings", "offices"), { offices });
-    setLoading(false); // Set loading to false after saving
-    setIsEditing(false); // Exit editing mode after saving
+    if (window.confirm("Are you sure you want to submit the new offices? This cannot be undone, Edited or Deleted.")) {
+      setError(null); // Clear error
+      setLoading(true); // Set loading to true
+      await setDoc(doc(db, "settings", "offices"), { offices: [...offices, ...newOffices] });
+      setOffices((prevOffices) => [...prevOffices, ...newOffices]); // Update state with new offices
+      setNewOffices([]); // Clear new offices
+      setLoading(false); // Set loading to false after saving
+    }
   };
 
   const isFormValid = () => {
-    return offices.every(service => service.name.trim() !== "");
+    return newOffices.every(office => office.name.trim() !== "");
   };
 
-  const handleServiceChange = (index: number, field: keyof typeof offices[number], value: string) => {
-    setOffices((prevOffices) =>
-      prevOffices.map((s, i) => (i === index ? { ...s, [field]: value } : s))
+  const handleNewOfficeChange = (index: number, value: string) => {
+    setNewOffices((prevNewOffices) =>
+      prevNewOffices.map((office, i) => (i === index ? { ...office, name: value } : office))
     );
   };
 
-  const deleteService = (index: number) =>
-    setOffices(offices.filter((_, i) => i !== index));
-
-  const addService = () =>
-    setOffices([
-      ...offices,
-      {
-        name: "",
-      },
-    ]);
-
-  const toggleEdit = () => {
-    setIsEditing(!isEditing);
+  const addNewOffice = () => {
+    setNewOffices([...newOffices, { name: "" }]);
   };
 
   return (
     <div className="bg-white p-5 rounded-lg border flex flex-col gap-3 text-zinc-600">
       <div className="flex justify-between items-center">
-        <span className="font-bold text-primary">Offices</span> {/* Updated title */}
-        <button
-          onClick={toggleEdit}
-          className="btn btn-sm text-primary btn-outline rounded-sm"
-        >
-          {isEditing ? "Cancel" : "Edit"}
-        </button>
+        <span className="font-bold text-primary">Offices</span>
       </div>
 
       {error && <div className="text-red-500">{error}</div>}
 
+      {/* Display existing offices (not editable or deletable) */}
       {offices.length > 0 &&
-        offices.map((service, index) => (
+        offices.map((office, index) => (
           <div key={index} className="flex gap-3">
-            {isEditing ? (
-              <div className="flex gap-3 items-center">
-                <input
-                  type="text"
-                  placeholder="Service Name"
-                  value={service.name}
-                  onChange={(e) =>
-                    handleServiceChange(index, "name", e.target.value)
-                  }
-                  className="p-2 text-sm border-primary border-2 rounded-sm w-80"
-                />
-                <button
-                  onClick={() => deleteService(index)}
-                  className="btn btn-sm rounded-sm text-white btn-error"
-                >
-                  Delete
-                </button>
-              </div>
-            ) : (
-              <div className="flex gap-3">
-                <span>{service.name}</span>
-              </div>
-            )}
+            <span>{office.name}</span>
           </div>
         ))}
 
-      {isEditing && (
-        <div className="mx-auto flex gap-5">
-          <button
-            onClick={addService}
-            className="btn btn-sm rounded-none text-primary btn-outline"
-          >
-            Add Office
-          </button>
-          <button
-            onClick={saveOffices}
-            className="btn btn-sm rounded-none btn-primary text-white"
-            disabled={!isFormValid() || loading} // Disable button if form is invalid or loading
-          >
-            {loading ? "Saving..." : "Save Changes"} {/* Show loading text */}
-          </button>
-        </div>
-      )}
+      {/* Display new offices (editable until saved) */}
+      {newOffices.length > 0 &&
+        newOffices.map((office, index) => (
+          <div key={index} className="flex gap-3 items-center">
+            <input
+              type="text"
+              placeholder="Office Name"
+              value={office.name}
+              onChange={(e) => handleNewOfficeChange(index, e.target.value)}
+              className="p-2 text-sm border-primary border-2 rounded-sm w-80"
+            />
+          </div>
+        ))}
+
+      {/* Add new office button and save changes */}
+      <div className="mx-auto flex gap-5">
+        <button
+          onClick={addNewOffice}
+          className="btn btn-sm rounded-none text-primary btn-outline"
+        >
+          Add Office
+        </button>
+        <button
+          onClick={saveOffices}
+          className="btn btn-sm rounded-none btn-primary text-white"
+          disabled={!isFormValid() || loading}
+        >
+          {loading ? "Saving..." : "Save Changes"}
+        </button>
+      </div>
     </div>
   );
 };
 
-export default Offices; // Updated export
+export default Offices;

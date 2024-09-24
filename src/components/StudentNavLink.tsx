@@ -18,7 +18,7 @@ const StudentNavLink: React.FC<StudentNavLinkProps> = ({ isMobile = false }) => 
 
   const linkClass = isMobile
     ? "block py-2 px-4 text-gray-700 hover:bg-gray-100 w-full text-left"
-    : "text-gray-700 hover:text-gray-900";
+    : "text-gray-700 hover:text-gray-900 hover:bg-primary hover:text-white p-2";
 
   return (
     <div className={isMobile ? "flex flex-col" : "flex gap-5 ml-auto mr-5"}>

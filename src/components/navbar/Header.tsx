@@ -7,6 +7,7 @@ import { auth, db } from "@/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import ClientNavLink from "../ClientNavLink";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -79,11 +80,22 @@ const Header = () => {
             <Menu size={24} />
           </button>
         </div>
-        {isMenuOpen && userRole && (
-          <div className="bg-white border-b border-zinc-300 shadow-md">
-            <NavLink isMobile={true} />
-          </div>
-        )}
+
+        {/* AnimatePresence handles the mounting/unmounting animations */}
+        <AnimatePresence>
+          {isMenuOpen && userRole && (
+            <motion.div
+              key="menu" // Key is important for animating items in AnimatePresence
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white border-b border-zinc-300 shadow-md"
+            >
+              <NavLink isMobile={true} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </>
   );
