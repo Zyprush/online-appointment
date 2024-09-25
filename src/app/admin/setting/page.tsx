@@ -7,6 +7,7 @@ import Personnel from "./Personnel";
 import ResetPassword from "@/components/ResetPassword";
 
 const AdminAccount = () => {
+
   return (
     <NavLayout>
       <div className="p-8">
@@ -15,7 +16,7 @@ const AdminAccount = () => {
           <Offices />
           <Services />
           <Personnel />
-          <ResetPassword /> {/* Add ResetPassword component */}
+          <ResetPassword />
         </div>
       </div>
     </NavLayout>

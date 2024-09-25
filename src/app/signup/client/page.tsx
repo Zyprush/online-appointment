@@ -5,6 +5,7 @@ import { auth, db } from "@/firebase";
 import { useState } from "react";
 
 const SignupPage = () => {
+  const [step, setStep] = useState(1); // Tracks current step
   const [formData, setFormData] = useState({
     lastName: "",
     firstName: "",
@@ -29,15 +30,13 @@ const SignupPage = () => {
     const { name, value } = e.target;
     
     if (name === 'zipCode') {
-      // Only allow numeric input and limit to 4 digits
-      const numericValue = value.replace(/\D/g, '').slice(0, 4);
+      const numericValue = value.replace(/\D/g, '').slice(0, 4); // Limit to 4 digits
       setFormData(prevData => ({
         ...prevData,
         [name]: numericValue,
       }));
-    } else if (name === 'c') {
-      // Only allow numeric input and limit to 11 digits
-      const numericValue = value.replace(/\D/g, '').slice(0, 11);
+    } else if (name === 'contact') {
+      const numericValue = value.replace(/\D/g, '').slice(0, 10); // Limit to 10 digits
       setFormData(prevData => ({
         ...prevData,
         [name]: numericValue,
@@ -54,8 +53,8 @@ const SignupPage = () => {
     return /^\d{4}$/.test(zipCode);
   };
 
-  const validateContact = (c: string): boolean => {
-    return /^9\d{11}$/.test(c);
+  const validateContact = (contact: string): boolean => {
+    return /^9\d{9}$/.test(contact);
   };
 
   const validateForm = () => {
@@ -82,9 +81,7 @@ const SignupPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match");
@@ -129,204 +126,227 @@ const SignupPage = () => {
     }
   };
 
+  const nextStep = () => setStep(step + 1);
+  const prevStep = () => setStep(step - 1);
+
   return (
     <div className="flex justify-center items-center h-full overflow-scroll fixed top-0 bottom-0 right-0 left-0 p-5 bg-[url('/img/omsc.jpg')]">
-      <form onSubmit={handleSubmit} className="bg-white p-5 md:p-10 mt-80 rounded-lg shadow-md w-full max-w-2xl">
+      <form onSubmit={handleSubmit} className="bg-white p-5 md:p-10 rounded-lg shadow-md w-full max-w-2xl">
         <h2 className="text-2xl font-bold mb-6">Signup</h2>
-        <div className="grid grid-cols-2 gap-4">
-          {/* Personal Details */}
-          <div className="col-span-2 text-lg font-semibold">Personal Details</div>
-          <div className="form-control">
-            <label className="label text-sm">Last Name *</label>
-            <input
-              type="text"
-              name="lastName"
-              className="input input-bordered input-sm"
-              value={formData.lastName}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="form-control">
-            <label className="label text-sm">First Name *</label>
-            <input
-              type="text"
-              name="firstName"
-              className="input input-bordered input-sm"
-              value={formData.firstName}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="form-control">
-            <label className="label text-sm">Middle Name</label>
-            <input
-              type="text"
-              name="middleName"
-              className="input input-bordered input-sm"
-              value={formData.middleName}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="form-control">
-            <label className="label text-sm">Extension Name</label>
-            <input
-              type="text"
-              name="extensionName"
-              className="input input-bordered input-sm"
-              value={formData.extensionName}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="form-control">
-            <label className="label text-sm">Contact Number *</label>
-            <input
-              type="tel"
-              name="c"
-              className="input input-bordered input-sm"
-              value={formData.contact}
-              onChange={handleInputChange}
-              required
-              maxLength={10}
-              pattern="\d{10}"
-              title="Please enter an 11-digit contact number"
-            />
-          </div>
-          <div className="form-control">
-            <label className="label text-sm">Birthdate *</label>
-            <input
-              type="date"
-              name="birthdate"
-              className="input input-bordered input-sm"
-              value={formData.birthdate}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="form-control">
-            <label className="label text-sm">Sex *</label>
-            <select
-              name="sex"
-              className="input input-bordered input-sm"
-              value={formData.sex}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="">Select</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-          <div className="form-control col-span-2">
-            <label className="label text-sm">Home Address *</label>
-            <input
-              type="text"
-              name="homeAddress"
-              className="input input-bordered input-sm"
-              value={formData.homeAddress}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="form-control">
-            <label className="label text-sm">Province *</label>
-            <input
-              type="text"
-              name="province"
-              className="input input-bordered input-sm"
-              value={formData.province}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="form-control">
-            <label className="label text-sm">City *</label>
-            <input
-              type="text"
-              name="city"
-              className="input input-bordered input-sm"
-              value={formData.city}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="form-control">
-            <label className="label text-sm">Barangay *</label>
-            <input
-              type="text"
-              name="barangay"
-              className="input input-bordered input-sm"
-              value={formData.barangay}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="form-control">
-            <label className="label text-sm">Zip Code *</label>
-            <input
-              type="text"
-              name="zipCode"
-              className="input input-bordered input-sm"
-              value={formData.zipCode}
-              onChange={handleInputChange}
-              required
-              maxLength={4}
-              pattern="\d{4}"
-              title="Please enter a 4-digit zip code"
-            />
-          </div>
-          <div className="form-control col-span-2">
-            <label className="label text-sm">Email *</label>
-            <input
-              type="email"
-              name="email"
-              className="input input-bordered input-sm"
-              value={formData.email}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="form-control col-span-2">
-            <label className="label text-sm">Password *</label>
-            <input
-              type="password"
-              name="password"
-              className="input input-bordered input-sm"
-              value={formData.password}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div className="form-control col-span-2">
-            <label className="label text-sm">Confirm Password *</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              className="input input-bordered input-sm"
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
 
-          <div className="col-span-2 mt-6">
-            <button 
-              type="submit" 
-              className="btn btn-primary w-full" 
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <span className="loading loading-spinner"></span>
-                  Signing Up...
-                </>
-              ) : (
-                'Sign Up'
-              )}
-            </button>
-          </div>
-        </div>
+        {step === 1 && (
+          <>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="form-control col-span-2 text-lg font-semibold">Personal Information</div>
+              <div className="form-control">
+                <label className="label text-sm">Last Name *</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  className="input input-bordered input-sm"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-control">
+                <label className="label text-sm">First Name *</label>
+                <input
+                  type="text"
+                  name="firstName"
+                  className="input input-bordered input-sm"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-control">
+                <label className="label text-sm">Middle Name</label>
+                <input
+                  type="text"
+                  name="middleName"
+                  className="input input-bordered input-sm"
+                  value={formData.middleName}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="form-control">
+                <label className="label text-sm">Extension Name</label>
+                <input
+                  type="text"
+                  name="extensionName"
+                  className="input input-bordered input-sm"
+                  value={formData.extensionName}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="form-control">
+                <label className="label text-sm">Contact Number *</label>
+                <input
+                  type="tel"
+                  name="contact"
+                  className="input input-bordered input-sm"
+                  value={formData.contact}
+                  onChange={handleInputChange}
+                  required
+                  maxLength={11}
+                />
+              </div>
+              <div className="form-control">
+                <label className="label text-sm">Birthdate *</label>
+                <input
+                  type="date"
+                  name="birthdate"
+                  className="input input-bordered input-sm"
+                  value={formData.birthdate}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-control">
+                <label className="label text-sm">Sex *</label>
+                <select
+                  name="sex"
+                  className="input input-bordered input-sm"
+                  value={formData.sex}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Select</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div className="mt-6 w-full flex">
+              <button type="button" onClick={nextStep} className="btn btn-primary mr-0 ml-auto">
+                Next
+              </button>
+            </div>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="form-control col-span-2 text-lg font-semibold">Address Information</div>
+              <div className="form-control col-span-2">
+                <label className="label text-sm">Home Address *</label>
+                <input
+                  type="text"
+                  name="homeAddress"
+                  className="input input-bordered input-sm"
+                  value={formData.homeAddress}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-control">
+                <label className="label text-sm">Province *</label>
+                <input
+                  type="text"
+                  name="province"
+                  className="input input-bordered input-sm"
+                  value={formData.province}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-control">
+                <label className="label text-sm">City *</label>
+                <input
+                  type="text"
+                  name="city"
+                  className="input input-bordered input-sm"
+                  value={formData.city}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-control">
+                <label className="label text-sm">Barangay *</label>
+                <input
+                  type="text"
+                  name="barangay"
+                  className="input input-bordered input-sm"
+                  value={formData.barangay}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-control">
+                <label className="label text-sm">Zip Code *</label>
+                <input
+                  type="text"
+                  name="zipCode"
+                  className="input input-bordered input-sm"
+                  value={formData.zipCode}
+                  onChange={handleInputChange}
+                  required
+                  maxLength={4}
+                />
+              </div>
+            </div>
+            <div className="mt-6 flex justify-between">
+              <button type="button" onClick={prevStep} className="btn text-white btn-secondary mr-2">
+                Previous
+              </button>
+              <button type="button" onClick={nextStep} className="btn btn-primary ">
+                Next
+              </button>
+            </div>
+          </>
+        )}
+
+        {step === 3 && (
+          <>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="form-control col-span-2 text-lg font-semibold">Account Information</div>
+              <div className="form-control col-span-2">
+                <label className="label text-sm">Email *</label>
+                <input
+                  type="email"
+                  name="email"
+                  className="input input-bordered input-sm"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-control">
+                <label className="label text-sm">Password *</label>
+                <input
+                  type="password"
+                  name="password"
+                  className="input input-bordered input-sm"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-control">
+                <label className="label text-sm">Confirm Password *</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  className="input input-bordered input-sm"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+            </div>
+            <div className="mt-6 flex justify-between">
+              <button type="button" onClick={prevStep} className="btn btn-secondary text-white mr-2">
+                Previous
+              </button>
+              <button type="submit" className="btn btn-primary" disabled={isLoading}>
+                {isLoading ? "Signing up..." : "Submit"}
+              </button>
+            </div>
+          </>
+        )}
       </form>
     </div>
   );

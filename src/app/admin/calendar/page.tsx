@@ -61,7 +61,7 @@ const AdminCalendar: React.FC = () => {
 
             return {
               id: doc.id,
-              title: data.purpose || "Appointment",
+              title: `${data.purpose}/n ${data.name}`,
               start: `${data.selectedDate}T${startTime}`,
               end: `${data.selectedDate}T${endTime}`,
               appointmentType: data.appointmentType,
