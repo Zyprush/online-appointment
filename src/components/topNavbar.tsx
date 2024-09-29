@@ -29,9 +29,9 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <Link href="/contact" className="hover:text-primary hover:font-bold hover:underline">
+            <a href="mailto:mambuappoint@gmail.com" className="hover:text-primary hover:font-bold hover:underline">
               Contact
-            </Link>
+            </a>
           </li>
         </ul>
         <div className="hidden md:block space-x-4">
