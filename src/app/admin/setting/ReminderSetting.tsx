@@ -1,7 +1,11 @@
 "use client";
-import React, { useState, useEffect, ChangeEvent } from "react";
+import React, { useState, useEffect } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase";
+import dynamic from 'next/dynamic';
+
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+import 'react-quill/dist/quill.snow.css';
 
 const ReminderSetting: React.FC = (): JSX.Element => {
   const [isEditing, setIsEditing] = useState(false);
@@ -37,8 +41,8 @@ const ReminderSetting: React.FC = (): JSX.Element => {
     setNewValue(value || "");
   };
 
-  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    setNewValue(event.target.value);
+  const handleChange = (content: string) => {
+    setNewValue(content);
   };
 
   const handleSave = async () => {
@@ -66,19 +70,18 @@ const ReminderSetting: React.FC = (): JSX.Element => {
       ) : (
         <>
           {isEditing ? (
-            <div className="flex w-full justify-start gap-5 items-center my-auto">
+            <div className="flex w-full flex-col justify-start gap-5 items-start my-auto">
               <p className="font-semibold text-primary text-sm">
                 Reminder
               </p>
-              <textarea
+              <ReactQuill
                 value={newValue}
-                placeholder="Enter reminder"
                 onChange={handleChange}
-                className="textarea textarea-bordered textarea-sm w-80 rounded-sm resize-none"
-                disabled={isSaving}
-                rows={3}
+                placeholder="Enter reminder"
+                className="w-full h-40"
+                readOnly={isSaving}
               />
-              <div className="flex gap-2  ml-auto mr-0">
+              <div className="flex gap-2 mt-10 mr-0 ml-auto">
                 <button
                   onClick={handleCancel}
                   className="btn btn-sm btn-outline text-secondary rounded-sm"
@@ -97,15 +100,16 @@ const ReminderSetting: React.FC = (): JSX.Element => {
             </div>
           ) : (
             <div className="flex w-full justify-start my-auto gap-5 items-center">
-              <p className="font-semibold text-primary text-sm">
+              <p className="font-bold mb-auto mt-0  text-primary">
                 Reminder
               </p>
-              <p className="text-sm text-zinc-500 ml-0 mr-auto max-w-80 text-center">
-                {value ? value : `No data for Reminder`}
-              </p>
+              <div 
+                className="text-sm text-zinc-500 ml-0 w-full rounded-sm min-w-80 p-2 bg-slate-100 reminder-content"
+                dangerouslySetInnerHTML={{ __html: value || 'No data for Reminder' }}
+              />
               <button
                 onClick={toggleEdit}
-                className="btn btn-outline btn-sm rounded-sm text-primary mx-auto hover:text-secondary ml-auto mr-0"
+                className="btn btn-outline btn-sm rounded-sm text-primary mx-auto hover:text-secondary ml-auto mb-auto mt-0 mr-0"
               >
                 Edit
               </button>

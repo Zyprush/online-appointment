@@ -26,3 +26,37 @@ body {
     font-family: 'DM Mono', monospace; /* Custom class for DM Mono */
   }
 }
+
+
+.reminder-content ul, .reminder-content ol {
+  list-style-position: inside;
+  padding-left: 1.5em;
+}
+
+.reminder-content ul {
+  list-style-type: disc;
+}
+
+.reminder-content ol {
+  list-style-type: decimal;
+}
+
+.reminder-content li {
+  margin-bottom: 0.5em;
+}
+
+.reminder-content p {
+  margin-bottom: 1em;
+}
+
+.reminder-content strong {
+  font-weight: bold;
+}
+
+.reminder-content em {
+  font-style: italic;
+}
+
+.reminder-content u {
+  text-decoration: underline;
+}

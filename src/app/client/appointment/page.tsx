@@ -4,6 +4,7 @@ import ClientRequestAppointment from "./ClientRequestAppointment";
 import ClientAppointmentHistory from "./ClientAppointmentHistory";
 import ClientPendingAppointment from "./ClientPendingAppointment"; // Import ClientPendingAppointment component
 import NavLayout from "@/components/NavLayout";
+import Reminder from "@/app/student/dashboard/Reminder";
 
 const Page: React.FC = () => {
   const [activeComponent, setActiveComponent] = useState<string>("pendingAppointments");
@@ -58,6 +59,7 @@ const Page: React.FC = () => {
           {activeComponent === "requestAppointment" && <ClientRequestAppointment />}
           {activeComponent === "pendingAppointments" && <ClientPendingAppointment />} {/* Add the ClientPendingAppointment component */}
           {activeComponent === "appointmentHistory" && <ClientAppointmentHistory />}
+          {activeComponent === "requestAppointment" && <Reminder />}
         </div>
       </div>
     </NavLayout>
