@@ -36,6 +36,8 @@ const PendingAppointments: React.FC = () => {
     useState<AppointmentType | null>(null); // State for selected appointment
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // State for modal visibility
 
+  const [searchTerm, setSearchTerm] = useState<string>(""); // State for search input
+
   useEffect(() => {
     const fetchPendingAppointments = async () => {
       try {
@@ -87,7 +89,7 @@ const PendingAppointments: React.FC = () => {
         console.log('appointment.contact', appointment.contact)
         // Call the API to send SMS using axios
         // const response = await axios.post(
-        //   `/pages/api/send-sms`, // Use relative path for API call
+        //   /pages/api/send-sms, // Use relative path for API call
         //   {
         //     appointmentId: appointment.id,
         //     contact: appointment.contact,
@@ -137,6 +139,11 @@ const PendingAppointments: React.FC = () => {
     setSelectedAppointment(null);
   };
 
+  // Filter appointments based on search term
+  const filteredAppointments = appointments.filter((appointment) =>
+    appointment.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   if (loading) {
     return <div>Loading appointments...</div>;
   }
@@ -147,22 +154,34 @@ const PendingAppointments: React.FC = () => {
 
   return (
     <div className="overflow-x-auto">
+      {/* Search Input */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search by name..."
+          className="p-2 border border-gray-300 rounded"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)} // Update search term on input change
+        />
+      </div>
+
       <table className="min-w-full">
         <thead>
           <tr className="bg-gray-100">
             <th className="px-4 py-2 text-left">Appointment Code</th>
+            <th className="px-4 py-2 text-left">Name</th>
             <th className="px-4 py-2 text-left">Type</th>
             <th className="px-4 py-2 text-left">Date</th>
             <th className="px-4 py-2 text-left">Time</th>
             <th className="px-4 py-2 text-left">Status</th>
             <th className="px-4 py-2 text-left">Actions</th>
-            {/* New Actions Column */}
           </tr>
         </thead>
         <tbody>
-          {appointments.map((appointment) => (
+          {filteredAppointments.map((appointment) => (
             <tr key={appointment.id} className="border-b">
               <td className="px-4 py-2">{appointment.id}</td>
+              <td className="px-4 py-2 capitalize">{appointment.name}</td>
               <td className="px-4 py-2">{appointment.appointmentType}</td>
               <td className="px-4 py-2">{appointment.selectedDate}</td>
               <td className="px-4 py-2">{appointment.timeRange}</td>
@@ -217,4 +236,3 @@ const PendingAppointments: React.FC = () => {
 };
 
 export default PendingAppointments;
-

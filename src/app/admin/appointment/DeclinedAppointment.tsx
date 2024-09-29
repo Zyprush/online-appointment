@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/firebase";
-import ViewAppointment from "@/app/student/dashboard/ViewAppointment"; // Import the ViewAppointment modal
+import ViewAppointment from "@/app/student/dashboard/ViewAppointment";
 
 type AppointmentType = {
   id: string;
@@ -22,14 +22,16 @@ type AppointmentType = {
 
 const DeclinedAppointments: React.FC = () => {
   const [appointments, setAppointments] = useState<AppointmentType[]>([]);
+  const [filteredAppointments, setFilteredAppointments] = useState<AppointmentType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedAppointment, setSelectedAppointment] = useState<AppointmentType | null>(null); // State for selected appointment
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // State for modal visibility
+  const [selectedAppointment, setSelectedAppointment] = useState<AppointmentType | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   // States for filtering
-  const [filterType, setFilterType] = useState<string>(""); // State for appointment type filter
-  const [filterDate, setFilterDate] = useState<string>(""); // State for date filter
+  const [filterType, setFilterType] = useState<string>("");
+  const [filterDate, setFilterDate] = useState<string>("");
+  const [searchName, setSearchName] = useState<string>("");
 
   useEffect(() => {
     const fetchDeclinedAppointments = async () => {
@@ -37,12 +39,10 @@ const DeclinedAppointments: React.FC = () => {
         const appointmentsRef = collection(db, "appointments");
         let q = query(appointmentsRef, where("status", "==", "declined"));
 
-        // Apply type filter if selected
         if (filterType) {
           q = query(q, where("appointmentType", "==", filterType));
         }
 
-        // Apply date filter if selected
         if (filterDate) {
           q = query(q, where("selectedDate", "==", filterDate));
         }
@@ -65,6 +65,7 @@ const DeclinedAppointments: React.FC = () => {
           status: doc.data().status || "",
         }));
         setAppointments(appointmentsList);
+        setFilteredAppointments(appointmentsList);
       } catch (err) {
         setError("Error fetching appointments: " + (err as Error).message);
       } finally {
@@ -73,7 +74,14 @@ const DeclinedAppointments: React.FC = () => {
     };
 
     fetchDeclinedAppointments();
-  }, [filterType, filterDate]); // Fetch data again when filters change
+  }, [filterType, filterDate]);
+
+  useEffect(() => {
+    const filtered = appointments.filter((appointment) =>
+      appointment.name.toLowerCase().includes(searchName.toLowerCase())
+    );
+    setFilteredAppointments(filtered);
+  }, [searchName, appointments]);
 
   const handleView = (appointment: AppointmentType) => {
     setSelectedAppointment(appointment);
@@ -95,24 +103,32 @@ const DeclinedAppointments: React.FC = () => {
 
   return (
     <div className="overflow-x-auto">
-      {/* Filter section */}
-      <div className="mb-4">
+      <div className="mb-4 flex items-center">
         <label className="mr-2">Filter by Type:</label>
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
-          className="border rounded p-2"
+          className="border rounded p-2 mr-4"
         >
           <option value="">All Types</option>
           <option value="service">Service</option>
           <option value="meet">Meeting</option>
         </select>
 
-        <label className="ml-4 mr-2">Filter by Date:</label>
+        <label className="mr-2">Filter by Date:</label>
         <input
           type="date"
           value={filterDate}
           onChange={(e) => setFilterDate(e.target.value)}
+          className="border rounded p-2 mr-4"
+        />
+
+        <label className="mr-2">Search by Name:</label>
+        <input
+          type="text"
+          value={searchName}
+          onChange={(e) => setSearchName(e.target.value)}
+          placeholder="Enter name"
           className="border rounded p-2"
         />
       </div>
@@ -124,17 +140,19 @@ const DeclinedAppointments: React.FC = () => {
             <th className="px-4 py-2 text-left">Type</th>
             <th className="px-4 py-2 text-left">Date</th>
             <th className="px-4 py-2 text-left">Time</th>
+            <th className="px-4 py-2 text-left">Name</th>
             <th className="px-4 py-2 text-left">Status</th>
             <th className="px-4 py-2 text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {appointments.map((appointment) => (
+          {filteredAppointments.map((appointment) => (
             <tr key={appointment.id} className="border-b">
               <td className="px-4 py-2">{appointment.id}</td>
               <td className="px-4 py-2">{appointment.appointmentType}</td>
               <td className="px-4 py-2">{appointment.selectedDate}</td>
               <td className="px-4 py-2">{appointment.timeRange}</td>
+              <td className="px-4 py-2">{appointment.name}</td>
               <td className="px-4 py-2">
                 <span className="px-2 py-1 rounded bg-red-200 text-red-800">
                   {appointment.status}
@@ -153,7 +171,6 @@ const DeclinedAppointments: React.FC = () => {
         </tbody>
       </table>
 
-      {/* Modal for viewing appointment details */}
       {isModalOpen && selectedAppointment && (
         <ViewAppointment appointment={selectedAppointment} onClose={closeModal} />
       )}

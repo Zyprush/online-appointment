@@ -10,7 +10,7 @@ const AdminNavLink: React.FC<AdminNavLinkProps> = ({ isMobile = false }) => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      window.location.href = "/log-in";
+      window.location.href = "/";
     } catch (error) {
       console.error("Error logging out:", error);
     }

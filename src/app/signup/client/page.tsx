@@ -132,7 +132,7 @@ const SignupPage = () => {
   return (
     <div className="flex justify-center items-center h-full overflow-scroll fixed top-0 bottom-0 right-0 left-0 p-5 bg-[url('/img/omsc.jpg')]">
       <form onSubmit={handleSubmit} className="bg-white p-5 md:p-10 rounded-lg shadow-md w-full max-w-2xl">
-        <h2 className="text-2xl font-bold mb-6">Signup</h2>
+        <h2 className="text-2xl font-bold mb-6 text-primary">Signup as Client</h2>
 
         {step === 1 && (
           <>
@@ -143,7 +143,7 @@ const SignupPage = () => {
                 <input
                   type="text"
                   name="lastName"
-                  className="input input-bordered input-sm"
+                  className="input input-bordered input-sm rounded-sm"
                   value={formData.lastName}
                   onChange={handleInputChange}
                   required
@@ -154,7 +154,7 @@ const SignupPage = () => {
                 <input
                   type="text"
                   name="firstName"
-                  className="input input-bordered input-sm"
+                  className="input input-bordered input-sm rounded-sm"
                   value={formData.firstName}
                   onChange={handleInputChange}
                   required
@@ -165,7 +165,7 @@ const SignupPage = () => {
                 <input
                   type="text"
                   name="middleName"
-                  className="input input-bordered input-sm"
+                  className="input input-bordered input-sm rounded-sm"
                   value={formData.middleName}
                   onChange={handleInputChange}
                 />
@@ -175,7 +175,7 @@ const SignupPage = () => {
                 <input
                   type="text"
                   name="extensionName"
-                  className="input input-bordered input-sm"
+                  className="input input-bordered input-sm rounded-sm"
                   value={formData.extensionName}
                   onChange={handleInputChange}
                 />
@@ -185,7 +185,7 @@ const SignupPage = () => {
                 <input
                   type="tel"
                   name="contact"
-                  className="input input-bordered input-sm"
+                  className="input input-bordered input-sm rounded-sm"
                   value={formData.contact}
                   onChange={handleInputChange}
                   required
@@ -197,7 +197,7 @@ const SignupPage = () => {
                 <input
                   type="date"
                   name="birthdate"
-                  className="input input-bordered input-sm"
+                  className="input input-bordered input-sm rounded-sm"
                   value={formData.birthdate}
                   onChange={handleInputChange}
                   required
@@ -207,7 +207,7 @@ const SignupPage = () => {
                 <label className="label text-sm">Sex *</label>
                 <select
                   name="sex"
-                  className="input input-bordered input-sm"
+                  className="input input-bordered input-sm rounded-sm"
                   value={formData.sex}
                   onChange={handleInputChange}
                   required
@@ -236,7 +236,7 @@ const SignupPage = () => {
                 <input
                   type="text"
                   name="homeAddress"
-                  className="input input-bordered input-sm"
+                  className="input input-bordered input-sm rounded-sm"
                   value={formData.homeAddress}
                   onChange={handleInputChange}
                   required
@@ -247,7 +247,7 @@ const SignupPage = () => {
                 <input
                   type="text"
                   name="province"
-                  className="input input-bordered input-sm"
+                  className="input input-bordered input-sm rounded-sm"
                   value={formData.province}
                   onChange={handleInputChange}
                   required
@@ -258,7 +258,7 @@ const SignupPage = () => {
                 <input
                   type="text"
                   name="city"
-                  className="input input-bordered input-sm"
+                  className="input input-bordered input-sm rounded-sm"
                   value={formData.city}
                   onChange={handleInputChange}
                   required
@@ -269,7 +269,7 @@ const SignupPage = () => {
                 <input
                   type="text"
                   name="barangay"
-                  className="input input-bordered input-sm"
+                  className="input input-bordered input-sm rounded-sm"
                   value={formData.barangay}
                   onChange={handleInputChange}
                   required
@@ -280,7 +280,7 @@ const SignupPage = () => {
                 <input
                   type="text"
                   name="zipCode"
-                  className="input input-bordered input-sm"
+                  className="input input-bordered input-sm rounded-sm"
                   value={formData.zipCode}
                   onChange={handleInputChange}
                   required
@@ -308,7 +308,7 @@ const SignupPage = () => {
                 <input
                   type="email"
                   name="email"
-                  className="input input-bordered input-sm"
+                  className="input input-bordered input-sm rounded-sm"
                   value={formData.email}
                   onChange={handleInputChange}
                   required
@@ -319,7 +319,7 @@ const SignupPage = () => {
                 <input
                   type="password"
                   name="password"
-                  className="input input-bordered input-sm"
+                  className="input input-bordered input-sm rounded-sm"
                   value={formData.password}
                   onChange={handleInputChange}
                   required
@@ -330,7 +330,7 @@ const SignupPage = () => {
                 <input
                   type="password"
                   name="confirmPassword"
-                  className="input input-bordered input-sm"
+                  className="input input-bordered input-sm rounded-sm"
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
                   required

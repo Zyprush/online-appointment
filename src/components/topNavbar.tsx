@@ -19,17 +19,17 @@ const Navbar = () => {
         {/* Desktop Menu */}
         <ul className="hidden md:flex space-x-8 text-gray-700">
           <li>
-            <Link href="/" className="hover:text-blue-600">
+            <Link href="/" className="hover:text-primary hover:font-bold hover:underline">
               Home
             </Link>
           </li>
           <li>
-            <Link href="/about" className="hover:text-blue-600">
+            <Link href="/about" className="hover:text-primary hover:font-bold hover:underline">
               About Us
             </Link>
           </li>
           <li>
-            <Link href="/contact" className="hover:text-blue-600">
+            <Link href="/contact" className="hover:text-primary hover:font-bold hover:underline">
               Contact
             </Link>
           </li>
@@ -37,11 +37,11 @@ const Navbar = () => {
         <div className="hidden md:block space-x-4">
           <Link
             href="/signup/client"
-            className="text-blue-600 hover:text-blue-700"
+            className="text-blue-600  hover:text-primary hover:font-bold hover:underline"
           >
             Sign Up
           </Link>
-          <Link href="/log-in" className="text-blue-600 hover:text-blue-700">
+          <Link href="/log-in" className="text-blue-600 hover:text-primary hover:font-bold hover:underline">
             Login
           </Link>
         </div>

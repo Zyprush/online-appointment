@@ -29,6 +29,7 @@ const ApprovedAppointments: React.FC = () => {
 
   const [filterType, setFilterType] = useState<string>(""); // State for appointment type filter
   const [filterDate, setFilterDate] = useState<string>(""); // State for date filter
+  const [filterName, setFilterName] = useState<string>(""); // State for name filter
 
   useEffect(() => {
     const fetchApprovedAppointments = async () => {
@@ -63,7 +64,15 @@ const ApprovedAppointments: React.FC = () => {
           dateCreated: doc.data().dateCreated || "",
           status: doc.data().status || "",
         }));
-        setAppointments(appointmentsList);
+
+        // Apply name filter after fetching the data
+        const filteredAppointments = filterName
+          ? appointmentsList.filter((appointment) =>
+              appointment.name.toLowerCase().includes(filterName.toLowerCase())
+            )
+          : appointmentsList;
+
+        setAppointments(filteredAppointments);
       } catch (err) {
         setError("Error fetching appointments: " + (err as Error).message);
       } finally {
@@ -72,7 +81,7 @@ const ApprovedAppointments: React.FC = () => {
     };
 
     fetchApprovedAppointments();
-  }, [filterType, filterDate]); // Fetch data again when filters change
+  }, [filterType, filterDate, filterName]); // Fetch data again when filters change
 
   const handleView = (appointment: AppointmentType) => {
     setSelectedAppointment(appointment);
@@ -96,7 +105,16 @@ const ApprovedAppointments: React.FC = () => {
     <div className="overflow-x-auto">
       <div className="mb-4">
         {/* Filter section */}
-        <label className="mr-2">Filter by Type:</label>
+        <label className="mr-2">Filter by Name:</label>
+        <input
+          type="text"
+          value={filterName}
+          onChange={(e) => setFilterName(e.target.value)}
+          placeholder="Enter name"
+          className="border rounded p-2"
+        />
+
+        <label className="ml-4 mr-2">Filter by Type:</label>
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
@@ -120,6 +138,7 @@ const ApprovedAppointments: React.FC = () => {
         <thead>
           <tr className="bg-gray-100">
             <th className="px-4 py-2 text-left">Appointment Code</th>
+            <th className="px-4 py-2 text-left">Name</th>
             <th className="px-4 py-2 text-left">Type</th>
             <th className="px-4 py-2 text-left">Date</th>
             <th className="px-4 py-2 text-left">Time</th>
@@ -131,6 +150,7 @@ const ApprovedAppointments: React.FC = () => {
           {appointments.map((appointment) => (
             <tr key={appointment.id} className="border-b">
               <td className="px-4 py-2">{appointment.id}</td>
+              <td className="px-4 py-2 capitalize">{appointment.name}</td>
               <td className="px-4 py-2">{appointment.appointmentType}</td>
               <td className="px-4 py-2">{appointment.selectedDate}</td>
               <td className="px-4 py-2">{appointment.timeRange}</td>

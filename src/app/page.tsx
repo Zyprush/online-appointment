@@ -28,12 +28,19 @@ export default function Home() {
             Easily book and manage appointments with OMSC. Experience
             hassle-free scheduling for students, faculty, and staff.
           </p>
-          <div className="mt-4">
+          <div className="mt-4 gap-5 flex">
+            <Link
+              href="/calendar"
+              className="btn btn-primary rounded-md text-white px-6 py-3 font-normal"
+            >
+              Schedule
+            </Link>
+
             <Link
               href="/signup/client"
-              className="btn btn-primary rounded-md text-white px-6 py-3"
+              className="btn btn-primary rounded-md text-white px-6 py-3 font-normal"
             >
-              Get Started
+              Client Signup
             </Link>
           </div>
         </motion.div>
