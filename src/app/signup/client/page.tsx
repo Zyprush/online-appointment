@@ -26,23 +26,25 @@ const SignupPage = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    
-    if (name === 'zipCode') {
-      const numericValue = value.replace(/\D/g, '').slice(0, 4); // Limit to 4 digits
-      setFormData(prevData => ({
+
+    if (name === "zipCode") {
+      const numericValue = value.replace(/\D/g, "").slice(0, 4); // Limit to 4 digits
+      setFormData((prevData) => ({
         ...prevData,
         [name]: numericValue,
       }));
-    } else if (name === 'contact') {
-      const numericValue = value.replace(/\D/g, '').slice(0, 10); // Limit to 10 digits
-      setFormData(prevData => ({
+    } else if (name === "contact") {
+      const numericValue = value.replace(/\D/g, "").slice(0, 10); // Limit to 10 digits
+      setFormData((prevData) => ({
         ...prevData,
         [name]: numericValue,
       }));
     } else {
-      setFormData(prevData => ({
+      setFormData((prevData) => ({
         ...prevData,
         [name]: value,
       }));
@@ -59,22 +61,24 @@ const SignupPage = () => {
 
   const validateForm = () => {
     for (const [key, value] of Object.entries(formData)) {
-      if (!value && (key !== "middleName" && key !== "extensionName")) {
-        alert(`Please fill out the ${key.replace(/([A-Z])/g, ' $1').toLowerCase()}.`);
+      if (!value && key !== "middleName" && key !== "extensionName") {
+        alert(
+          `Please fill out the ${key.replace(/([A-Z])/g, " $1").toLowerCase()}.`
+        );
         return false;
       }
     }
-    
+
     if (!validateZipCode(formData.zipCode)) {
       alert("Please enter a valid 4-digit zip code.");
       return false;
     }
-    
+
     if (!validateContact(formData.contact)) {
       alert("Please enter a valid 10-digit contact number.");
       return false;
     }
-    
+
     return true;
   };
 
@@ -92,7 +96,11 @@ const SignupPage = () => {
 
     try {
       // Create user with Firebase Auth
-      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
       const user = userCredential.user;
 
       if (user) {
@@ -112,7 +120,7 @@ const SignupPage = () => {
           zipCode: formData.zipCode,
           email: formData.email,
           verified: true,
-          role: "client"
+          role: "client",
         });
 
         alert("Signup successful");
@@ -128,16 +136,45 @@ const SignupPage = () => {
 
   const nextStep = () => setStep(step + 1);
   const prevStep = () => setStep(step - 1);
+  const isStepValid = () => {
+    if (step === 1) {
+      return (
+        formData.lastName &&
+        formData.firstName &&
+        formData.contact &&
+        formData.birthdate &&
+        formData.sex
+      );
+    } else if (step === 2) {
+      return (
+        formData.homeAddress &&
+        formData.province &&
+        formData.city &&
+        formData.barangay &&
+        formData.zipCode
+      );
+    } else if (step === 3) {
+      return formData.email && formData.password && formData.confirmPassword;
+    }
+    return true;
+  };
 
   return (
     <div className="flex justify-center items-center h-full overflow-scroll fixed top-0 bottom-0 right-0 left-0 p-5 bg-[url('/img/omsc.jpg')]">
-      <form onSubmit={handleSubmit} className="bg-white p-5 md:p-10 rounded-lg shadow-md w-full max-w-2xl">
-        <h2 className="text-2xl font-bold mb-6 text-primary">Signup as Client</h2>
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-5 md:p-10 rounded-lg shadow-md w-full max-w-2xl"
+      >
+        <h2 className="text-2xl font-bold mb-6 text-primary">
+          Signup as Client
+        </h2>
 
         {step === 1 && (
           <>
             <div className="grid grid-cols-2 gap-4">
-              <div className="form-control col-span-2 text-lg font-semibold">Personal Information</div>
+              <div className="form-control col-span-2 text-lg font-semibold">
+                Personal Information
+              </div>
               <div className="form-control">
                 <label className="label text-sm">Last Name *</label>
                 <input
@@ -220,7 +257,12 @@ const SignupPage = () => {
               </div>
             </div>
             <div className="mt-6 w-full flex">
-              <button type="button" onClick={nextStep} className="btn btn-primary mr-0 ml-auto">
+              <button
+                type="button"
+                onClick={nextStep}
+                className="btn btn-primary mr-0 ml-auto"
+                disabled={!isStepValid()}
+              >
                 Next
               </button>
             </div>
@@ -230,7 +272,9 @@ const SignupPage = () => {
         {step === 2 && (
           <>
             <div className="grid grid-cols-2 gap-4">
-              <div className="form-control col-span-2 text-lg font-semibold">Address Information</div>
+              <div className="form-control col-span-2 text-lg font-semibold">
+                Address Information
+              </div>
               <div className="form-control col-span-2">
                 <label className="label text-sm">Home Address *</label>
                 <input
@@ -289,10 +333,19 @@ const SignupPage = () => {
               </div>
             </div>
             <div className="mt-6 flex justify-between">
-              <button type="button" onClick={prevStep} className="btn text-white btn-secondary mr-2">
+              <button
+                type="button"
+                onClick={prevStep}
+                className="btn text-white btn-secondary mr-2"
+              >
                 Previous
               </button>
-              <button type="button" onClick={nextStep} className="btn btn-primary ">
+              <button
+                type="button"
+                onClick={nextStep}
+                className="btn btn-primary "
+                disabled={!isStepValid()}
+              >
                 Next
               </button>
             </div>
@@ -302,7 +355,9 @@ const SignupPage = () => {
         {step === 3 && (
           <>
             <div className="grid grid-cols-2 gap-4">
-              <div className="form-control col-span-2 text-lg font-semibold">Account Information</div>
+              <div className="form-control col-span-2 text-lg font-semibold">
+                Account Information
+              </div>
               <div className="form-control col-span-2">
                 <label className="label text-sm">Email *</label>
                 <input
@@ -338,10 +393,18 @@ const SignupPage = () => {
               </div>
             </div>
             <div className="mt-6 flex justify-between">
-              <button type="button" onClick={prevStep} className="btn btn-secondary text-white mr-2">
+              <button
+                type="button"
+                onClick={prevStep}
+                className="btn btn-secondary text-white mr-2"
+              >
                 Previous
               </button>
-              <button type="submit" className="btn btn-primary" disabled={isLoading}>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={isLoading}
+              >
                 {isLoading ? "Signing up..." : "Submit"}
               </button>
             </div>

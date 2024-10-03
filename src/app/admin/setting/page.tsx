@@ -3,7 +3,6 @@ import NavLayout from "@/components/NavLayout";
 import React from "react";
 import Offices from "./Offices";
 import Services from "./Services";
-import Personnel from "./Personnel";
 import ResetPassword from "@/components/ResetPassword";
 import ReminderSetting from "./ReminderSetting";
 
@@ -16,7 +15,7 @@ const AdminAccount = () => {
           <ReminderSetting />
           <Offices />
           <Services />
-          <Personnel />
+          {/* <Personnel /> */}
           <ResetPassword />
         </div>
       </div>

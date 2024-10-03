@@ -6,9 +6,10 @@ const Offices = () => {
   const [offices, setOffices] = useState<
     {
       name: string;
+      phoneNumber: string;
     }[]
   >([]);
-  const [newOffices, setNewOffices] = useState<{ name: string }[]>([]); // New state for unsaved offices
+  const [newOffices, setNewOffices] = useState<{ name: string; phoneNumber: string }[]>([]); // New state for unsaved offices
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -40,18 +41,28 @@ const Offices = () => {
     }
   };
 
-  const isFormValid = () => {
-    return newOffices.every(office => office.name.trim() !== "");
+  // Cancel adding new offices
+  const cancelAddingOffices = () => {
+    if (window.confirm("Are you sure you want to cancel adding new offices? All unsaved changes will be lost.")) {
+      setNewOffices([]); // Clear unsaved new offices
+      setError(null); // Clear any error message
+    }
   };
 
-  const handleNewOfficeChange = (index: number, value: string) => {
+  const isFormValid = () => {
+    return newOffices.every(office => office.name.trim() !== "" && office.phoneNumber.trim() !== "");
+  };
+
+  const handleNewOfficeChange = (index: number, value: string, field: "name" | "phoneNumber") => {
     setNewOffices((prevNewOffices) =>
-      prevNewOffices.map((office, i) => (i === index ? { ...office, name: value } : office))
+      prevNewOffices.map((office, i) => 
+        i === index ? { ...office, [field]: value } : office
+      )
     );
   };
 
   const addNewOffice = () => {
-    setNewOffices([...newOffices, { name: "" }]);
+    setNewOffices([...newOffices, { name: "", phoneNumber: "" }]);
   };
 
   return (
@@ -67,6 +78,7 @@ const Offices = () => {
         offices.map((office, index) => (
           <div key={index} className="flex gap-3">
             <span>{office.name}</span>
+            <span>{office.phoneNumber}</span>
           </div>
         ))}
 
@@ -78,13 +90,20 @@ const Offices = () => {
               type="text"
               placeholder="Office Name"
               value={office.name}
-              onChange={(e) => handleNewOfficeChange(index, e.target.value)}
+              onChange={(e) => handleNewOfficeChange(index, e.target.value, "name")}
+              className="p-2 text-sm border-primary border-2 rounded-sm w-80"
+            />
+            <input
+              type="text"
+              placeholder="Phone Number"
+              value={office.phoneNumber}
+              onChange={(e) => handleNewOfficeChange(index, e.target.value, "phoneNumber")}
               className="p-2 text-sm border-primary border-2 rounded-sm w-80"
             />
           </div>
         ))}
 
-      {/* Add new office button and save changes */}
+      {/* Add new office button */}
       <div className="mx-auto flex gap-5">
         <button
           onClick={addNewOffice}
@@ -92,13 +111,25 @@ const Offices = () => {
         >
           Add Office
         </button>
-        <button
-          onClick={saveOffices}
-          className="btn btn-sm rounded-none btn-primary text-white"
-          disabled={!isFormValid() || loading}
-        >
-          {loading ? "Saving..." : "Save Changes"}
-        </button>
+
+        {/* Conditionally render Save and Cancel buttons only when there are unsaved offices */}
+        {newOffices.length > 0 && (
+          <>
+            <button
+              onClick={saveOffices}
+              className="btn btn-sm rounded-none btn-primary text-white"
+              disabled={!isFormValid() || loading}
+            >
+              {loading ? "Saving..." : "Save Changes"}
+            </button>
+            <button
+              onClick={cancelAddingOffices}
+              className="btn btn-sm rounded-none btn-outline text-red-500"
+            >
+              Cancel
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

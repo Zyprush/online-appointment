@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Calendar, Lock, BookOpen, User, Mail } from 'lucide-react'
+import { Lock, BookOpen, User, Mail, Eye, EyeOff } from 'lucide-react'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth, db } from '@/firebase'
 import { doc, getDoc } from 'firebase/firestore'
@@ -11,34 +11,30 @@ import Link from 'next/link'
 export default function LogIn() {
   const [studentNo, setStudentNo] = useState('')
   const [email, setEmail] = useState('')
-  const [birthday, setBirthday] = useState('')
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false) // New loading state
+  const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true) // Set loading to true
+    setLoading(true)
     try {
-      // Sign in the user
       const userCredential = await signInWithEmailAndPassword(auth, email, password)
       const uid = userCredential.user.uid
 
-      // Fetch student data from Firestore
       const studentDoc = await getDoc(doc(db, 'users', uid))
       if (studentDoc.exists()) {
         const studentData = studentDoc.data()
-        // Check if student ID and birthday match
-        if (studentData.studentId === studentNo && studentData.birthday === birthday) {
-          console.log('Sign in successful:', { studentNo, email, birthday })
-          // Redirect based on user role
-          const role = studentData.role; // Assuming role is stored in Firestore
+        if (studentData.studentId === studentNo) {
+          console.log('Sign in successful:', { studentNo, email })
+          const role = studentData.role;
           if (role === 'admin') {
             window.location.href = '/admin/dashboard';
           } else {
             window.location.href = '/student/dashboard';
           }
         } else {
-          alert('Student ID or birthday does not match.')
+          alert('Student ID does not match.')
         }
       } else {
         alert('No student record found.')
@@ -53,8 +49,12 @@ export default function LogIn() {
         alert('Error signing in: ' + errorMessage)
       }
     } finally {
-      setLoading(false) // Reset loading state
+      setLoading(false)
     }
+  }
+
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword)
   }
 
   return (
@@ -105,27 +105,24 @@ export default function LogIn() {
                 />
               </div>
               <div className="relative">
-                <Calendar className="absolute top-3 left-3 text-gray-400" />
-                <input
-                  type="date"
-                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  value={birthday}
-                  onChange={(e) => setBirthday(e.target.value)}
-                  required
-                  aria-label="Birth Date"
-                />
-              </div>
-              <div className="relative">
                 <Lock className="absolute top-3 left-3 text-gray-400" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Password"
-                  className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   aria-label="Password"
                 />
+                <button
+                  type="button"
+                  onClick={toggleShowPassword}
+                  className="absolute top-3 right-3 text-gray-400"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
               </div>
               <div className="flex space-x-4">
                 <Link
@@ -139,9 +136,9 @@ export default function LogIn() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className={`flex-1 ${loading ? 'bg-gray-400' : 'bg-primary'} text-white py-2 rounded-md transition duration-300`}
-                  disabled={loading} // Disable button while loading
+                  disabled={loading}
                 >
-                  {loading ? 'Signing in...' : 'Sign in'} {/* Change button text based on loading state */}
+                  {loading ? 'Signing in...' : 'Sign in'}
                 </motion.button>
               </div>
             </form>
@@ -152,7 +149,7 @@ export default function LogIn() {
               <a href="#" className="text-green-600 hover:underline">
                 Terms of Use
               </a>
-              and
+              {' '}and{' '}
               <a href="#" className="text-green-600 hover:underline">
                 Privacy Statement
               </a>
