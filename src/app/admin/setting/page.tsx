@@ -4,7 +4,6 @@ import React from "react";
 import Offices from "./Offices";
 import Services from "./Services";
 import ResetPassword from "@/components/ResetPassword";
-import ReminderSetting from "./ReminderSetting";
 
 const AdminAccount = () => {
   return (
@@ -12,7 +11,7 @@ const AdminAccount = () => {
       <div className="p-8">
         <h1 className="text-xl font-bold my-4">Admin Settings</h1>
         <div className="grid md:grid-cols-2 gap-8">
-          <ReminderSetting />
+          {/* <ReminderSetting /> */}
           <Offices />
           <Services />
           {/* <Personnel /> */}

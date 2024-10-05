@@ -2,14 +2,20 @@ import React, { useState, useEffect } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 
-const Services = () => {
-  const [services, setServices] = useState<
-    {
-      name: string;
-      office: string;
-    }[]
-  >([]);
-  const [offices, setOffices] = useState<string[]>([]); // State to store offices
+interface Office {
+  name: string;
+  phoneNumber: string;
+  designatedPersonnel: string;
+}
+
+interface Service {
+  name: string;
+  office: string;
+}
+
+const Services: React.FC = () => {
+  const [services, setServices] = useState<Service[]>([]);
+  const [offices, setOffices] = useState<Office[]>([]); 
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -24,7 +30,7 @@ const Services = () => {
         setServices(servicesDoc.data().services || []);
       }
       if (officesDoc.exists()) {
-        setOffices(officesDoc.data().offices.map((office: { name: string }) => office.name) || []);
+        setOffices(officesDoc.data().offices || []);
       }
     };
     fetchServicesAndOffices();
@@ -54,7 +60,7 @@ const Services = () => {
   // Handle changes in service name or office selection
   const handleServiceChange = (
     index: number,
-    field: keyof typeof services[number],
+    field: keyof Service,
     value: string
   ) => {
     setServices((prevServices) =>
@@ -120,9 +126,9 @@ const Services = () => {
                   className="p-2 text-sm border-primary border-2 rounded-sm"
                 >
                   <option value="">Select Office</option>
-                  {offices.map((office, i) => (
-                    <option key={i} value={office}>
-                      {office}
+                  {offices?.map((office, i) => (
+                    <option key={i} value={office?.name}>
+                      {office?.name}
                     </option>
                   ))}
                 </select>
