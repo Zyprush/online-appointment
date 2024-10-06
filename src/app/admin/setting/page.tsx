@@ -4,6 +4,7 @@ import React from "react";
 import Offices from "./Offices";
 import Services from "./Services";
 import ResetPassword from "@/components/ResetPassword";
+import OfficesAccount from "./OfficesAccount";
 
 const AdminAccount = () => {
   return (
@@ -14,7 +15,7 @@ const AdminAccount = () => {
           {/* <ReminderSetting /> */}
           <Offices />
           <Services />
-          {/* <Personnel /> */}
+          <OfficesAccount />
           <ResetPassword />
         </div>
       </div>

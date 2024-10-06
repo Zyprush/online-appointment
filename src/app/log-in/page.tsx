@@ -29,10 +29,16 @@ const page = () => {
           Client
         </Link>
         <Link
+          href={"/log-in/offices"}
+          className="bg-secondary text-white rounded-lg py-3 w-full transition duration-300 mb-4"
+        >
+          Office Administrator
+        </Link>
+        <Link
           href={"/log-in/admin"}
           className="bg-secondary text-white rounded-lg py-3 w-full transition duration-300"
         >
-          College/Office Administrator
+          System Administrator
         </Link>
         <p className="text-gray-500 text-xs md:text-sm mt-4">
           By using this service, you understand and agree to the OMSC Online
