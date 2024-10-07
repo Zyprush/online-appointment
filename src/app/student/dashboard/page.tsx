@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import Reminder from "./Reminder";
 import Appointment from "./Appointment";
 import RequestAppointment from "./RequestAppointment";
 import AppointmentHistory from "./AppointmentHistory";
@@ -59,7 +58,7 @@ const StudentDashboard: React.FC = () => {
         {/* Main Content */}
         <div className="w-full md:w-3/4 p-4 md:p-6">
           {activeComponent === "requestAppointment" && <RequestAppointment />}
-          <Reminder />
+          {/* <Reminder /> */}
           {activeComponent === "dashboard" && <Appointment />}
           {activeComponent === "appointments" && <Appointment />}
           {activeComponent === "appointmentHistory" && <AppointmentHistory />}

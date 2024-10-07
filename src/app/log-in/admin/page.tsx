@@ -34,7 +34,7 @@ export default function LogIn() {
       const uid = userCredential.user.uid;
       const studentDoc = await getDoc(doc(db, "users", uid));
       if (studentDoc.exists() && studentDoc.data().role === "admin") {
-        window.location.href = "/admin/appointment";
+        window.location.href = "/admin/client";
       } else {
         setError("No Admin or Staff record found.");
       }

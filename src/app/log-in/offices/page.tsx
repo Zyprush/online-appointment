@@ -1,16 +1,16 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useRouter } from "next/navigation"; // Import useRouter
+import { useRouter } from "next/navigation";
 import { db } from "@/firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { Eye, EyeOff } from "lucide-react"; // Import Eye and EyeOff icons
-
+import { Eye, EyeOff } from "lucide-react"; 
 interface Office {
   name: string;
   password: string;
   username: string;
 }
+
 
 const OfficesLogin = () => {
   const [officesData, setOfficesData] = useState<Office[]>([]); // Stores offices data from Firestore
