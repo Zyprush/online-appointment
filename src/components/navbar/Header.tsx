@@ -8,35 +8,50 @@ import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import ClientNavLink from "../ClientNavLink";
 import { motion, AnimatePresence } from "framer-motion";
+import OfficeNavLink from "../OfficeNavLink";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
 
+  // Check for office login data from localStorage
   useEffect(() => {
+    const checkOfficeLogin = () => {
+      const officeLoginData = localStorage.getItem("officeLoginData");
+      if (officeLoginData) {
+        setUserRole("office"); // Set role as 'office' if office login data exists
+      }
+    };
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
-          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          const userDoc = await getDoc(doc(db, "users", user.uid));
           if (userDoc.exists()) {
             setUserRole(userDoc.data().role);
           }
         } catch (error) {
-          console.error('Error fetching user role:', error);
+          console.error("Error fetching user role:", error);
         }
       } else {
-        setUserRole(null);
+        checkOfficeLogin(); // If not authenticated, check for office login
       }
     });
 
+    checkOfficeLogin(); // Also check office login on initial load
     return () => unsubscribe();
   }, []);
 
-  const NavLink = userRole === 'admin'
-    ? AdminNavLink
-    : userRole === 'client'
+  const NavLink =
+    userRole === "admin"
+      ? AdminNavLink
+      : userRole === "client"
       ? ClientNavLink
-      : StudentNavLink;
+      : userRole === "student" || userRole === "alumni"
+      ? StudentNavLink
+      : userRole === "office"
+      ? OfficeNavLink
+      : null; // If no role, don't show any NavLink
 
   return (
     <>
@@ -60,7 +75,7 @@ const Header = () => {
           </details>
           <p className="capitalize font-bold text-primary">{userRole}</p>
         </div>
-        {userRole && <NavLink />}
+        {userRole && NavLink && <NavLink />}
       </span>
 
       {/* Mobile Header */}
@@ -83,7 +98,7 @@ const Header = () => {
 
         {/* AnimatePresence handles the mounting/unmounting animations */}
         <AnimatePresence>
-          {isMenuOpen && userRole && (
+          {isMenuOpen && userRole && NavLink && (
             <motion.div
               key="menu" // Key is important for animating items in AnimatePresence
               initial={{ opacity: 0, y: -20 }}

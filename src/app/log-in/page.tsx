@@ -3,7 +3,7 @@ import React from "react";
 
 const page = () => {
   return (
-    <div className="flex justify-center items-center min-h-screen p-5 bg-[url('/img/omsc.jpg')] bg-cover bg-center fixed inset-0">
+    <div className="flex justify-center items-center min-h-screen p-5 bg-[url('/img/omsc.jpg')] fixed bg-center inset-0">
       <div className="w-full md:w-auto h-full hidden md:flex justify-center items-center"></div>
 
       <div className="bg-white rounded-lg shadow-lg p-6 md:p-8 text-center flex flex-col border w-full max-w-sm md:max-w-sm">
