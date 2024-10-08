@@ -34,7 +34,7 @@ const useFirestoreData = (docId: string, field: string) => {
   return data;
 };
 
-const RequestAppointment: React.FC = () => {
+const StudentRequestAppointment: React.FC = () => {
   const [appointmentType, setAppointmentType] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
@@ -64,11 +64,6 @@ const RequestAppointment: React.FC = () => {
 
     if (!appointmentType || !selectedDate || !selectedTime || !selectedOffice) {
       alert("Please fill in all required fields.");
-      setLoading(false);
-      return;
-    }
-    if (appointmentType === "visit" && !selectedPersonnel) {
-      alert("Please select a personnel.");
       setLoading(false);
       return;
     }
@@ -259,4 +254,4 @@ const RequestAppointment: React.FC = () => {
   );
 };
 
-export default RequestAppointment;
+export default StudentRequestAppointment;

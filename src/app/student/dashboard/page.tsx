@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Appointment from "./Appointment";
-import RequestAppointment from "./RequestAppointment";
+import StudentRequestAppointment from "./StudentRequestAppointment";
 import AppointmentHistory from "./AppointmentHistory";
 import NavLayout from "@/components/NavLayout";
 import { PlusCircle, Folder, FileText } from "lucide-react"; // Import Lucide icons
@@ -57,7 +57,7 @@ const StudentDashboard: React.FC = () => {
 
         {/* Main Content */}
         <div className="w-full md:w-3/4 p-4 md:p-6">
-          {activeComponent === "requestAppointment" && <RequestAppointment />}
+          {activeComponent === "requestAppointment" && <StudentRequestAppointment />}
           {/* <Reminder /> */}
           {activeComponent === "dashboard" && <Appointment />}
           {activeComponent === "appointments" && <Appointment />}
