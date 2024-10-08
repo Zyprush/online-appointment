@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import NavLayout from "@/components/NavLayout";
 import ApprovedAppointments from "./ApprovedAppointment"; // Import the ApprovedAppointments component
 import DeclinedAppointments from "./DeclinedAppointment"; // Import the DeclinedAppointments component
-import OfficePendingAppointment from "../dashboard copy/OfficePendingAppointment";
+import OfficePendingAppointment from "./OfficePendingAppointment";
 
 const AdminAppointments: React.FC = () => {
   const [status, setStatus] = useState<string>("pending"); // State to manage selected status
@@ -32,7 +32,6 @@ const AdminAppointments: React.FC = () => {
             Declined
           </button>
         </div>
-
         {status === "pending" && <OfficePendingAppointment />}
         {status === "approved" && <ApprovedAppointments />}
         {status === "declined" && <DeclinedAppointments />}

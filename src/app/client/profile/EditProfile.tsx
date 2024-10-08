@@ -27,7 +27,6 @@ const EditProfile = ({
   const [clientData, setClientData] = useState<ClientData | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchClientData = async (userId: string) => {
@@ -37,10 +36,10 @@ const EditProfile = ({
         if (docSnap.exists()) {
           setClientData(docSnap.data() as ClientData);
         } else {
-          setError("No client data found.");
+          alert("No client data found.");
         }
       } catch (err) {
-        setError("Error fetching client data.");
+        alert("Error fetching client data.");
         console.error(err);
       } finally {
         setLoading(false);
@@ -51,7 +50,7 @@ const EditProfile = ({
       if (user) {
         fetchClientData(user.uid);
       } else {
-        setError("No user logged in.");
+        alert("No user logged in.");
         setLoading(false);
       }
     });
@@ -68,13 +67,24 @@ const EditProfile = ({
     }
   };
 
+  const validateContact = (contact: string): boolean => {
+    const contactRegex = /^9\d{9}$/;
+    return contactRegex.test(contact);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     if (clientData) {
+      if (!validateContact(clientData.contact)) {
+        alert("Contact number must be 10 digits and start with 9.");
+        setSubmitting(false);
+        return;
+      }
+
       try {
-        const userId = auth.currentUser?.uid; // Get the current user's ID
-        if (!userId) throw new Error("User not authenticated."); // Handle case where user is not authenticated
+        const userId = auth.currentUser?.uid;
+        if (!userId) throw new Error("User not authenticated.");
 
         const docRef = doc(db, "users", userId);
         await updateDoc(docRef, {
@@ -82,20 +92,22 @@ const EditProfile = ({
           birthdate: clientData.birthdate,
           city: clientData.city,
           contact: clientData.contact,
-          extensionName: clientData.extensionName || "", // Use empty string if undefined
+          extensionName: clientData.extensionName || "",
           firstName: clientData.firstName,
           homeAddress: clientData.homeAddress,
           lastName: clientData.lastName,
-          middleName: clientData.middleName || "", // Use empty string if undefined
+          middleName: clientData.middleName || "",
           province: clientData.province,
         });
 
         alert("Profile updated successfully!");
-        onClose(); // Close modal after saving
+        onClose();
         window.location.reload();
       } catch (err) {
-        setError("Error updating client data.");
+        alert("Error updating client data.");
         console.error(err);
+      } finally {
+        setSubmitting(false);
       }
     }
   };
@@ -104,10 +116,6 @@ const EditProfile = ({
 
   if (loading) {
     return <div className="text-center">Loading...</div>;
-  }
-
-  if (error) {
-    return <div className="text-red-500 text-center">{error}</div>;
   }
 
   return (

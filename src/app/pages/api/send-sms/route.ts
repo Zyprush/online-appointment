@@ -3,22 +3,23 @@ import twilio from "twilio";
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
-const client = twilio(accountSid, authToken);
-console.log('process.env.TWILIO_PHONE_NUMBER', process.env.TWILIO_PHONE_NUMBER)
-export async function POST(req: Request) {
+const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
 
-  if (!accountSid || !authToken) {
+const client = twilio(accountSid, authToken);
+
+export async function POST(req: Request) {
+  if (!accountSid || !authToken || !twilioPhoneNumber) {
     return NextResponse.json(
-      { success: false, error: "Twilio credentials are missing." },
+      { success: false, error: "Twilio credentials or phone number are missing." },
       { status: 500 }
     );
   }
 
   try {
-    console.log("TRY SENDING MESS")
+    // Parse request body
     const {
       appointmentId,
-      // phone,
+      contact, // Use this contact field for sending the SMS
       selectedDate,
       timeRange,
       selectedOffice,
@@ -26,27 +27,23 @@ export async function POST(req: Request) {
     } = await req.json();
 
     // Construct the SMS message
-    const messageBody = `Your appointment (Code: ${appointmentId}) has been approved.\nDetails:\nDate: ${selectedDate}\nTime: ${timeRange}\nOffice/Personnel: ${
-      selectedOffice || selectedPersonnel
-    }.`;
+    const messageBody = `Your appointment (Code: ${appointmentId}) has been approved.\nDetails:\nDate: ${selectedDate}\nTime: ${timeRange}\nOffice/Personnel: ${selectedOffice || selectedPersonnel}.`;
 
     // Send the SMS
     const message = await client.messages.create({
       body: messageBody,
-      from: process.env.TWILIO_PHONE_NUMBER, // Make sure this is set
-      to: "+639084953288",
+      from: twilioPhoneNumber, // Use the Twilio phone number from environment variables
+      to: `+63${contact}`, // Send to the dynamic contact number provided
     });
-    if (message) {
-      console.log("MESSAGE SENT OK");
-    }
+
+    console.log('message', message)
+    // Respond with success if the message was sent
     return NextResponse.json({ success: true, message });
   } catch (error) {
-    console.log("ERROR", error);
+    console.error("Error sending SMS:", error);
     return NextResponse.json(
       { success: false, error: "Failed to send SMS" },
       { status: 500 }
     );
   }
 }
-
-// You can also export other HTTP methods if needed, e.g., GET, DELETE, etc.
