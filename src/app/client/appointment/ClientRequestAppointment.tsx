@@ -5,6 +5,7 @@ import { useUserData } from "@/hooks/useUserData";
 
 interface Option {
   name: string;
+  office?: string;
 }
 
 const useFirestoreData = (docId: string, field: string) => {
@@ -32,38 +33,34 @@ const ClientRequestAppointment: React.FC = () => {
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedService, setSelectedService] = useState("");
   const [selectedOffice, setSelectedOffice] = useState("");
-  const [selectedPersonnel, setSelectedPersonnel] = useState("");
   const [otherReason, setOtherReason] = useState("");
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
   const { userData } = useUserData();
 
   // Fetch data from Firestore
   const services = useFirestoreData("services", "services");
-  const personnel = useFirestoreData("personnel", "personnel");
   const offices = useFirestoreData("offices", "offices");
+
+  useEffect(() => {
+    if (appointmentType === "service" && selectedService) {
+      const service = services.find(s => s.name === selectedService);
+      if (service && service.office) {
+        setSelectedOffice(service.office);
+      }
+    }
+  }, [appointmentType, selectedService, services]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true); // Set loading to true
+    setLoading(true);
     if(userData?.verified === false) {
-      alert("Your account is restricted. Please contact the system admin f you have any questions: mambuappoint@gmail.com.");
+      alert("Your account is restricted. Please contact the system admin if you have any questions: mambuappoint@gmail.com.");
       setLoading(false);
       return;
     }
 
-    // Validate required fields
     if (!appointmentType || !selectedDate || !selectedTime || !selectedOffice) {
       alert("Please fill in all required fields.");
-      setLoading(false);
-      return;
-    }
-    if (appointmentType === "meet" && !selectedPersonnel) {
-      alert("Please select a personnel.");
-      setLoading(false);
-      return;
-    }
-    if (appointmentType === "other" && !otherReason) {
-      alert("Please enter a reason.");
       setLoading(false);
       return;
     }
@@ -71,14 +68,10 @@ const ClientRequestAppointment: React.FC = () => {
     const appointmentData = {
       submittedUid: userData?.uid,
       appointmentType,
-      purpose:
-        appointmentType === "meet"
-          ? "Meet OMSC Official"
-          : "Avail OMSC services",
+      purpose: appointmentType === "visit" ? "Visit OMSC Office" : "Avail OMSC services",
       selectedDate,
-      timeRange: selectedTime, 
+      timeRange: selectedTime,
       selectedService,
-      selectedPersonnel,
       selectedOffice,
       otherReason,
       name: `${userData?.firstName} ${userData?.lastName}` || userData?.fullName,
@@ -90,21 +83,19 @@ const ClientRequestAppointment: React.FC = () => {
     };
 
     try {
-      // Save appointment data to Firestore
       const appointmentsRef = collection(db, "appointments");
-      await setDoc(doc(appointmentsRef), appointmentData); // Use addDoc if you want to auto-generate IDs
+      await setDoc(doc(appointmentsRef), appointmentData);
       setAppointmentType(null);
       setSelectedDate("");
       setSelectedTime("");
       setSelectedService("");
       setSelectedOffice("");
-      setSelectedPersonnel("");
       setOtherReason("");
       alert("Appointment request submitted successfully.");
     } catch (error) {
       console.error("Error saving appointment:", error);
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false);
     }
   };
 
@@ -112,7 +103,6 @@ const ClientRequestAppointment: React.FC = () => {
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4">Request Appointment</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Appointment Type Section */}
         <div className="grid grid-cols-2 gap-5">
           <input type="text" className="input input-disabled input-sm" value={`${userData?.firstName} ${userData?.lastName}`} disabled />
           <input type="text" className="input input-disabled input-sm capitalize" value={userData?.role} disabled />
@@ -138,13 +128,13 @@ const ClientRequestAppointment: React.FC = () => {
             <button
               type="button"
               className={`mb-2 px-4 py-2 rounded ${
-                appointmentType === "meet"
+                appointmentType === "visit"
                   ? "bg-primary text-white"
                   : "bg-gray-200"
               }`}
-              onClick={() => setAppointmentType("meet")}
+              onClick={() => setAppointmentType("visit")}
             >
-              Meet OMSC Official
+              Visit OMSC Office
             </button>
           </div>
         </div>
@@ -170,27 +160,6 @@ const ClientRequestAppointment: React.FC = () => {
           </div>
         )}
 
-        {appointmentType === "meet" && (
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              * Select Personnel
-            </label>
-            <select
-              className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              value={selectedPersonnel}
-              onChange={(e) => setSelectedPersonnel(e.target.value)}
-              required
-            >
-              <option value="">Select a personnel</option>
-              {personnel.map((person) => (
-                <option key={person.name} value={person.name}>
-                  {person.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-
         {appointmentType && (
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -201,6 +170,7 @@ const ClientRequestAppointment: React.FC = () => {
               value={selectedOffice}
               onChange={(e) => setSelectedOffice(e.target.value)}
               required
+              disabled={appointmentType === "service"}
             >
               <option value="">Select an office</option>
               {offices.map((office) => (
@@ -212,7 +182,6 @@ const ClientRequestAppointment: React.FC = () => {
           </div>
         )}
 
-        {/* Date and Time Selection */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -251,10 +220,9 @@ const ClientRequestAppointment: React.FC = () => {
         <button
           type="submit"
           className="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          disabled={!appointmentType || loading} // Disable button while loading
+          disabled={!appointmentType || loading}
         >
-          {loading ? "Submitting..." : "Submit Request"}{" "}
-          {/* Change button text */}
+          {loading ? "Submitting..." : "Submit Request"}
         </button>
       </form>
     </div>
