@@ -8,7 +8,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db } from "@/firebase";
-import ViewAppointment from "@/app/student/dashboard/ViewAppointment"; // Import the ViewAppointment modal
+import ViewAppointment from "@/components/ViewAppointment";
 // import axios from 'axios'; // Import axios
 
 type AppointmentType = {

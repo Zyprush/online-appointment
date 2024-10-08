@@ -1,8 +1,10 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import { collection, getDocs, deleteDoc, doc, query, where } from 'firebase/firestore';
 import { db } from '@/firebase';
-import ViewAppointment from './ViewAppointment'; // Import the modal component
-import {useUserData} from "@/hooks/useUserData"; // Import useUserData
+import { useOffice } from '@/hooks/useOffice'; // Import the custom hook
+import ViewAppointment from '@/components/ViewAppointment';
 
 type AppointmentType = {
   id: string;
@@ -21,18 +23,27 @@ type AppointmentType = {
   status: string;
 };
 
-const Appointment = () => {
-  const { userData } = useUserData(); // Get current user data
+const OfficePendingAppointment = () => {
+  const officeData = useOffice(); // Use the custom hook to get office data
   const [appointments, setAppointments] = useState<AppointmentType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedAppointment, setSelectedAppointment] = useState<AppointmentType | null>(null); // State for selected appointment
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // State for modal visibility
+  const [selectedAppointment, setSelectedAppointment] = useState<AppointmentType | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchAppointments = async () => {
+      if (!officeData) {
+        setLoading(false);
+        return;
+      }
+
       try {
-        const appointmentsRef = query(collection(db, 'appointments'), where("submittedUid", "==", userData?.uid), where("status", "==", "pending")); // Filter by submittedUid and status
+        const appointmentsRef = query(
+          collection(db, 'appointments'),
+          where("selectedOffice", "==", officeData.office),
+          where("status", "==", "pending")
+        );
         const snapshot = await getDocs(appointmentsRef);
         const appointmentsList = snapshot.docs.map(doc => ({
           id: doc.id,
@@ -58,10 +69,8 @@ const Appointment = () => {
       }
     };
 
-    if (userData?.uid) { // Ensure user UID is available before fetching
-      fetchAppointments();
-    }
-  }, [userData]); // Dependency on userData
+    fetchAppointments();
+  }, [officeData]);
 
   const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this appointment?")) {
@@ -92,9 +101,13 @@ const Appointment = () => {
     return <div>{error}</div>;
   }
 
+  if (!officeData) {
+    return <div>No office data available. Please log in.</div>;
+  }
+
   return (
     <div className="bg-white p-4 rounded shadow overflow-x-auto">
-      <h3 className="font-bold text-lg mb-4">Your Appointments</h3>
+      <h3 className="font-bold text-lg mb-4">Appointments for {officeData.office}</h3>
       <input
         type="text"
         placeholder="Search"
@@ -117,7 +130,7 @@ const Appointment = () => {
                 <td className="border px-4 py-2">{appointment.id}</td>
                 <td className="border px-4 py-2">{appointment.appointmentType}</td>
                 <td className="border px-4 py-2">{`${appointment.selectedDate} ${appointment.timeRange}`}</td>
-                <td className="border px-4 py-2">Pending</td>
+                <td className="border px-4 py-2">{appointment.status}</td>
                 <td className="border px-4 py-2">
                   <button className="text-blue-500 hover:underline" onClick={() => handleView(appointment)}>View</button>
                   <button
@@ -132,14 +145,13 @@ const Appointment = () => {
           ) : (
             <tr>
               <td className="border px-4 py-2" colSpan={5}>
-                No appointments found.
+                No appointments found for this office.
               </td>
             </tr>
           )}
         </tbody>
       </table>
 
-      {/* Modal for viewing appointment details */}
       {isModalOpen && selectedAppointment && (
         <ViewAppointment appointment={selectedAppointment} onClose={closeModal} />
       )}
@@ -147,4 +159,4 @@ const Appointment = () => {
   );
 };
 
-export default Appointment;
+export default OfficePendingAppointment;

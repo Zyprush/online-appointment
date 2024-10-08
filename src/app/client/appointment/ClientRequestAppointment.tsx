@@ -111,7 +111,7 @@ const ClientRequestAppointment: React.FC = () => {
         </div>
         <div>
           <label className="block text-gray-700 text-sm font-bold mb-2">
-            * Appointment Type
+            * Purpose of Appointment
           </label>
           <div className="flex flex-col md:flex-row md:space-x-2">
             <button

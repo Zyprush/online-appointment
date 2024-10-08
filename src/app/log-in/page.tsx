@@ -17,14 +17,8 @@ const page = () => {
           Please click or tap the appropriate button.
         </p>
         <Link
-          href={"/log-in/student"}
-          className="bg-primary text-white rounded-lg py-3 w-full hover:bg-blue-600 transition duration-300 mb-4"
-        >
-          Student/Alumni
-        </Link>
-        <Link
           href={"/log-in/client"}
-          className="bg-gray-500 text-white rounded-lg py-3 w-full hover:bg-gray-600 transition duration-300 mb-4"
+          className="bg-primary text-white rounded-lg py-3 w-full hover:bg-blue-600 transition duration-300 mb-4"
         >
           Client
         </Link>
@@ -36,9 +30,9 @@ const page = () => {
         </Link>
         <Link
           href={"/log-in/admin"}
-          className="bg-secondary text-white rounded-lg py-3 w-full transition duration-300"
+          className="bg-zinc-600 text-white rounded-lg py-3 w-full transition duration-300"
         >
-          System Administrator
+          System Admin
         </Link>
         <p className="text-gray-500 text-xs md:text-sm mt-4">
           By using this service, you understand and agree to the OMSC Online

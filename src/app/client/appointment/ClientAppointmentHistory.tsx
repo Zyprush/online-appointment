@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { db } from "@/firebase"; // Import Firestore
 import { collection, getDocs, query, where } from "firebase/firestore"; // Import query and where
 import { useUserData } from "@/hooks/useUserData";
-import ViewAppointment from "@/app/student/dashboard/ViewAppointment";
+import ViewAppointment from "@/components/ViewAppointment";
 
 interface Appointment {
   id: string;

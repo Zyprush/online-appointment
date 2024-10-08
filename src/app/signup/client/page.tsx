@@ -124,7 +124,7 @@ const SignupPage = () => {
         });
 
         alert("Signup successful");
-        window.location.href = "/";
+        window.location.href = "/log-in";
       }
     } catch (error) {
       console.error("Error signing up: ", error);
@@ -163,9 +163,9 @@ const SignupPage = () => {
     <div className="flex justify-center items-center h-full overflow-scroll fixed top-0 bottom-0 right-0 left-0 p-5 bg-[url('/img/omsc.jpg')]">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-5 md:p-10 rounded-lg shadow-md w-full max-w-2xl"
+        className="bg-white p-5 md:p-10 rounded-2xl shadow-md w-full max-w-2xl"
       >
-        <h2 className="text-2xl font-bold mb-6 text-primary">
+        <h2 className="text-3xl font-bold mb-4 text-primary">
           Signup as Client
         </h2>
 

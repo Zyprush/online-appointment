@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { db } from "@/firebase"; // Import Firestore
 import { collection, getDocs, query, where, deleteDoc, doc } from "firebase/firestore"; // Import deleteDoc
 import { useUserData } from "@/hooks/useUserData";
-import ViewAppointment from "@/app/student/dashboard/ViewAppointment";
+import ViewAppointment from "@/components/ViewAppointment";
 
 interface Appointment {
     id: string;
@@ -130,11 +130,11 @@ const ClientPendingAppointment: React.FC = () => {
       </div>
 
       {/* Appointments Table */}
-      <table className="min-w-full">
+      <table className="min-w-full bg-white">
         <thead>
-          <tr className="bg-gray-100">
+          <tr className="border-b ">
             <th className="px-4 py-2 text-left">Appointment Code</th>
-            <th className="px-4 py-2 text-left">Type</th>
+            <th className="px-4 py-2 text-left">Purpose</th>
             <th className="px-4 py-2 text-left">Date</th>
             <th className="px-4 py-2 text-left">Time</th>
             <th className="px-4 py-2 text-left">Status</th>
@@ -158,14 +158,14 @@ const ClientPendingAppointment: React.FC = () => {
                     {appointment.status}
                   </span>
                 </td>
-                <td className="px-4 py-2">
+                <td className="px-4 py-2 flex gap-2">
                   <button
                     className="text-blue-500 hover:underline"
                     onClick={() => handleView(appointment)}
                   >
                     View
-                  </button>{" "}
-                  |{" "}
+                  </button>
+                  
                   <button
                     className="text-red-500 hover:underline"
                     onClick={() => handleDelete(appointment.id)}

@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { collection, getDocs, deleteDoc, doc, query, where } from 'firebase/firestore';
-import { db } from '@/firebase';
 import { useOffice } from '@/hooks/useOffice'; // Import the custom hook
-import ViewAppointment from '@/app/student/dashboard/ViewAppointment';
+import ViewAppointment from '@/components/ViewAppointment';
+import { db } from '@/firebase';
 
 type AppointmentType = {
   id: string;
