@@ -19,6 +19,7 @@ interface AppointmentProps {
   onClose: () => void; // Function to close the modal
 }
 
+
 const ViewAppointment: React.FC<AppointmentProps> = ({ appointment, onClose }) => {
   console.log('appointment', appointment)
   return (
@@ -30,10 +31,8 @@ const ViewAppointment: React.FC<AppointmentProps> = ({ appointment, onClose }) =
         <p><strong>Date:</strong> {appointment.selectedDate}</p>
         <p><strong>Time:</strong> {appointment.timeRange}</p>
         <p><strong>Service:</strong> {appointment.selectedService}</p>
-        {appointment.selectedPersonnel && (
-          <p><strong>Personnel:</strong> {appointment.selectedPersonnel}</p>
-        )}
         <p><strong>Office:</strong> {appointment.selectedOffice}</p>
+        <p><strong>Other Reason:</strong> {appointment.otherReason}</p>
         <p><strong>Name:</strong> {appointment.name}</p>
         <p><strong>Contact:</strong> {appointment.contact}</p>
         <p><strong>Email:</strong> {appointment.email}</p>

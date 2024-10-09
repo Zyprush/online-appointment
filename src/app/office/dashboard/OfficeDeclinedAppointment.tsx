@@ -1,15 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import {
-  collection,
-  getDocs,
-  doc,
-  query,
-  where,
-  updateDoc,
-} from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { useOffice } from "@/hooks/useOffice"; // Import the custom hook
 import ViewAppointment from "@/components/ViewAppointment";
 import { db } from "@/firebase";
@@ -32,13 +24,16 @@ type AppointmentType = {
   officeCode: string;
 };
 
-const OfficePendingAppointment = () => {
+const OfficeDeclinedAppointment = () => {
   const officeData = useOffice(); // Use the custom hook to get office data
   const [appointments, setAppointments] = useState<AppointmentType[]>([]);
-  const [filteredAppointments, setFilteredAppointments] = useState<AppointmentType[]>([]); // State for filtered appointments
+  const [filteredAppointments, setFilteredAppointments] = useState<
+    AppointmentType[]
+  >([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>(""); // State for search query
+  const [selectedDate, setSelectedDate] = useState<string>(""); // State for selected date
   const [selectedAppointment, setSelectedAppointment] =
     useState<AppointmentType | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -54,7 +49,7 @@ const OfficePendingAppointment = () => {
       const appointmentsRef = query(
         collection(db, "appointments"),
         where("selectedOffice", "==", officeData.office),
-        where("status", "==", "pending")
+        where("status", "==", "declined")
       );
       const snapshot = await getDocs(appointmentsRef);
       const appointmentsList = snapshot.docs.map((doc) => ({
@@ -83,13 +78,27 @@ const OfficePendingAppointment = () => {
     }
   };
 
-  // Filter appointments by search query
+  // Filter appointments by search query and selected date
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
-    const filtered = appointments.filter((appointment) =>
-      appointment.name.toLowerCase().includes(query)
-    );
+    filterAppointments(query, selectedDate);
+  };
+
+  // Handle date change
+  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const date = event.target.value;
+    setSelectedDate(date);
+    filterAppointments(searchQuery, date);
+  };
+
+  // Filter appointments based on search query and selected date
+  const filterAppointments = (query: string, date: string) => {
+    const filtered = appointments.filter((appointment) => {
+      const matchesName = appointment.name.toLowerCase().includes(query);
+      const matchesDate = date ? appointment.selectedDate === date : true;
+      return matchesName && matchesDate;
+    });
     setFilteredAppointments(filtered);
   };
 
@@ -98,56 +107,6 @@ const OfficePendingAppointment = () => {
     fetchAppointments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [officeData]);
-
-  const handleDecline = async (id: string) => {
-    if (window.confirm("Are you sure you want to decline this appointment?")) {
-      try {
-        const appointmentRef = doc(db, "appointments", id);
-        await updateDoc(appointmentRef, { status: "declined" }); // Update status to declined
-        setAppointments(appointments.filter((appt) => appt.id !== id)); // Remove from state
-        setFilteredAppointments(filteredAppointments.filter((appt) => appt.id !== id)); // Remove from filtered list
-      } catch (err) {
-        setError("Error declining appointment: " + (err as Error).message);
-      }
-    }
-  };
-
-  const handleApprove = async (id: string, appointment: AppointmentType) => {
-    if (window.confirm("Do you want to approve this appointment?")) {
-      try {
-        // Call the API to send SMS using axios
-        const response = await axios.post(
-          "/pages/api/send-sms", // Use relative path for API call
-          {
-            appointmentId: appointment.id,
-            contact: appointment.contact,
-            selectedDate: appointment.selectedDate,
-            timeRange: appointment.timeRange,
-            selectedOffice: appointment.selectedOffice,
-            selectedPersonnel: appointment.selectedPersonnel,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (response.data.success) {
-          // Update Firestore status to approved
-          const appointmentRef = doc(db, "appointments", id);
-          await updateDoc(appointmentRef, { status: "approved" });
-
-          // Refetch appointments after approval to refresh the list
-          await fetchAppointments();
-        } else {
-          setError("Failed to send SMS: " + response.data.error);
-        }
-      } catch (err) {
-        setError("Error approving appointment: " + (err as Error).message);
-      }
-    }
-  };
 
   const handleView = (appointment: AppointmentType) => {
     setSelectedAppointment(appointment);
@@ -173,13 +132,25 @@ const OfficePendingAppointment = () => {
 
   return (
     <div className="bg-white p-4 rounded shadow overflow-x-auto">
-      <input
-        type="text"
-        placeholder="Search by Name"
-        value={searchQuery}
-        onChange={handleSearch} // Add the search handler
-        className="border rounded w-80 px-2 py-1 mb-4"
-      />
+      <div className="flex items-center mb-4 gap-5">
+        <input
+          type="text"
+          placeholder="Search by Name"
+          value={searchQuery}
+          onChange={handleSearch} // Add the search handler
+          className="border rounded w-80 px-2 py-1 "
+        />
+        <span className="flex gap-2 items-center">
+          <p>Filter by Date</p>
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={handleDateChange} // Add date change handler
+            className="border rounded w-40 px-2 py-1"
+          />
+        </span>
+      </div>
+
       <table className="table-auto w-full text-left">
         <thead>
           <tr className="bg-gray-200">
@@ -207,18 +178,6 @@ const OfficePendingAppointment = () => {
                   >
                     View
                   </button>
-                  <button
-                    className="text-green-500 hover:underline ml-2"
-                    onClick={() => handleApprove(appointment.id, appointment)}
-                  >
-                    Approve
-                  </button>
-                  <button
-                    className="text-red-500 hover:underline ml-2"
-                    onClick={() => handleDecline(appointment.id)}
-                  >
-                    Decline
-                  </button>
                 </td>
               </tr>
             ))
@@ -242,4 +201,4 @@ const OfficePendingAppointment = () => {
   );
 };
 
-export default OfficePendingAppointment;
+export default OfficeDeclinedAppointment;

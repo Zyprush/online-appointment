@@ -25,11 +25,11 @@ const AdminNavLink: React.FC<AdminNavLinkProps> = ({ isMobile = false }) => {
       {/* <Link href="/admin/appointment" className={linkClass}>
         Appointment
       </Link> */}
-      {/* <Link href="/admin/calendar" className={linkClass}>
+      <Link href="/admin/calendar" className={linkClass}>
         Calendar
-      </Link> */}
+      </Link>
       <Link href="/admin/client" className={linkClass}>
-        Dashboard 
+        Dashboard
       </Link>
       {/* <Link href="/admin/student" className={linkClass}>
         Student
