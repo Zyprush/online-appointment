@@ -2,7 +2,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-const OfficeRouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const OfficeRouteGuard: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [loading, setLoading] = useState(true); // Add loading state
   const router = useRouter();
 
@@ -19,7 +21,11 @@ const OfficeRouteGuard: React.FC<{ children: React.ReactNode }> = ({ children })
   }, [router]);
 
   if (loading) {
-    return <div>Loading...</div>; // Display loading message while checking authentication
+    return (
+      <div className="flex justify-center gap-2 items-center w-screen h-screen text-primary">
+        <span className="loading loading-spinner loading-xs"></span>Loading...
+      </div>
+    ); // Display loading message while checking authentication
   }
 
   return <>{children}</>; // Render children if authenticated

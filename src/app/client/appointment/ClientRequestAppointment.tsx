@@ -293,10 +293,16 @@ const ClientRequestAppointment: React.FC = () => {
               required
             >
               <option value="">Select a time</option>
-              <option value="8am-10am">8:00 AM - 10:00 AM</option>
-              <option value="10am-12pm">10:00 AM - 12:00 PM</option>
-              <option value="1pm-3pm">1:00 PM - 3:00 PM</option>
-              <option value="3pm-5pm">3:00 PM - 5:00 PM</option>
+              <option value="8:00am-9:00am">8:00 AM - 9:00 AM</option>
+              <option value="9:00am-10:00am">9:00 AM - 10:00 AM</option>
+              <option value="10:00am-11:00am">10:00 AM - 11:00 AM</option>
+              <option value="11:00am-12:00pm">11:00 AM - 12:00 PM</option>
+              {/* <option value="12:00pm-1:00pm">12:00 PM - 1:00 PM</option> */}
+              <option value="1:00pm-2:00pm">1:00 PM - 2:00 PM</option>
+              <option value="2:00pm-3:00pm">2:00 PM - 3:00 PM</option>
+              <option value="3:00pm-4:00pm">3:00 PM - 4:00 PM</option>
+              <option value="4:00pm-5:00pm">4:00 PM - 5:00 PM</option>
+        
             </select>
           </div>
         </div>
