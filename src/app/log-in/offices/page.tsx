@@ -4,13 +4,13 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { db } from "@/firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { Eye, EyeOff } from "lucide-react"; 
+import { Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
 interface Office {
   name: string;
   password: string;
   username: string;
 }
-
 
 const OfficesLogin = () => {
   const [officesData, setOfficesData] = useState<Office[]>([]); // Stores offices data from Firestore
@@ -46,14 +46,19 @@ const OfficesLogin = () => {
 
   const handleLogin = () => {
     const officeData = officesData.find(
-      (o) => o.name === office && o.username === username && o.password === password
+      (o) =>
+        o.name === office && o.username === username && o.password === password
     );
 
     if (officeData) {
       // Save to localStorage
       localStorage.setItem(
         "officeLoginData",
-        JSON.stringify({ office: officeData.name, username: officeData.username, password: officeData.password })
+        JSON.stringify({
+          office: officeData.name,
+          username: officeData.username,
+          password: officeData.password,
+        })
       );
 
       setError(null);
@@ -80,10 +85,16 @@ const OfficesLogin = () => {
       >
         <div className="bg-white rounded-lg shadow-xl overflow-hidden">
           <div className="p-8">
-            <h2 className="text-2xl font-bold text-center text-gray-800 mb-1">Office Login</h2>
-            <p className="text-sm text-center text-gray-600 mb-8">Sign in to access your office account</p>
+            <h2 className="text-2xl font-bold text-center text-gray-800 mb-1">
+              Office Login
+            </h2>
+            <p className="text-sm text-center text-gray-600 mb-8">
+              Sign in to access your office account
+            </p>
             {error && <div className="text-red-500 text-center">{error}</div>}
-            {success && <div className="text-green-500 text-center">{success}</div>}
+            {success && (
+              <div className="text-green-500 text-center">{success}</div>
+            )}
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -150,15 +161,26 @@ const OfficesLogin = () => {
                 </button>
               </div>
 
+              <div className="flex gap-4 w-full">
+              <Link
+                className="flex-1 text-center bg-gray-200 text-gray-800 py-2 sm:py-3 rounded-md hover:bg-gray-300 transition duration-300 w-1/2"
+                href={"/log-in"}
+              >
+                Back
+              </Link>
               <motion.button
                 type="submit"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`w-full ${loading ? "bg-gray-400" : "bg-primary"} text-white py-2 rounded-md transition duration-300`}
+                className={`w-1/2 ${
+                  loading ? "bg-gray-400" : "bg-primary"
+                } text-white py-2 rounded-md transition duration-300`}
                 disabled={loading}
               >
                 {loading ? "Signing in..." : "Sign in"}
               </motion.button>
+              </div>
+
             </form>
           </div>
           <div className="px-8 py-4 bg-gray-50 border-t border-gray-200">
@@ -170,7 +192,8 @@ const OfficesLogin = () => {
               and{" "}
               <a href="#" className="text-green-600 hover:underline">
                 Privacy Statement
-              </a>.
+              </a>
+              .
             </p>
           </div>
         </div>
