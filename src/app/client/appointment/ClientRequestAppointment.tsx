@@ -6,6 +6,7 @@ import { useUserData } from "@/hooks/useUserData";
 interface Option {
   name: string;
   office?: string;
+  officeCode?: string;
 }
 
 const useFirestoreData = (docId: string, field: string) => {
@@ -64,6 +65,8 @@ const ClientRequestAppointment: React.FC = () => {
       setLoading(false);
       return;
     }
+    const office = offices.find((o) => o.name === selectedOffice);
+    const officeCode = office?.officeCode || "";
 
     const appointmentData = {
       submittedUid: userData?.uid,
@@ -80,6 +83,7 @@ const ClientRequestAppointment: React.FC = () => {
       role: userData?.role,
       dateCreated: new Date().toISOString(),
       status: "pending",
+      officeCode, //base on selected office officeCode,
     };
 
     try {

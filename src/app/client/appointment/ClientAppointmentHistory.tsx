@@ -19,6 +19,7 @@ interface Appointment {
   email: string;
   role: string;
   dateCreated: string;
+  officeCode: string;
 }
 
 const ClientAppointmentHistory: React.FC = () => {
@@ -59,6 +60,7 @@ const ClientAppointmentHistory: React.FC = () => {
           email: doc.data().email || "",
           role: doc.data().role || "",
           dateCreated: doc.data().dateCreated || "",
+          officeCode: doc.data().officeCode || "",
         }));
         setAppointments(appointmentList);
         setFilteredAppointments(appointmentList); // Initially, show all appointments
@@ -162,7 +164,7 @@ const ClientAppointmentHistory: React.FC = () => {
           ) : (
             filteredAppointments.map((appointment) => (
               <tr key={appointment.id} className="border-b">
-                <td className="px-4 py-2 uppercase">{appointment.id}</td>
+                <td className="px-4 py-2 uppercase">{`${appointment.officeCode}${appointment.id}` || appointment.id}</td>
                 <td className="px-4 py-2 capitalize">{appointment.appointmentType}</td>
                 <td className="px-4 py-2">{appointment.selectedDate}</td>
                 <td className="px-4 py-2">{appointment.timeRange}</td>

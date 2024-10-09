@@ -19,6 +19,7 @@ interface Appointment {
     email: string;
     role: string;
     dateCreated: string;
+    officeCode: string;
   }
 
 const ClientPendingAppointment: React.FC = () => {
@@ -56,6 +57,7 @@ const ClientPendingAppointment: React.FC = () => {
           email: doc.data().email || "",
           role: doc.data().role || "",
           dateCreated: doc.data().dateCreated || "",
+          officeCode: doc.data().officeCode || ""
         }));
 
         // Filter appointments by date if filterDate is set
@@ -149,7 +151,7 @@ const ClientPendingAppointment: React.FC = () => {
           ) : (
             appointments.map((appointment) => (
               <tr key={appointment.id} className="border-b">
-                <td className="px-4 py-2">{appointment.id}</td>
+                <td className="px-4 py-2">{`${appointment.officeCode}${appointment.id}`}</td>
                 <td className="px-4 py-2">{appointment.appointmentType}</td>
                 <td className="px-4 py-2">{appointment.selectedDate}</td>
                 <td className="px-4 py-2">{appointment.timeRange}</td>

@@ -1,10 +1,12 @@
-"use client"
-import { useEffect, useState } from 'react';
+"use client";
+import { useEffect, useState } from "react";
 // import { useRouter } from 'next/router'; // Removed useRouter
-import { auth } from '@/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from "@/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
-const ClientRouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const ClientRouteGuard: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   // const router = useRouter(); // Removed router
   const [loading, setLoading] = useState(true); // Add loading state
 
@@ -12,7 +14,7 @@ const ClientRouteGuard: React.FC<{ children: React.ReactNode }> = ({ children })
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
         // Redirect to login if not authenticated
-        window.location.href = '/log-in'; // Changed to use window.location
+        window.location.href = "/log-in"; // Changed to use window.location
       } else {
         setLoading(false); // Set loading to false when user is authenticated
       }
@@ -22,7 +24,11 @@ const ClientRouteGuard: React.FC<{ children: React.ReactNode }> = ({ children })
   }, []); // Removed router dependency
 
   if (loading) {
-    return <div>Loading...</div>; // Display loading message
+    return (
+      <div className="flex justify-center gap-2 items-center w-screen h-screen text-primary">
+        <span className="loading loading-spinner loading-xs"></span>Loading...
+      </div>
+    ); // Display loading message
   }
 
   return <>{children}</>;

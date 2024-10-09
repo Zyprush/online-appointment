@@ -29,6 +29,7 @@ type AppointmentType = {
   role: string;
   dateCreated: string;
   status: string;
+  officeCode: string;
 };
 
 const OfficePendingAppointment = () => {
@@ -69,6 +70,7 @@ const OfficePendingAppointment = () => {
         role: doc.data().role || "",
         dateCreated: doc.data().dateCreated || "",
         status: doc.data().status || "",
+        officeCode: doc.data().officeCode || "",
       }));
       setAppointments(appointmentsList);
     } catch (err) {
@@ -81,7 +83,7 @@ const OfficePendingAppointment = () => {
   // Fetch appointments when the component mounts
   useEffect(() => {
     fetchAppointments();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [officeData]);
 
   const handleDecline = async (id: string) => {
@@ -162,7 +164,9 @@ const OfficePendingAppointment = () => {
 
   return (
     <div className="bg-white p-4 rounded shadow overflow-x-auto">
-      <h3 className="font-bold text-lg mb-4">Appointments for {officeData.office}</h3>
+      <h3 className="font-bold text-lg mb-4">
+        Appointments for {officeData.office}
+      </h3>
       <input
         type="text"
         placeholder="Search"
@@ -182,7 +186,7 @@ const OfficePendingAppointment = () => {
           {appointments.length > 0 ? (
             appointments.map((appointment) => (
               <tr key={appointment.id}>
-                <td className="border px-4 py-2">{appointment.id}</td>
+                <td className="border px-4 py-2">{`${appointment.officeCode}${appointment.id}`}</td>
                 <td className="border px-4 py-2">
                   {appointment.appointmentType}
                 </td>

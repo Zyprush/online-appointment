@@ -18,6 +18,7 @@ type AppointmentType = {
   role: string;
   dateCreated: string;
   status: string;
+  officeCode: string;
 };
 
 const ApprovedAppointments: React.FC = () => {
@@ -63,6 +64,7 @@ const ApprovedAppointments: React.FC = () => {
           role: doc.data().role || "",
           dateCreated: doc.data().dateCreated || "",
           status: doc.data().status || "",
+          officeCode: doc.data().officeCode || "",
         }));
 
         // Apply name filter after fetching the data
@@ -149,7 +151,7 @@ const ApprovedAppointments: React.FC = () => {
         <tbody>
           {appointments.map((appointment) => (
             <tr key={appointment.id} className="border-b">
-              <td className="px-4 py-2">{appointment.id}</td>
+              <td className="border px-4 py-2">{`${appointment.officeCode}${appointment.id}`}</td>
               <td className="px-4 py-2 capitalize">{appointment.name}</td>
               <td className="px-4 py-2">{appointment.appointmentType}</td>
               <td className="px-4 py-2">{appointment.selectedDate}</td>
