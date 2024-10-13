@@ -4,6 +4,7 @@ import { doc, getDoc } from "firebase/firestore";
 import Image from "next/image";
 import QrComponent from "./QrComponent";
 import { useState, useEffect, useMemo } from "react";
+import { useRouter } from 'next/navigation'; // Import useRouter
 
 interface InfoProps {
   params: {
@@ -31,6 +32,7 @@ interface Appointment {
 
 const AppointmentSlip: React.FC<InfoProps> = ({ params }) => {
   const { id } = params;
+  const router = useRouter(); // Initialize the router
   const [appointment, setAppointment] = useState<Appointment | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -69,8 +71,25 @@ const AppointmentSlip: React.FC<InfoProps> = ({ params }) => {
     return "";
   }, [appointment]);
 
+  // Function to print the div without reload and keep the formatting
+  const handlePrint = () => {
+    const printContents = document.getElementById("printable")?.innerHTML;
+    const originalContents = document.body.innerHTML;
+
+    if (printContents) {
+      document.body.innerHTML = printContents;
+      window.print();
+      document.body.innerHTML = originalContents;
+    }
+  };
+
+  // Function to handle back button click
+  const handleBack = () => {
+    router.back(); // Navigate to the last visited page
+  };
+
   // Show loading state
-  if (loading) return <div>Loading appointment...</div>;
+  if (loading) return <div className="flex w-screen h-screen justify-center items-center">Loading...</div>;
 
   // Show error state
   if (error) return <div>{error}</div>;
@@ -79,6 +98,49 @@ const AppointmentSlip: React.FC<InfoProps> = ({ params }) => {
   if (appointment) {
     return (
       <div className="flex flex-col p-4 bg-slate-50">
+        {/* Button to print the appointment */}
+        <button
+          className="btn btn-sm btn-primary fixed bottom-3 right-3 text-white rounded"
+          onClick={handlePrint}
+        >
+          Print
+        </button>
+
+        {/* Button to go back */}
+        <button
+          className="btn btn-sm btn-primary fixed bottom-3 left-3 text-white rounded"
+          onClick={handleBack}
+        >
+          Back
+        </button>
+
+        <style jsx global>{`
+          @media print {
+            @page {
+              margin: 0; /* Remove margins for the page */
+            }
+            body {
+              margin: 0;
+              padding: 0;
+            }
+            #printable {
+              margin: 0;
+              padding: 0;
+              width: 100%;
+              height: 100%;
+            }
+            /* Ensure background colors are printed */
+            * {
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            /* Optional: hide elements like the print button */
+            button {
+              display: none;
+            }
+          }
+        `}</style>
+
         <div
           className="flex flex-col mx-auto border bg-white p-0 gap-5"
           style={{ width: "794px", height: "1123px" }}

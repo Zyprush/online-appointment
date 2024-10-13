@@ -1,8 +1,8 @@
+import React, { useEffect, useState } from "react";
 import { db } from "@/firebase"; // Import Firestore
 import { collection, getDocs, query, where } from "firebase/firestore"; // Import query and where
 import { useUserData } from "@/hooks/useUserData";
 import ViewAppointment from "@/components/ViewAppointment";
-import { useState, useEffect } from "react";
 
 interface Appointment {
   id: string;
@@ -22,7 +22,7 @@ interface Appointment {
   officeCode: string;
 }
 
-const ClientAppointmentHistory: React.FC = () => {
+const ClientApprovedAppointment: React.FC = () => {
   const { userData } = useUserData(); // Get current user data
   const [appointments, setAppointments] = useState<Appointment[]>([]); // State to hold appointments
   const [filteredAppointments, setFilteredAppointments] = useState<Appointment[]>([]); // State to hold filtered appointments
@@ -42,7 +42,7 @@ const ClientAppointmentHistory: React.FC = () => {
         const appointmentsRef = collection(db, "appointments");
         const q = query(appointmentsRef, 
           where("submittedUid", "==", userData?.uid),
-          where("status", "in", ["declined", "approved"])
+          where("status", "==", "approved")
         ); 
         const snapshot = await getDocs(q);
         const appointmentList = snapshot.docs.map((doc) => ({
@@ -203,4 +203,4 @@ const ClientAppointmentHistory: React.FC = () => {
   );
 };
 
-export default ClientAppointmentHistory;
+export default ClientApprovedAppointment;
