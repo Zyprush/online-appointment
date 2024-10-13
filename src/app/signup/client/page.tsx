@@ -3,6 +3,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/firebase";
 import { useState } from "react";
+import Link from "next/link";
 
 const SignupPage = () => {
   const [step, setStep] = useState(1); // Tracks current step
@@ -411,6 +412,7 @@ const SignupPage = () => {
           </>
         )}
       </form>
+      <Link href={"/"} className="btn btn-sm btn-secondary text-white fixed top-2 left-2">back</Link>
     </div>
   );
 };
