@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import VerifiedClient from "./VerifiedClient";
 import RestrictedClient from "./RestrictedClient"; // Updated import statement
 import NavLayout from "@/components/NavLayout";
-  
+    
 export default function Page() {
   const [showVerified, setShowVerified] = useState(true);
 
