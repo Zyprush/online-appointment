@@ -10,7 +10,7 @@ const ReminderSetting: React.FC = (): JSX.Element => {
   const [newValue, setNewValue] = useState<string>("");
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
-  useEffect(() => {
+  useEffect(() => {  
     const fetchSetting = async () => {
       setLoading(true);
       try {
