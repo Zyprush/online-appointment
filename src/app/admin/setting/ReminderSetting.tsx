@@ -2,10 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase";
-import dynamic from 'next/dynamic';
-
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
-import 'react-quill/dist/quill.snow.css';
 
 const ReminderSetting: React.FC = (): JSX.Element => {
   const [isEditing, setIsEditing] = useState(false);
@@ -41,8 +37,8 @@ const ReminderSetting: React.FC = (): JSX.Element => {
     setNewValue(value || "");
   };
 
-  const handleChange = (content: string) => {
-    setNewValue(content);
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setNewValue(event.target.value);
   };
 
   const handleSave = async () => {
@@ -71,15 +67,13 @@ const ReminderSetting: React.FC = (): JSX.Element => {
         <>
           {isEditing ? (
             <div className="flex w-full flex-col justify-start gap-5 items-start my-auto">
-              <p className="font-semibold text-primary text-sm">
-                Reminder
-              </p>
-              <ReactQuill
+              <p className="font-semibold text-primary text-sm">Reminder</p>
+              <textarea
                 value={newValue}
                 onChange={handleChange}
                 placeholder="Enter reminder"
-                className="w-full h-40"
-                readOnly={isSaving}
+                className="w-full h-40 p-2 border border-gray-300 rounded"
+                disabled={isSaving}
               />
               <div className="flex gap-2 mt-10 mr-0 ml-auto">
                 <button
@@ -100,12 +94,10 @@ const ReminderSetting: React.FC = (): JSX.Element => {
             </div>
           ) : (
             <div className="flex w-full justify-start my-auto gap-5 items-center">
-              <p className="font-bold mb-auto mt-0  text-primary">
-                Reminder
-              </p>
-              <div 
+              <p className="font-bold mb-auto mt-0 text-primary">Reminder</p>
+              <div
                 className="text-sm text-zinc-500 ml-0 w-full rounded-sm min-w-80 p-2 bg-slate-100 reminder-content"
-                dangerouslySetInnerHTML={{ __html: value || 'No data for Reminder' }}
+                dangerouslySetInnerHTML={{ __html: value || "No data for Reminder" }}
               />
               <button
                 onClick={toggleEdit}
