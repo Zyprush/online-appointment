@@ -31,8 +31,6 @@ const ClientDeclinedAppointment: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null); // State for selected appointment
 
-  // Filter state
-  const [statusFilter, setStatusFilter] = useState<string>(""); // State for status filter
   const [dateFilter, setDateFilter] = useState<string>(""); // State for date filter
 
   useEffect(() => {
@@ -42,7 +40,7 @@ const ClientDeclinedAppointment: React.FC = () => {
         const appointmentsRef = collection(db, "appointments");
         const q = query(appointmentsRef, 
           where("submittedUid", "==", userData?.uid),
-          where("status", "==", "approved")
+          where("status", "==", "declined")
         ); 
         const snapshot = await getDocs(q);
         const appointmentList = snapshot.docs.map((doc) => ({
@@ -92,11 +90,6 @@ const ClientDeclinedAppointment: React.FC = () => {
   const handleFilter = () => {
     let filtered = appointments;
 
-    // Filter by status if a status is selected
-    if (statusFilter) {
-      filtered = filtered.filter((appointment) => appointment.status === statusFilter);
-    }
-
     // Filter by date if a date is selected
     if (dateFilter) {
       filtered = filtered.filter((appointment) => appointment.selectedDate === dateFilter);
@@ -119,18 +112,6 @@ const ClientDeclinedAppointment: React.FC = () => {
 
       {/* Filter Section */}
       <div className="mb-4">
-        <label className="mr-2">Filter by Status:</label>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="mr-4 p-2 border"
-        >
-          <option value="">All</option>
-          <option value="pending">Pending</option>
-          <option value="completed">Completed</option>
-          <option value="declined">Declined</option>
-        </select>
-
         <label className="mr-2">Filter by Date:</label>
         <input
           type="date"
@@ -145,9 +126,9 @@ const ClientDeclinedAppointment: React.FC = () => {
       </div>
 
       {/* Appointments Table */}
-      <table className="min-w-full">
+      <table className="min-w-full bg-white border">
         <thead>
-          <tr className="bg-gray-100">
+          <tr className="">
             <th className="px-4 py-2 text-left">Appointment Code</th>
             <th className="px-4 py-2 text-left">Type</th>
             <th className="px-4 py-2 text-left">Date</th>

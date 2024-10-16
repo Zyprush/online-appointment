@@ -1,12 +1,15 @@
 "use client"; // Ensure this component is a client component
 import React, { useState } from "react";
 import ClientRequestAppointment from "./ClientRequestAppointment";
-import ClientAppointmentHistory from "./ClientAppointmentHistory";
 import ClientPendingAppointment from "./ClientPendingAppointment"; // Import ClientPendingAppointment component
 import NavLayout from "@/components/NavLayout";
+import ClientApprovedAppointment from "./ClientApprovedAppointment";
+import ClientDeclinedAppointment from "./ClientDeclinedAppointment";
 
 const Page: React.FC = () => {
-  const [activeComponent, setActiveComponent] = useState<string>("pendingAppointments");
+  const [activeComponent, setActiveComponent] = useState<string>(
+    "pendingAppointments"
+  );
 
   return (
     <NavLayout>
@@ -41,13 +44,25 @@ const Page: React.FC = () => {
             <li className="mb-2">
               <button
                 className={`w-full flex items-center justify-start py-2 px-4 rounded ${
-                  activeComponent === "appointmentHistory"
+                  activeComponent === "approvedAppointments"
                     ? "bg-primary text-white"
                     : "text-gray-600 hover:bg-gray-200"
                 }`}
-                onClick={() => setActiveComponent("appointmentHistory")}
+                onClick={() => setActiveComponent("approvedAppointments")}
               >
-                Appointment History
+                Approved Appointment
+              </button>
+            </li>
+            <li className="mb-2">
+              <button
+                className={`w-full flex items-center justify-start py-2 px-4 rounded ${
+                  activeComponent === "declinedAppointments"
+                    ? "bg-primary text-white"
+                    : "text-gray-600 hover:bg-gray-200"
+                }`}
+                onClick={() => setActiveComponent("declinedAppointments")}
+              >
+                Declined Appointment
               </button>
             </li>
           </ul>
@@ -55,9 +70,18 @@ const Page: React.FC = () => {
 
         {/* Main Content */}
         <div className="w-full md:w-3/4 p-4 md:p-6">
-          {activeComponent === "requestAppointment" && <ClientRequestAppointment />}
-          {activeComponent === "pendingAppointments" && <ClientPendingAppointment />} {/* Add the ClientPendingAppointment component */}
-          {activeComponent === "appointmentHistory" && <ClientAppointmentHistory />}
+          {activeComponent === "requestAppointment" && (
+            <ClientRequestAppointment />
+          )}
+          {activeComponent === "pendingAppointments" && (
+            <ClientPendingAppointment />
+          )}
+          {activeComponent === "approvedAppointments" && (
+            <ClientApprovedAppointment />
+          )}
+          {activeComponent === "declinedAppointments" && (
+            <ClientDeclinedAppointment />
+          )}
         </div>
       </div>
     </NavLayout>

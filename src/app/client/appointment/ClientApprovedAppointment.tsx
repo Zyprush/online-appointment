@@ -3,6 +3,7 @@ import { db } from "@/firebase"; // Import Firestore
 import { collection, getDocs, query, where } from "firebase/firestore"; // Import query and where
 import { useUserData } from "@/hooks/useUserData";
 import ViewAppointment from "@/components/ViewAppointment";
+import Link from "next/link";
 
 interface Appointment {
   id: string;
@@ -25,14 +26,16 @@ interface Appointment {
 const ClientApprovedAppointment: React.FC = () => {
   const { userData } = useUserData(); // Get current user data
   const [appointments, setAppointments] = useState<Appointment[]>([]); // State to hold appointments
-  const [filteredAppointments, setFilteredAppointments] = useState<Appointment[]>([]); // State to hold filtered appointments
+  const [filteredAppointments, setFilteredAppointments] = useState<
+    Appointment[]
+  >([]); // State to hold filtered appointments
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState<string | null>(null); // Error state
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null); // State for selected appointment
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null); // State for selected appointment
 
   // Filter state
-  const [statusFilter, setStatusFilter] = useState<string>(""); // State for status filter
   const [dateFilter, setDateFilter] = useState<string>(""); // State for date filter
 
   useEffect(() => {
@@ -40,10 +43,11 @@ const ClientApprovedAppointment: React.FC = () => {
       setLoading(true); // Set loading to true
       try {
         const appointmentsRef = collection(db, "appointments");
-        const q = query(appointmentsRef, 
+        const q = query(
+          appointmentsRef,
           where("submittedUid", "==", userData?.uid),
-          where("status", "==", "declined")
-        ); 
+          where("status", "==", "approved")
+        );
         const snapshot = await getDocs(q);
         const appointmentList = snapshot.docs.map((doc) => ({
           id: doc.id,
@@ -71,7 +75,8 @@ const ClientApprovedAppointment: React.FC = () => {
       }
     };
 
-    if (userData?.uid) { // Ensure user UID is available before fetching
+    if (userData?.uid) {
+      // Ensure user UID is available before fetching
       fetchAppointments();
     }
   }, [userData]);
@@ -92,14 +97,11 @@ const ClientApprovedAppointment: React.FC = () => {
   const handleFilter = () => {
     let filtered = appointments;
 
-    // Filter by status if a status is selected
-    if (statusFilter) {
-      filtered = filtered.filter((appointment) => appointment.status === statusFilter);
-    }
-
     // Filter by date if a date is selected
     if (dateFilter) {
-      filtered = filtered.filter((appointment) => appointment.selectedDate === dateFilter);
+      filtered = filtered.filter(
+        (appointment) => appointment.selectedDate === dateFilter
+      );
     }
 
     setFilteredAppointments(filtered);
@@ -114,23 +116,11 @@ const ClientApprovedAppointment: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className="">
       <h2 className="text-xl font-bold mb-4">Appointment History</h2>
 
       {/* Filter Section */}
       <div className="mb-4">
-        <label className="mr-2">Filter by Status:</label>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="mr-4 p-2 border"
-        >
-          <option value="">All</option>
-          <option value="pending">Pending</option>
-          <option value="completed">Completed</option>
-          <option value="declined">Declined</option>
-        </select>
-
         <label className="mr-2">Filter by Date:</label>
         <input
           type="date"
@@ -139,48 +129,46 @@ const ClientApprovedAppointment: React.FC = () => {
           className="mr-4 p-2 border"
         />
 
-        <button onClick={handleFilter} className="bg-primary text-white py-2 px-4 rounded">
+        <button
+          onClick={handleFilter}
+          className="bg-primary text-white py-2 px-4 rounded"
+        >
           Apply Filter
         </button>
       </div>
 
       {/* Appointments Table */}
-      <table className="min-w-full">
+      <table className="min-w-full bg-white border">
         <thead>
-          <tr className="bg-gray-100">
+          <tr className="">
             <th className="px-4 py-2 text-left">Appointment Code</th>
             <th className="px-4 py-2 text-left">Type</th>
             <th className="px-4 py-2 text-left">Date</th>
             <th className="px-4 py-2 text-left">Time</th>
-            <th className="px-4 py-2 text-left">Status</th>
+            <th className="px-4 py-2 text-left">Printable Slip</th>
             <th className="px-4 py-2 text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
           {filteredAppointments.length === 0 ? (
             <tr>
-              <td colSpan={6} className="px-4 py-2 text-center">No appointment history found.</td>
+              <td colSpan={6} className="px-4 py-2 text-center">
+                No appointment history found.
+              </td>
             </tr>
           ) : (
             filteredAppointments.map((appointment) => (
               <tr key={appointment.id} className="border-b">
-                <td className="px-4 py-2 uppercase">{`${appointment.officeCode}${appointment.id}` || appointment.id}</td>
-                <td className="px-4 py-2 capitalize">{appointment.appointmentType}</td>
+                <td className="px-4 py-2 uppercase">
+                  {`${appointment.officeCode}${appointment.id}` ||
+                    appointment.id}
+                </td>
+                <td className="px-4 py-2 capitalize">
+                  {appointment.appointmentType}
+                </td>
                 <td className="px-4 py-2">{appointment.selectedDate}</td>
                 <td className="px-4 py-2">{appointment.timeRange}</td>
-                <td className="px-4 py-2">
-                  <span
-                    className={`px-2 py-1 rounded ${
-                      appointment.status === "declined"
-                        ? "bg-red-200 text-red-800"
-                        : appointment.status === "approved"
-                        ? "bg-green-200 text-green-800"
-                        : "bg-yellow-200 text-yellow-800"
-                    }`}
-                  >
-                    {appointment.status}
-                  </span>
-                </td>
+                <td className="px-4 py-2"><Link className="text-blue-500" href={`/slip/${appointment.id}`}>Link</Link></td>
                 <td className="px-4 py-2">
                   <button
                     className="text-blue-500 hover:underline"
@@ -197,7 +185,10 @@ const ClientApprovedAppointment: React.FC = () => {
 
       {/* Modal for viewing appointment details */}
       {isModalOpen && selectedAppointment && (
-        <ViewAppointment appointment={selectedAppointment} onClose={closeModal} />
+        <ViewAppointment
+          appointment={selectedAppointment}
+          onClose={closeModal}
+        />
       )}
     </div>
   );
