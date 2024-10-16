@@ -34,6 +34,7 @@ export async function POST(req: Request) {
       body: messageBody,
       from: twilioPhoneNumber, // Use the Twilio phone number from environment variables
       to: `+63${contact}`, // Send to the dynamic contact number provided
+      // to: `+639633538466`,
     });
 
     console.log('message', message)
