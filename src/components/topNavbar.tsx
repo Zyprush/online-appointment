@@ -24,6 +24,11 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
+            <Link href="/announcement" className="hover:text-primary hover:font-bold hover:underline">
+              Announcement
+            </Link>
+          </li>
+          <li>
             <Link href="/about" className="hover:text-primary hover:font-bold hover:underline">
               About Us
             </Link>

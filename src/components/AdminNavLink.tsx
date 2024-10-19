@@ -31,9 +31,9 @@ const AdminNavLink: React.FC<AdminNavLinkProps> = ({ isMobile = false }) => {
       <Link href="/admin/client" className={linkClass}>
         Dashboard
       </Link>
-      {/* <Link href="/admin/student" className={linkClass}>
-        Student
-      </Link> */}
+      <Link href="/admin/announcement" className={linkClass}>
+        Announcement
+      </Link>
       <Link href="/admin/setting" className={linkClass}>
         Setting
       </Link>
