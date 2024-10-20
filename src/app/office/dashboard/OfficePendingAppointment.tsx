@@ -59,10 +59,13 @@ const OfficePendingAppointment = () => {
         where("status", "==", "pending")
       );
       const snapshot = await getDocs(appointmentsRef);
-      const appointmentsList = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      } as AppointmentType));
+      const appointmentsList = snapshot.docs.map(
+        (doc) =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+          } as AppointmentType)
+      );
       setAppointments(appointmentsList);
       setFilteredAppointments(appointmentsList); // Initialize filtered list
     } catch (err) {
@@ -84,7 +87,7 @@ const OfficePendingAppointment = () => {
 
   useEffect(() => {
     fetchAppointments();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [officeData]);
 
   const handleDecline = async (id: string) => {
@@ -105,14 +108,15 @@ const OfficePendingAppointment = () => {
   const checkExistingAppointments = async (
     selectedDate: string,
     timeRange: string
-  ) => {
+  ): Promise<number> => {
     try {
-      if (!officeData) return;
+      if (!officeData) return 0;
       const appointmentsRef = query(
         collection(db, "appointments"),
         where("selectedOffice", "==", officeData.office),
         where("selectedDate", "==", selectedDate),
-        where("timeRange", "==", timeRange)
+        where("timeRange", "==", timeRange),
+        where("status", "==", "approved")
       );
       const snapshot = await getDocs(appointmentsRef);
       return snapshot.size;
@@ -130,9 +134,9 @@ const OfficePendingAppointment = () => {
           appointment.selectedDate,
           appointment.timeRange
         );
-
-        if (appointmentCount !== undefined && appointmentCount >= 4) {
-          alert("There are already four appointments for that time range.");
+        console.log("appointmentCount", appointmentCount);
+        if (appointmentCount >= 4) {
+          alert("There are already 4 (four) appointments for that time range.");
           setApproving(false); // Set approving state to false
           return;
         }

@@ -20,12 +20,13 @@ interface Appointment {
     role: string;
     dateCreated: string;
     officeCode: string;
-  }
+}
 
 const ClientPendingAppointment: React.FC = () => {
   const { userData } = useUserData(); // Get current user data
   const [appointments, setAppointments] = useState<Appointment[]>([]); // State to hold appointments
   const [loading, setLoading] = useState(true); // Loading state
+  const [isDeleting, setIsDeleting] = useState<string | null>(null); // Deleting state to track which appointment is being deleted
   const [error, setError] = useState<string | null>(null); // Error state
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null); // State for selected appointment in modal
   const [isModalOpen, setIsModalOpen] = useState(false); // State to handle modal visibility
@@ -83,6 +84,7 @@ const ClientPendingAppointment: React.FC = () => {
   // Handler to delete an appointment
   const handleDelete = async (appointmentId: string) => {
     if (confirm("Are you sure you want to delete this appointment?")) {
+      setIsDeleting(appointmentId); // Set the appointment ID being deleted
       try {
         const appointmentDocRef = doc(db, "appointments", appointmentId);
         await deleteDoc(appointmentDocRef); // Delete the appointment from Firestore
@@ -92,6 +94,8 @@ const ClientPendingAppointment: React.FC = () => {
         );
       } catch (error) {
         alert("Error deleting appointment: " + (error as Error).message);
+      } finally {
+        setIsDeleting(null); // Reset the deleting state
       }
     }
   };
@@ -122,7 +126,7 @@ const ClientPendingAppointment: React.FC = () => {
 
       {/* Date Filter */}
       <div className="mb-4">
-        <label className="block mb-2 font-bold">Filter by Date:</label>
+        <label className="block mb-1 font-bold text-sm">Filter by Date:</label>
         <input
           type="date"
           className="border border-gray-300 px-4 py-2 rounded"
@@ -132,9 +136,9 @@ const ClientPendingAppointment: React.FC = () => {
       </div>
 
       {/* Appointments Table */}
-      <table className="min-w-full bg-white">
+      <table className="min-w-full bg-white text-sm">
         <thead>
-          <tr className="border-b ">
+          <tr className="border-b text-primary">
             <th className="px-4 py-2 text-left">Appointment Code</th>
             <th className="px-4 py-2 text-left">Purpose</th>
             <th className="px-4 py-2 text-left">Date</th>
@@ -162,17 +166,18 @@ const ClientPendingAppointment: React.FC = () => {
                 </td>
                 <td className="px-4 py-2 flex gap-2">
                   <button
-                    className="text-blue-500 hover:underline"
+                    className="btn btn-xs rounded-sm btn-primary text-white"
                     onClick={() => handleView(appointment)}
                   >
                     View
                   </button>
                   
                   <button
-                    className="text-red-500 hover:underline"
+                    className={`text-red-500 hover:underline ${isDeleting === appointment.id ? 'opacity-50 cursor-not-allowed' : ''}`}
                     onClick={() => handleDelete(appointment.id)}
+                    disabled={isDeleting === appointment.id}
                   >
-                    Delete
+                    {isDeleting === appointment.id ? 'Deleting...' : 'Delete'}
                   </button>
                 </td>
               </tr>

@@ -126,9 +126,9 @@ const ClientDeclinedAppointment: React.FC = () => {
       </div>
 
       {/* Appointments Table */}
-      <table className="min-w-full bg-white border">
+      <table className="min-w-full bg-white border text-sm">
         <thead>
-          <tr className="">
+          <tr className="text-primary">
             <th className="px-4 py-2 text-left">Appointment Code</th>
             <th className="px-4 py-2 text-left">Type</th>
             <th className="px-4 py-2 text-left">Date</th>
@@ -164,7 +164,7 @@ const ClientDeclinedAppointment: React.FC = () => {
                 </td>
                 <td className="px-4 py-2">
                   <button
-                    className="text-blue-500 hover:underline"
+                    className="btn btn-xs rounded-sm btn-primary text-white"
                     onClick={() => handleView(appointment)}
                   >
                     View

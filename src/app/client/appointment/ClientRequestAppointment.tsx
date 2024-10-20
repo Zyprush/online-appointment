@@ -59,10 +59,39 @@ const ClientRequestAppointment: React.FC = () => {
     }
   }, [appointmentType, selectedService, services]);
 
+  const checkExistingAppointments = async (
+  selectedDate: string,
+  timeRange: string,
+): Promise<number> => {
+  try {
+    const appointmentsRef = query(
+      collection(db, "appointments"),
+      where("selectedOffice", "==", selectedOffice),
+      where("selectedDate", "==", selectedDate),
+      where("timeRange", "==", timeRange),
+      where("status", "==", "approved")
+    );
+    const snapshot = await getDocs(appointmentsRef);
+    return snapshot.size;
+  } catch (err) {
+    console.error("Error checking existing appointments:", err);
+    throw err;
+  }
+};
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
+    const appointmentCount = await checkExistingAppointments(
+      selectedDate,
+      selectedTime
+    );
+    console.log('appointmentCount', appointmentCount)
+    if (appointmentCount >= 4) {
+      alert("There are already 4 (four) appointments for that time range.");
+      setLoading(false);
+      return;
+    }
     // Check if the user is restricted
     if (userData?.verified === false) {
       alert(
@@ -302,7 +331,6 @@ const ClientRequestAppointment: React.FC = () => {
               <option value="2:00pm-3:00pm">2:00 PM - 3:00 PM</option>
               <option value="3:00pm-4:00pm">3:00 PM - 4:00 PM</option>
               <option value="4:00pm-5:00pm">4:00 PM - 5:00 PM</option>
-        
             </select>
           </div>
         </div>

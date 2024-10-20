@@ -66,7 +66,7 @@ const Announce: React.FC = (): JSX.Element => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-start px-4 md:px-12 py-16 bg-white">
       <Navbar />
-      <div className="md:p-4 pt-0">
+      <div className="md:p-4 pt-0 w-full max-w-7xl">
         {loading && <p>Loading announcements...</p>}
         {error && <p className="text-red-500">{error}</p>}
 
@@ -74,53 +74,44 @@ const Announce: React.FC = (): JSX.Element => {
           <p>No announcements available.</p>
         )}
 
+        <div className="flex items-center mb-6">
+          <h2 className="text-2xl font-bold text-primary drop-shadow">
+            Announcements
+          </h2>
+        </div>
+
         {!loading && !error && announcements.length > 0 && (
-          <div className="bg-white rounded-lg shadow-md p-4">
-            <div className="flex items-center mb-2">
-              <h2 className="text-xl font-bold text-primary drop-shadow">
-                Announcements
-              </h2>
-            </div>
-            <div className="border-b border-gray-200 mb-2"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {announcements.map((announce) => (
               <div
-                className="flex items-start mb-8 cursor-pointer"
+                className="flex flex-col items-start mb-6 p-4 bg-zinc-100 border border-gray-200 rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer"
                 key={announce.id}
                 onClick={() => openModal(announce)}
               >
-                {announce.files.map((file, index) => (
-                  <li key={index} className="mr-2 mb-2 list-none">
-                    <a
-                      href={file}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center"
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={file}
-                        alt={`Document ${index}`}
-                        height={150}
-                        width={150}
-                        className="rounded border border-gray-300"
-                      />
-                    </a>
-                  </li>
-                ))}
-                <div className="flex-1">
-                  <p className="font-bold text-sm text-gray-700">
-                    {announce.what}
-                  </p>
-                  <div className="flex items-center ">
-                    <div className="text-xs text-zinc-500">
-                      <p>{getRelativeTime(announce.createdAt)}</p>
-                    </div>
+                {announce.files.length > 0 && (
+                  <div className="flex justify-center mb-4">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={announce.files[0]}
+                      alt="Announcement"
+                      className="h-48 w-full object-cover rounded-lg"
+                    />
                   </div>
+                )}
 
-                  <div className="flex bg-white border p-2 rounded text-sm text-zinc-500 mt-2 max-w-[30rem]">
-                    This advisory is meant for &nbsp;
-                    <b className="inline">{announce.who}</b>
+                <div className="flex-1 w-full">
+                  <h3 className="font-bold text-lg text-gray-700 mb-2">
+                    {announce.what}
+                  </h3>
+                  <div className="text-xs text-gray-500 mb-1">
+                    {getRelativeTime(announce.createdAt)}
                   </div>
+                  <p className="text-sm text-gray-600 mb-1">
+                    <strong>Who:</strong> {announce.who}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    <strong>Where:</strong> {announce.where}
+                  </p>
                 </div>
               </div>
             ))}
@@ -129,40 +120,33 @@ const Announce: React.FC = (): JSX.Element => {
 
         {isModalOpen && selectedAnnouncement && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div className="bg-white rounded-lg p-6 w-11/12 md:w-1/2 max-w-4xl relative">
+            <div className="bg-white rounded-lg p-6 w-11/12 md:w-2/3 lg:w-1/2 max-w-4xl relative shadow-lg">
               <button
                 onClick={closeModal}
-                className="absolute top-2 right-2 text-xl font-bold"
+                className="absolute top-2 right-2 text-xl font-bold text-gray-500 hover:text-gray-700"
               >
                 &times;
               </button>
-              <div className="flex items-start mb-2 cursor-pointer">
-                <div className="flex-1">
-                  <p className="font-bold text-sm text-gray-700">
-                    Barangay Admin
-                  </p>
-                  <div className="flex items-center ">
-                    <div className="text-xs text-zinc-500">
-                      <p>{getRelativeTime(selectedAnnouncement.createdAt)}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <h3 className="text-xl font-semibold mb-4">
+
+              <h3 className="text-xl font-semibold mb-4 text-gray-800">
                 {selectedAnnouncement.what}
               </h3>
-              <p className="text-sm mb-2">
-                <strong>When:</strong>{" "}
-                {format(new Date(selectedAnnouncement.when), "MMM dd, yyyy")}
-              </p>
-              <p className="text-sm mb-2">
-                <strong>Who:</strong> {selectedAnnouncement.who}
-              </p>
-              <p className="text-sm mb-2">
-                <strong>Where:</strong> {selectedAnnouncement.where}
-              </p>
+
+              <div className="flex flex-col space-y-2">
+                <p className="text-sm">
+                  <strong>When:</strong>{" "}
+                  {format(new Date(selectedAnnouncement.when), "MMM dd, yyyy")}
+                </p>
+                <p className="text-sm">
+                  <strong>Who:</strong> {selectedAnnouncement.who}
+                </p>
+                <p className="text-sm">
+                  <strong>Where:</strong> {selectedAnnouncement.where}
+                </p>
+              </div>
+
               {selectedAnnouncement.files.length > 0 && (
-                <div>
+                <div className="mt-6">
                   <h4 className="font-bold mb-2 text-gray-600 text-sm">
                     Attached Files
                   </h4>
@@ -179,9 +163,7 @@ const Announce: React.FC = (): JSX.Element => {
                           <img
                             src={file}
                             alt={`Document ${index}`}
-                            height={200}
-                            width={200}
-                            className="rounded border border-gray-300"
+                            className="h-32 w-32 object-cover rounded border border-gray-300"
                           />
                         </a>
                       </li>
