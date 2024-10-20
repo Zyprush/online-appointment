@@ -1,19 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import FullCalendar from "@fullcalendar/react";
-import { EventClickArg } from "@fullcalendar/core";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "@/firebase";
-import { useUserData } from "@/hooks/useUserData";
-import NavLayout from "@/components/NavLayout";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import ViewAppointment from "@/components/ViewAppointment";
+import { db } from "@/firebase";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import NavLayout from "@/components/NavLayout";
+import { useUserData } from "@/hooks/useUserData";
 
-interface Appointment {
+type AppointmentType = {
   id: string;
-  title: string;
-  start: string;
-  end: string;
   appointmentType: string;
   selectedDate: string;
   timeRange: string;
@@ -26,131 +22,147 @@ interface Appointment {
   email: string;
   role: string;
   dateCreated: string;
-}
+  status: string;
+  officeCode: string;
+};
 
-const ClientCalendar: React.FC = () => {
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null); // State for selected appointment
-  const { uid } = useUserData(); // Get the user data including submittedUid
+const OfficeCalendarAppointment = () => {
+  const {uid } = useUserData()
+  const [appointments, setAppointments] = useState<AppointmentType[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<AppointmentType | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
+  // Extracted fetchAppointments function
+  const fetchAppointments = async () => {
+
+
+    try {
+      const appointmentsRef = query(
+        collection(db, "appointments"),
+        where("submittedUid", "==", uid),
+        where("status", "==", "approved")
+      );
+      const snapshot = await getDocs(appointmentsRef);
+      const appointmentsList = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        appointmentType: doc.data().appointmentType || "",
+        selectedDate: doc.data().selectedDate || "",
+        timeRange: doc.data().timeRange || "",
+        selectedService: doc.data().selectedService || "",
+        selectedPersonnel: doc.data().selectedPersonnel || "",
+        selectedOffice: doc.data().selectedOffice || "",
+        otherReason: doc.data().otherReason || "",
+        name: doc.data().name || "",
+        contact: doc.data().contact || "",
+        email: doc.data().email || "",
+        role: doc.data().role || "",
+        dateCreated: doc.data().dateCreated || "",
+        status: doc.data().status || "",
+        officeCode: doc.data().officeCode || "",
+      }));
+      setAppointments(appointmentsList);
+    } catch (err) {
+      setError("Error fetching appointments: " + (err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch appointments when the component mounts
   useEffect(() => {
-    const fetchApprovedAppointments = async () => {
-      if (!uid) {
-        console.error("User UID not found!");
-        return;
-      }
-
-      try {
-        const appointmentsRef = collection(db, "appointments");
-        const q = query(
-          appointmentsRef,
-          where("submittedUid", "==", uid),
-          where("status", "==", "approved")
-        );
-
-        const querySnapshot = await getDocs(q);
-
-        if (querySnapshot.empty) {
-          alert("No approved appointments found for this user.");
-        } else {
-          const fetchedAppointments: Appointment[] = querySnapshot.docs.map((doc) => {
-            const data = doc.data();
-            const timeRangeParts = data.timeRange.split(" - ");
-            const startTime = convertTo24HourFormat(timeRangeParts[0]);
-            const endTime = convertTo24HourFormat(timeRangeParts[1]);
-
-            return {
-              id: doc.id,
-              title: data.purpose || "Appointment",
-              start: `${data.selectedDate}T${startTime}`,
-              end: `${data.selectedDate}T${endTime}`,
-              appointmentType: data.appointmentType,
-              selectedDate: data.selectedDate,
-              timeRange: data.timeRange,
-              selectedService: data.selectedService,
-              selectedPersonnel: data.selectedPersonnel,
-              selectedOffice: data.selectedOffice,
-              otherReason: data.otherReason,
-              name: data.name,
-              contact: data.contact,
-              email: data.email,
-              role: data.role,
-              dateCreated: data.dateCreated,
-            };
-          });
-
-          setAppointments(fetchedAppointments);
-        }
-      } catch (error) {
-        console.error("Error fetching appointments:", error);
-      }
-    };
-
-    fetchApprovedAppointments();
+    fetchAppointments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uid]);
 
-  // Helper function to convert 12-hour time format to 24-hour
-  const convertTo24HourFormat = (time: string) => {
-    const [timePart, modifier] = time.split(" ");
-    // eslint-disable-next-line prefer-const
-    let [hours, minutes] = timePart.split(":");
-
-    if (hours === "12") {
-      hours = "00";
-    }
-    if (modifier === "PM") {
-      hours = (parseInt(hours, 10) + 12).toString();
-    }
-
-    return `${hours}:${minutes}`;
-  };
-
-  // Function to handle event click and open the modal
-  const handleEventClick = (info: EventClickArg) => {
-    const clickedAppointment = appointments.find(
-      (appointment) => appointment.id === info.event.id
-    );
-    if (clickedAppointment) {
-      setSelectedAppointment(clickedAppointment); // Set the selected appointment data
+  const handleEventClick = (eventId: string) => {
+    const appointment = appointments.find((appt) => appt.id === eventId);
+    if (appointment) {
+      setSelectedAppointment(appointment);
+      setIsModalOpen(true);
     }
   };
 
-  // Close the modal
-  const handleCloseModal = () => {
-    setSelectedAppointment(null); // Close the modal by resetting the selected appointment
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedAppointment(null);
   };
+
+  if (loading) {
+    return <div>Loading appointments...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  if (!uid) {
+    return <div>No Appointment data available. Please log in.</div>;
+  }
+
+  // Prepare calendar events
+
+  // Helper function to parse time strings into hours
+  const parseTime = (timeString: string) => {
+    // Changed type from any to string
+    const [time, modifier] = timeString.split(/(am|pm)/);
+    let [hours] = time.split(":");
+    if (modifier === "pm" && hours !== "12") {
+      hours = (parseInt(hours) + 12).toString();
+    }
+    if (modifier === "am" && hours === "12") {
+      hours = "0"; // Ensure hours is a string
+    }
+    return parseInt(hours); // Return hours in 24-hour format
+  };
+  const calendarEvents = appointments.map((appointment) => {
+    // Split the timeRange value into start and end times
+    const [startTime, endTime] = appointment.timeRange
+      .split("-")
+      .map((time) => time.trim());
+
+    // Create a start and end date string in ISO format for FullCalendar
+    const startDate = new Date(appointment.selectedDate);
+    const endDate = new Date(appointment.selectedDate);
+
+    // Parse the start and end times into the correct format
+    startDate.setHours(parseTime(startTime));
+    endDate.setHours(parseTime(endTime));
+
+    return {
+      id: appointment.id,
+      title: `${appointment.selectedService} - ${appointment.selectedOffice}`,
+      start: startDate.toISOString(), // FullCalendar requires ISO string
+      end: endDate.toISOString(), // FullCalendar requires ISO string
+    };
+  });
 
   return (
     <NavLayout>
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-4 -z-20">My Approved Appointments</h2>
+      <div className="bg-white p-10 h-auto rounded shadow overflow-x-auto">
         <FullCalendar
-          plugins={[timeGridPlugin]}
-          initialView="timeGridWeek" // Week view format based on time
-          events={appointments}
-          allDaySlot={false} // Remove the "All-day" slot
-          slotMinTime="07:00:00" // Customize calendar start time
-          slotMaxTime="20:00:00" // Customize calendar end time
-          height="auto"
-          eventColor="#3182ce" // Customize event color
+          plugins={[dayGridPlugin]}
+          initialView="dayGridMonth"
+          events={calendarEvents}
           headerToolbar={{
             left: "prev,next today",
             center: "title",
-            right: "timeGridDay,timeGridWeek",
+            right: "dayGridMonth,dayGridWeek,dayGridDay",
           }}
-          eventClick={handleEventClick} // Handle event click
+          eventClick={(info) => handleEventClick(info.event.id)} // Handle event click without interactionPlugin
         />
-      </div>
 
-      {/* Modal */}
-      {selectedAppointment && (
-        <ViewAppointment
-          appointment={selectedAppointment}
-          onClose={handleCloseModal}
-        />
-      )}
+        {isModalOpen && selectedAppointment && (
+          <ViewAppointment
+            appointment={selectedAppointment}
+            onClose={closeModal}
+          />
+        )}
+      </div>
     </NavLayout>
   );
 };
 
-export default ClientCalendar;
+export default OfficeCalendarAppointment;

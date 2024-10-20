@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -35,15 +34,18 @@ type AppointmentType = {
 const OfficePendingAppointment = () => {
   const officeData = useOffice(); // Use the custom hook to get office data
   const [appointments, setAppointments] = useState<AppointmentType[]>([]);
-  const [filteredAppointments, setFilteredAppointments] = useState<AppointmentType[]>([]); // State for filtered appointments
+  const [filteredAppointments, setFilteredAppointments] = useState<
+    AppointmentType[]
+  >([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>(""); // State for search query
   const [selectedAppointment, setSelectedAppointment] =
     useState<AppointmentType | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [approving, setApproving] = useState<boolean>(false); // Loading state for approval
 
-  // Extracted fetchAppointments function
+  // Fetch Appointments
   const fetchAppointments = async () => {
     if (!officeData) {
       setLoading(false);
@@ -59,21 +61,8 @@ const OfficePendingAppointment = () => {
       const snapshot = await getDocs(appointmentsRef);
       const appointmentsList = snapshot.docs.map((doc) => ({
         id: doc.id,
-        appointmentType: doc.data().appointmentType || "",
-        selectedDate: doc.data().selectedDate || "",
-        timeRange: doc.data().timeRange || "",
-        selectedService: doc.data().selectedService || "",
-        selectedPersonnel: doc.data().selectedPersonnel || "",
-        selectedOffice: doc.data().selectedOffice || "",
-        otherReason: doc.data().otherReason || "",
-        name: doc.data().name || "",
-        contact: doc.data().contact || "",
-        email: doc.data().email || "",
-        role: doc.data().role || "",
-        dateCreated: doc.data().dateCreated || "",
-        status: doc.data().status || "",
-        officeCode: doc.data().officeCode || "",
-      }));
+        ...doc.data(),
+      } as AppointmentType));
       setAppointments(appointmentsList);
       setFilteredAppointments(appointmentsList); // Initialize filtered list
     } catch (err) {
@@ -93,31 +82,63 @@ const OfficePendingAppointment = () => {
     setFilteredAppointments(filtered);
   };
 
-  // Fetch appointments when the component mounts
   useEffect(() => {
     fetchAppointments();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [officeData]);
 
   const handleDecline = async (id: string) => {
     if (window.confirm("Are you sure you want to decline this appointment?")) {
       try {
         const appointmentRef = doc(db, "appointments", id);
-        await updateDoc(appointmentRef, { status: "declined" }); // Update status to declined
+        await updateDoc(appointmentRef, { status: "declined" });
         setAppointments(appointments.filter((appt) => appt.id !== id)); // Remove from state
-        setFilteredAppointments(filteredAppointments.filter((appt) => appt.id !== id)); // Remove from filtered list
+        setFilteredAppointments(
+          filteredAppointments.filter((appt) => appt.id !== id)
+        ); // Remove from filtered list
       } catch (err) {
         setError("Error declining appointment: " + (err as Error).message);
       }
     }
   };
 
+  const checkExistingAppointments = async (
+    selectedDate: string,
+    timeRange: string
+  ) => {
+    try {
+      if (!officeData) return;
+      const appointmentsRef = query(
+        collection(db, "appointments"),
+        where("selectedOffice", "==", officeData.office),
+        where("selectedDate", "==", selectedDate),
+        where("timeRange", "==", timeRange)
+      );
+      const snapshot = await getDocs(appointmentsRef);
+      return snapshot.size;
+    } catch (err) {
+      console.error("Error checking existing appointments:", err);
+      throw err;
+    }
+  };
+
   const handleApprove = async (id: string, appointment: AppointmentType) => {
     if (window.confirm("Do you want to approve this appointment?")) {
+      setApproving(true); // Set approving state to true
       try {
-        // Call the API to send SMS using axios
+        const appointmentCount = await checkExistingAppointments(
+          appointment.selectedDate,
+          appointment.timeRange
+        );
+
+        if (appointmentCount !== undefined && appointmentCount >= 4) {
+          alert("There are already four appointments for that time range.");
+          setApproving(false); // Set approving state to false
+          return;
+        }
+
         const response = await axios.post(
-          "/pages/api/send-sms", // Use relative path for API call
+          "/pages/api/send-sms",
           {
             appointmentId: appointment.id,
             contact: appointment.contact,
@@ -126,25 +147,21 @@ const OfficePendingAppointment = () => {
             selectedOffice: appointment.selectedOffice,
             selectedPersonnel: appointment.selectedPersonnel,
           },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
+          { headers: { "Content-Type": "application/json" } }
         );
 
         if (response.data.success) {
-          // Update Firestore status to approved
           const appointmentRef = doc(db, "appointments", id);
           await updateDoc(appointmentRef, { status: "approved" });
 
-          // Refetch appointments after approval to refresh the list
-          await fetchAppointments();
+          window.location.reload(); // Reload the page after successful approval
         } else {
           setError("Failed to send SMS: " + response.data.error);
         }
       } catch (err) {
         setError("Error approving appointment: " + (err as Error).message);
+      } finally {
+        setApproving(false); // Reset approving state after the operation
       }
     }
   };
@@ -177,7 +194,7 @@ const OfficePendingAppointment = () => {
         type="text"
         placeholder="Search by Name"
         value={searchQuery}
-        onChange={handleSearch} // Add the search handler
+        onChange={handleSearch}
         className="border rounded w-80 px-2 py-1 mb-4"
       />
       <table className="table-auto w-full text-left">
@@ -208,10 +225,13 @@ const OfficePendingAppointment = () => {
                     View
                   </button>
                   <button
-                    className="text-green-500 hover:underline ml-2"
+                    className={`text-green-500 hover:underline ml-2 ${
+                      approving ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
                     onClick={() => handleApprove(appointment.id, appointment)}
+                    disabled={approving}
                   >
-                    Approve
+                    {approving ? "Approving..." : "Approve"}
                   </button>
                   <button
                     className="text-red-500 hover:underline ml-2"

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface AppointmentProps {
   appointment: {
@@ -16,29 +16,64 @@ interface AppointmentProps {
     role: string;
     dateCreated: string;
   };
-  onClose: () => void; // Function to close the modal
+  onClose: () => void;
 }
 
+const DetailRow: React.FC<{ label: string; value: string }> = ({
+  label,
+  value,
+}) => (
+  <span className="flex flex-col gap-1">
+    <span className="text-primary font-bold">{label}:</span>
+    <span className="text-sm text-gray-600 font-normal capitalize">{value}</span>
+  </span>
+);
 
-const ViewAppointment: React.FC<AppointmentProps> = ({ appointment, onClose }) => {
-  console.log('appointment', appointment)
+const ViewAppointment: React.FC<AppointmentProps> = ({
+  appointment,
+  onClose,
+}) => {
+  const {
+    id,
+    appointmentType,
+    selectedDate,
+    timeRange,
+    selectedService,
+    selectedOffice,
+    otherReason,
+    name,
+    contact,
+    email,
+    role,
+    dateCreated,
+  } = appointment;
+
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"  style={{ zIndex: 1000 }}>
-      <div className="bg-white p-6 rounded shadow-lg z-50">
-        <h2 className="text-2xl font-bold mb-4">Appointment Details</h2>
-        <p><strong>Appointment Code:</strong> {appointment.id}</p>
-        <p><strong>Type:</strong> {appointment.appointmentType}</p>
-        <p><strong>Date:</strong> {appointment.selectedDate}</p>
-        <p><strong>Time:</strong> {appointment.timeRange}</p>
-        <p><strong>Service:</strong> {appointment.selectedService}</p>
-        <p><strong>Office:</strong> {appointment.selectedOffice}</p>
-        <p><strong>Other Reason:</strong> {appointment.otherReason}</p>
-        <p><strong>Name:</strong> {appointment.name}</p>
-        <p><strong>Contact:</strong> {appointment.contact}</p>
-        <p><strong>Email:</strong> {appointment.email}</p>
-        <p><strong>Role:</strong> {appointment.role}</p>
-        <p><strong>Date Created:</strong> {appointment.dateCreated}</p>
-        <button className="mt-4 bg-blue-500 text-white py-2 px-4 rounded" onClick={onClose}>
+    <div
+      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+      style={{ zIndex: 1000 }}
+    >
+      <div className="flex flex-col bg-white p-6 rounded-lg shadow-lg z-50">
+        {/* <h2 className="text-2xl font-bold mb-4 text-primary">Appointment Details</h2> */}
+        <div className="grid gap-6 gap-x-10 md:grid-cols-2 rounded z-50">
+          <DetailRow label="Appointment Code" value={id} />
+          <DetailRow label="Type" value={appointmentType} />
+          <DetailRow label="Date" value={selectedDate} />
+          <DetailRow label="Time" value={timeRange} />
+          {appointmentType === "service" && <DetailRow label="Service" value={selectedService} />}
+          <DetailRow label="Office" value={selectedOffice} />
+          <DetailRow label="Other Reason" value={otherReason} />
+          <DetailRow label="Name" value={name} />
+          <DetailRow label="Contact" value={contact} />
+          <DetailRow label="Email" value={email} />
+          <DetailRow label="Role" value={role} />
+          <DetailRow label="Date Created" value={dateCreated} />
+        </div>
+
+        <button
+          className="mt-10 btn-sm btn-primary text-white btn ml-auto mr-0 rounded-sm"
+          onClick={onClose}
+        >
           Close
         </button>
       </div>

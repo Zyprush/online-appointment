@@ -94,7 +94,7 @@ export default function LogIn() {
               OMSC Appointment System
             </h2>
             <p className="text-sm text-center font-semibold text-gray-600 mb-6 sm:mb-8">
-              Sign in as Admin or Staff
+              Sign in as Admin
             </p>
             {error && (
               <p className="text-red-500 text-sm text-center mb-4">{error}</p>
