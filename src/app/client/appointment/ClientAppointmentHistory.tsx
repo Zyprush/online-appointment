@@ -76,7 +76,6 @@ const ClientAppointmentHistory: React.FC = () => {
     }
   }, [userData]);
 
-  // Handler to open the modal
   const handleView = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
     setIsModalOpen(true);
