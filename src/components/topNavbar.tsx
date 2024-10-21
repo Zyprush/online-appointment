@@ -39,14 +39,14 @@ const Navbar = () => {
             </a>
           </li>
         </ul>
-        <div className="hidden md:block space-x-4">
+        <div className="hidden md:block space-x-8">
           <Link
             href="/signup/client"
-            className="text-blue-600  hover:text-primary hover:font-bold hover:underline"
+            className="text-primary font-bold hover:text-blue-600 hover:font-bold hover:underline"
           >
-            Sign Up
+            Sign-up
           </Link>
-          <Link href="/log-in" className="text-blue-600 hover:text-primary hover:font-bold hover:underline">
+          <Link href="/log-in" className="text-primary font-bold hover:text-blue-600 hover:font-bold hover:underline">
             Login
           </Link>
         </div>
