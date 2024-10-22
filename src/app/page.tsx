@@ -38,9 +38,9 @@ export default function Home() {
 
             <Link
               href="/signup/client"
-              className="btn btn-primary rounded-md text-white px-6 py-3 font-normal"
+              className="btn btn-primary rounded-md mt-10 text-white px-6 py-3 font-normal"
             >
-              Client Signup
+              Signup
             </Link>
           </div>
         </motion.div>

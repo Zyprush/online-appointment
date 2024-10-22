@@ -40,12 +40,6 @@ const Navbar = () => {
           </li>
         </ul>
         <div className="hidden md:block space-x-8">
-          <Link
-            href="/signup/client"
-            className="text-primary font-bold hover:text-blue-600 hover:font-bold hover:underline"
-          >
-            Sign-up
-          </Link>
           <Link href="/log-in" className="text-primary font-bold hover:text-blue-600 hover:font-bold hover:underline">
             Login
           </Link>
@@ -104,15 +98,6 @@ const Navbar = () => {
                 onClick={toggleMenu}
               >
                 Contact
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/signup/client"
-                className="hover:text-blue-600"
-                onClick={toggleMenu}
-              >
-                Sign Up
               </Link>
             </li>
             <li>
