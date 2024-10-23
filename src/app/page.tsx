@@ -29,12 +29,12 @@ export default function Home() {
             hassle-free scheduling for students, faculty, and staff.
           </p>
           <div className="mt-4 gap-5 flex">
-            {/* <Link
-              href="/calendar"
-              className="btn btn-primary rounded-md text-white px-6 py-3 font-normal"
+            <Link
+              href="/schedule"
+              className="btn mt-10 btn-primary rounded-md text-white px-6 py-3 font-normal"
             >
               Schedule
-            </Link> */}
+            </Link>
 
             <Link
               href="/signup/client"
