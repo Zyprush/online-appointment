@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase";
+import RequirementsModal from "./RequirementsModal";
 
 interface Office {
   name: string;
@@ -11,16 +12,18 @@ interface Office {
 interface Service {
   name: string;
   office: string;
+  requirements: string;
 }
 
 const Services: React.FC = () => {
   const [services, setServices] = useState<Service[]>([]);
-  const [offices, setOffices] = useState<Office[]>([]); 
+  const [offices, setOffices] = useState<Office[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Fetch services and offices from Firestore on component mount
   useEffect(() => {
     const fetchServicesAndOffices = async () => {
       const servicesDoc = await getDoc(doc(db, "settings", "services"));
@@ -36,7 +39,6 @@ const Services: React.FC = () => {
     fetchServicesAndOffices();
   }, []);
 
-  // Save services to Firestore
   const saveServices = async () => {
     if (!isFormValid()) {
       setError("Please complete all fields.");
@@ -50,47 +52,61 @@ const Services: React.FC = () => {
     setIsEditing(false);
   };
 
-  // Validate form
   const isFormValid = () => {
     return services.every(
       (service) => service.name?.trim() !== "" && service.office?.trim() !== ""
     );
   };
 
-  // Handle changes in service name or office selection
   const handleServiceChange = (
     index: number,
     field: keyof Service,
     value: string
   ) => {
     setServices((prevServices) =>
-      prevServices.map((s, i) =>
-        i === index ? { ...s, [field]: value } : s
+      prevServices.map((s, i) => (i === index ? { ...s, [field]: value } : s))
+    );
+  };
+
+  const handleRequirementsChange = (requirements: string) => {
+    if (!selectedService) return;
+
+    const serviceIndex = services.findIndex(
+      (s) => s.name === selectedService.name
+    );
+    if (serviceIndex === -1) return;
+
+    setServices(
+      services.map((service, index) =>
+        index === serviceIndex ? { ...service, requirements } : service
       )
     );
   };
 
-  // Delete a service
   const deleteService = (index: number) =>
     setServices(services.filter((_, i) => i !== index));
 
-  // Add a new service
   const addService = () =>
     setServices([
       ...services,
       {
         name: "",
         office: "",
+        requirements: "",
       },
     ]);
 
-  // Toggle edit mode
   const toggleEdit = () => {
     setIsEditing(!isEditing);
   };
 
+  const openRequirementsModal = (service: Service) => {
+    setSelectedService(service);
+    setIsModalOpen(true);
+  };
+
   return (
-    <div className="bg-white p-5 rounded-lg border flex flex-col gap-3 text-zinc-600">
+    <div className="bg-white col-span-2 p-5 rounded-lg border flex flex-col gap-3 text-zinc-600">
       <div className="flex justify-between items-center">
         <span className="font-bold text-primary">Services</span>
         <button
@@ -102,8 +118,23 @@ const Services: React.FC = () => {
       </div>
 
       {error && <div className="text-red-500">{error}</div>}
-
-      {/* Display services */}
+      {isEditing && (
+        <div className="mx-auto flex gap-5">
+          <button
+            onClick={addService}
+            className="btn btn-sm rounded-none text-primary btn-outline"
+          >
+            Add Service
+          </button>
+          <button
+            onClick={saveServices}
+            className="btn btn-sm rounded-none btn-primary text-white"
+            disabled={!isFormValid() || loading}
+          >
+            {loading ? "Saving..." : "Save Changes"}
+          </button>
+        </div>
+      )}
       {services.length > 0 &&
         services.map((service, index) => (
           <div key={index} className="flex gap-3">
@@ -133,6 +164,12 @@ const Services: React.FC = () => {
                   ))}
                 </select>
                 <button
+                  onClick={() => openRequirementsModal(service)}
+                  className="btn btn-sm btn-primary text-white rounded-sm"
+                >
+                  Requirements
+                </button>
+                <button
                   onClick={() => deleteService(index)}
                   className="btn btn-sm rounded-sm text-white btn-error"
                 >
@@ -140,35 +177,36 @@ const Services: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <table className="table w-full">
-                <tbody>
-                  <tr>
-                    <td className="w-80">{service.name}</td>
-                    <td>{service.office}</td>
-                  </tr>
-                </tbody>
-              </table>
+              <div className="w-full">
+                <table className="table w-full">
+                  <tbody>
+                    <tr>
+                      <td className="w-80">{service.name}</td>
+                      <td>{service.office}</td>
+                      <td className="text-right">
+                        <button
+                          onClick={() => openRequirementsModal(service)}
+                          className="btn btn-sm btn-primary text-white rounded-sm"
+                        >
+                          View Requirements
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         ))}
 
-      {/* Add service and save changes */}
-      {isEditing && (
-        <div className="mx-auto flex gap-5">
-          <button
-            onClick={addService}
-            className="btn btn-sm rounded-none text-primary btn-outline"
-          >
-            Add Service
-          </button>
-          <button
-            onClick={saveServices}
-            className="btn btn-sm rounded-none btn-primary text-white"
-            disabled={!isFormValid() || loading}
-          >
-            {loading ? "Saving..." : "Save Changes"}
-          </button>
-        </div>
+      {selectedService && (
+        <RequirementsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          service={selectedService}
+          isEditing={isEditing}
+          onSave={handleRequirementsChange}
+        />
       )}
     </div>
   );

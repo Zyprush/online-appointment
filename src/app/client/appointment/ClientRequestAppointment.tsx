@@ -10,11 +10,14 @@ import {
 } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useUserData } from "@/hooks/useUserData";
+import ViewRequirements from "./ViewRequirements";
 
 interface Option {
   name: string;
   office?: string;
+  phoneNumber?: string;
   officeCode?: string;
+  requirements?: string;
 }
 
 const useFirestoreData = (docId: string, field: string) => {
@@ -334,7 +337,10 @@ const ClientRequestAppointment: React.FC = () => {
             </select>
           </div>
         </div>
-
+        <ViewRequirements 
+      selectedService={selectedService} 
+      services={services}
+    />
         <div className="flex items-center justify-between">
           <button
             type="submit"
