@@ -74,6 +74,7 @@ const OfficeCalendarAppointment = () => {
 
   useEffect(() => {
     fetchAppointments();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedOffice]);
 
   if (loading) {
