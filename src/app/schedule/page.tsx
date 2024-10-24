@@ -74,7 +74,7 @@ const OfficeCalendarAppointment = () => {
 
   useEffect(() => {
     fetchAppointments();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedOffice]);
 
   if (loading) {
@@ -130,119 +130,31 @@ const OfficeCalendarAppointment = () => {
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <div className="flex-grow p-6">
-        <div className="mt-4 bg-white p-6 rounded-lg shadow-md">
-          <select
-            className="mb-6 w-full md:w-80 px-4 py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            value={selectedOffice}
-            onChange={(e) => setSelectedOffice(e.target.value)}
-            required
-          >
-            <option value="">Select an office</option>
-            {officeList.map((office) => (
-              <option key={office.name} value={office.name}>
-                {office.name}
-              </option>
-            ))}
-          </select>
+        <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
+          <div className="flex flex-col md:flex-row gap-5 items-center mb-6">
+            <select
+              className="w-full md:w-80 px-4 py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 font-bold"
+              value={selectedOffice}
+              onChange={(e) => setSelectedOffice(e.target.value)}
+              required
+            >
+              <option value="">Select an office</option>
+              {officeList.map((office) => (
+                <option key={office.name} value={office.name}>
+                  {office.name}
+                </option>
+              ))}
+            </select>
+            <span className="flex gap-1 justify-center items-center ">
+              <div className="bg-primary h-7 w-7 rounded-sm"></div>
+              <div className="bg-primary h-7 w-7 rounded-sm"></div>
+              <div className="bg-primary h-7 w-7 rounded-sm"></div>
+              <div className="bg-primary h-7 w-7 rounded-sm"></div>
+              <span className="text-gray-500">Four Box indicate the schdule is full for this timeslot</span>
+            </span>
+          </div>
 
           <div className="calendar-container">
-          <style jsx global>{`
-              .fc {
-                height: calc(100vh - 200px) !important;
-              }
-
-              .fc-timegrid-slot {
-                height: 55px !important;
-                border: 1px solid #e2e8f0 !important;
-              }
-
-              .fc-timegrid-slot-lane {
-                border: 1px solid #e2e8f0 !important;
-                background-color: #ffffff;
-              }
-
-              .fc-timegrid-col {
-                border: 2px solid #e2e8f0 !important;
-              }
-
-              .fc-timegrid-col-frame {
-                background-color: #ffffff;
-              }
-
-              .fc-timegrid-event-harness {
-                margin-right: auto !important;
-                display: flex !important;
-                flex-direction: column !important;
-                justify-content: start !important;
-              }
-
-              .fc-event {
-                border: 1px solid #244e8a !important;
-                background-color: #244e8a !important;
-                width: 55px !important;
-                height: 55px !important;
-                color: #2b6cb0 !important;
-                padding: 2px 4px !important;
-              }
-
-              .fc-event-main {
-                padding: 0 !important;
-              }
-
-              .fc-event-title {
-                padding: 0 !important;
-              }
-
-              .fc-event:hover {
-                background-color: #1a365d !important;
-              }
-
-              .fc-timegrid-axis {
-                border: 1px solid #e2e8f0 !important;
-                background-color: #f7fafc !important;
-              }
-
-              .fc-col-header-cell {
-                background-color: #f7fafc !important;
-                border: 1px solid #e2e8f0 !important;
-                padding: 8px !important;
-              }
-
-              .fc-toolbar-title {
-                font-size: 1.25rem !important;
-                font-weight: 600 !important;
-              }
-
-              .fc-button {
-                background-color: #4299e1 !important;
-                border-color: #4299e1 !important;
-                text-transform: capitalize !important;
-                padding: 0.5rem 1rem !important;
-              }
-
-              .fc-button:hover {
-                background-color: #3182ce !important;
-                border-color: #3182ce !important;
-              }
-
-              .fc-button-active {
-                background-color: #2b6cb0 !important;
-                border-color: #2b6cb0 !important;
-              }
-
-              .fc .fc-toolbar {
-                flex-wrap: wrap;
-                gap: 1rem;
-              }
-
-              @media (max-width: 640px) {
-                .fc .fc-toolbar {
-                  flex-direction: column;
-                  align-items: stretch;
-                }
-              }
-            `}</style>
-
             <FullCalendar
               plugins={[timeGridPlugin, interactionPlugin]}
               initialView="timeGridWeek"
