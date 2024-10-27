@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import {
   collection,
   getDocs,
@@ -12,6 +11,7 @@ import {
 import { useOffice } from "@/hooks/useOffice"; // Import the custom hook
 import ViewAppointment from "@/components/ViewAppointment";
 import { db } from "@/firebase";
+import { useSendSMS } from "@/hooks/useSendSMS";
 
 type AppointmentType = {
   id: string;
@@ -44,6 +44,7 @@ const OfficePendingAppointment = () => {
     useState<AppointmentType | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [approving, setApproving] = useState<boolean>(false); // Loading state for approval
+  const { sendApproveSMS, sendDeclineSMS } = useSendSMS();
 
   // Fetch Appointments
   const fetchAppointments = async () => {
@@ -91,19 +92,39 @@ const OfficePendingAppointment = () => {
   }, [officeData]);
 
   const handleDecline = async (id: string) => {
+    const appointment = appointments.find((appt) => appt.id === id);
+    
+    if (!appointment) return; // If no appointment is found, exit function
+  
     if (window.confirm("Are you sure you want to decline this appointment?")) {
       try {
         const appointmentRef = doc(db, "appointments", id);
         await updateDoc(appointmentRef, { status: "declined" });
-        setAppointments(appointments.filter((appt) => appt.id !== id)); // Remove from state
-        setFilteredAppointments(
-          filteredAppointments.filter((appt) => appt.id !== id)
-        ); // Remove from filtered list
+        
+        // Send SMS notification
+        const smsResponse = await sendDeclineSMS({
+          appointmentId: appointment.id,
+          contact: appointment.contact,
+          selectedDate: appointment.selectedDate,
+          timeRange: appointment.timeRange,
+          selectedOffice: appointment.selectedOffice,
+          selectedPersonnel: appointment.selectedPersonnel,
+        });
+  
+        if (!smsResponse.success) {
+          setError("Failed to send SMS: " + smsResponse.error);
+        }
+  
+        // Update state after SMS
+        setAppointments(appointments.filter((appt) => appt.id !== id));
+        setFilteredAppointments(filteredAppointments.filter((appt) => appt.id !== id));
+        
       } catch (err) {
         setError("Error declining appointment: " + (err as Error).message);
       }
     }
   };
+  
 
   const checkExistingAppointments = async (
     selectedDate: string,
@@ -134,33 +155,28 @@ const OfficePendingAppointment = () => {
           appointment.selectedDate,
           appointment.timeRange
         );
-        console.log("appointmentCount", appointmentCount);
+  
         if (appointmentCount >= 4) {
           alert("There are already 4 (four) appointments for that time range.");
-          setApproving(false); // Set approving state to false
+          setApproving(false);
           return;
         }
-
-        const response = await axios.post(
-          "/pages/api/send-sms",
-          {
-            appointmentId: appointment.id,
-            contact: appointment.contact,
-            selectedDate: appointment.selectedDate,
-            timeRange: appointment.timeRange,
-            selectedOffice: appointment.selectedOffice,
-            selectedPersonnel: appointment.selectedPersonnel,
-          },
-          { headers: { "Content-Type": "application/json" } }
-        );
-
-        if (response.data.success) {
+  
+        const response = await sendApproveSMS({
+          appointmentId: appointment.id,
+          contact: appointment.contact,
+          selectedDate: appointment.selectedDate,
+          timeRange: appointment.timeRange,
+          selectedOffice: appointment.selectedOffice,
+          selectedPersonnel: appointment.selectedPersonnel,
+        });
+  
+        if (response.success) {
           const appointmentRef = doc(db, "appointments", id);
           await updateDoc(appointmentRef, { status: "approved" });
-
-          window.location.reload(); // Reload the page after successful approval
+          window.location.reload(); // Reload after successful approval
         } else {
-          setError("Failed to send SMS: " + response.data.error);
+          setError("Failed to send SMS: " + response.error);
         }
       } catch (err) {
         setError("Error approving appointment: " + (err as Error).message);
