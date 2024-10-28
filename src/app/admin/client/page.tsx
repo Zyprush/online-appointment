@@ -1,5 +1,5 @@
 "use client";
-  
+   
 import React, { useState } from "react";
 import VerifiedClient from "./VerifiedClient";
 import RestrictedClient from "./RestrictedClient"; // Updated import statement
