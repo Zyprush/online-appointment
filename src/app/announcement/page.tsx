@@ -84,7 +84,7 @@ const Announce: React.FC = (): JSX.Element => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {announcements.map((announce) => (
               <div
-                className="flex flex-col items-start mb-6 p-4 bg-zinc-100 border border-gray-200 rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer"
+                className="flex flex-col items-start mb-6 p-4 bg-white border-2 border-gray-200 rounded-lg hover:shadow-lg cursor-pointer"
                 key={announce.id}
                 onClick={() => openModal(announce)}
               >
@@ -119,51 +119,62 @@ const Announce: React.FC = (): JSX.Element => {
         )}
 
         {isModalOpen && selectedAnnouncement && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div className="bg-white rounded-lg p-6 w-11/12 md:w-2/3 lg:w-1/2 max-w-4xl relative shadow-lg">
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+            <div className="bg-white rounded-lg p-8 w-11/12 md:w-3/5 lg:w-2/5 max-w-2xl relative shadow-2xl">
+              {/* Close Button */}
               <button
                 onClick={closeModal}
-                className="absolute top-2 right-2 text-xl font-bold text-gray-500 hover:text-gray-700"
+                aria-label="Close announcement"
+                className="absolute top-3 right-3 text-2xl text-gray-600 hover:text-gray-800 transition duration-200 focus:outline-none"
               >
                 &times;
               </button>
 
-              <h3 className="text-xl font-semibold mb-4 text-gray-800">
+              {/* Announcement Title */}
+              <h3 className="text-2xl font-bold mb-5 text-primary">
                 {selectedAnnouncement.what}
               </h3>
 
-              <div className="flex flex-col space-y-2">
+              {/* Announcement Details */}
+              <div className="space-y-3 mb-6 text-gray-700">
                 <p className="text-sm">
-                  <strong>When:</strong>{" "}
+                  <strong className="text-primary-500">When:</strong>{" "}
                   {format(new Date(selectedAnnouncement.when), "MMM dd, yyyy")}
                 </p>
                 <p className="text-sm">
-                  <strong>Who:</strong> {selectedAnnouncement.who}
+                  <strong className="text-primary-500">Who:</strong>{" "}
+                  {selectedAnnouncement.who}
                 </p>
                 <p className="text-sm">
-                  <strong>Where:</strong> {selectedAnnouncement.where}
+                  <strong className="text-primary-500">Where:</strong>{" "}
+                  {selectedAnnouncement.where}
                 </p>
               </div>
 
+              {/* Attached Files Section */}
               {selectedAnnouncement.files.length > 0 && (
-                <div className="mt-6">
-                  <h4 className="font-bold mb-2 text-gray-600 text-sm">
+                <div>
+                  <h4 className="text-lg font-semibold text-gray-600 mb-3">
                     Attached Files
                   </h4>
-                  <ul className="flex flex-wrap">
+                  <ul className="flex flex-wrap gap-4">
                     {selectedAnnouncement.files.map((file, index) => (
-                      <li key={index} className="mr-2 mb-2">
+                      <li
+                        key={index}
+                        className="w-24 h-24 border border-gray-200 rounded-md overflow-hidden hover:shadow-lg transition-shadow duration-200"
+                      >
                         <a
                           href={file}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center"
+                          className="block w-full h-full"
+                          aria-label={`Open document ${index + 1}`}
                         >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={file}
                             alt={`Document ${index}`}
-                            className="h-32 w-32 object-cover rounded border border-gray-300"
+                            className="object-cover w-full h-full"
                           />
                         </a>
                       </li>
