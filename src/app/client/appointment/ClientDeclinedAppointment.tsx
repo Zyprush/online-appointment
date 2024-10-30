@@ -25,13 +25,10 @@ interface Appointment {
 const ClientDeclinedAppointment: React.FC = () => {
   const { userData } = useUserData(); // Get current user data
   const [appointments, setAppointments] = useState<Appointment[]>([]); // State to hold appointments
-  const [filteredAppointments, setFilteredAppointments] = useState<Appointment[]>([]); // State to hold filtered appointments
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState<string | null>(null); // Error state
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null); // State for selected appointment
-
-  const [dateFilter, setDateFilter] = useState<string>(""); // State for date filter
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -61,7 +58,6 @@ const ClientDeclinedAppointment: React.FC = () => {
           officeCode: doc.data().officeCode || "",
         }));
         setAppointments(appointmentList);
-        setFilteredAppointments(appointmentList); // Initially, show all appointments
       } catch (error) {
         setError("Error fetching appointments: " + (error as Error).message);
       } finally {
@@ -86,18 +82,6 @@ const ClientDeclinedAppointment: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  // Filter appointments based on date and status
-  const handleFilter = () => {
-    let filtered = appointments;
-
-    // Filter by date if a date is selected
-    if (dateFilter) {
-      filtered = filtered.filter((appointment) => appointment.selectedDate === dateFilter);
-    }
-
-    setFilteredAppointments(filtered);
-  };
-
   if (loading) {
     return <div>Loading...</div>; // Display loading message
   }
@@ -110,27 +94,11 @@ const ClientDeclinedAppointment: React.FC = () => {
     <div>
       <h2 className="text-xl font-bold mb-4">Appointment History</h2>
 
-      {/* Filter Section */}
-      <div className="mb-4">
-        <label className="mr-2">Filter by Date:</label>
-        <input
-          type="date"
-          value={dateFilter}
-          onChange={(e) => setDateFilter(e.target.value)}
-          className="mr-4 p-2 border"
-        />
-
-        <button onClick={handleFilter} className="bg-primary text-white py-2 px-4 rounded">
-          Apply Filter
-        </button>
-      </div>
-
       {/* Appointments Table */}
       <table className="min-w-full bg-white border text-sm">
         <thead>
           <tr className="text-primary">
             <th className="px-4 py-2 text-left">Appointment Code</th>
-            <th className="px-4 py-2 text-left">Type</th>
             <th className="px-4 py-2 text-left">Date</th>
             <th className="px-4 py-2 text-left">Time</th>
             <th className="px-4 py-2 text-left">Status</th>
@@ -138,15 +106,14 @@ const ClientDeclinedAppointment: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredAppointments.length === 0 ? (
+          {appointments.length === 0 ? (
             <tr>
               <td colSpan={6} className="px-4 py-2 text-center">No appointment history found.</td>
             </tr>
           ) : (
-            filteredAppointments.map((appointment) => (
+            appointments.map((appointment) => (
               <tr key={appointment.id} className="border-b">
                 <td className="px-4 py-2 uppercase">{`${appointment.officeCode}${appointment.id}` || appointment.id}</td>
-                <td className="px-4 py-2 capitalize">{appointment.appointmentType}</td>
                 <td className="px-4 py-2">{appointment.selectedDate}</td>
                 <td className="px-4 py-2">{appointment.timeRange}</td>
                 <td className="px-4 py-2">
@@ -185,3 +152,4 @@ const ClientDeclinedAppointment: React.FC = () => {
 };
 
 export default ClientDeclinedAppointment;
+

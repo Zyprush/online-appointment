@@ -65,6 +65,7 @@ const OfficeCalendarAppointment = () => {
         officeCode: doc.data().officeCode || "",
       }));
       setAppointments(appointmentsList);
+      console.log("appointmentsList", appointmentsList);
     } catch (err) {
       setError("Error fetching appointments: " + (err as Error).message);
     } finally {
@@ -125,7 +126,7 @@ const OfficeCalendarAppointment = () => {
       },
     };
   });
-
+  
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
@@ -150,11 +151,13 @@ const OfficeCalendarAppointment = () => {
               <div className="bg-primary h-7 w-7 rounded-sm"></div>
               <div className="bg-primary h-7 w-7 rounded-sm"></div>
               <div className="bg-primary h-7 w-7 rounded-sm"></div>
-              <span className="text-gray-500">Four Box indicate the schdule is full for this timeslot</span>
+              <span className="text-gray-500">
+                Four Box indicate the schdule is full for this timeslot
+              </span>
             </span>
           </div>
 
-          <div className="calendar-container">
+          <div className="calendar-contain">
             <FullCalendar
               plugins={[timeGridPlugin, interactionPlugin]}
               initialView="timeGridWeek"
@@ -196,6 +199,9 @@ const OfficeCalendarAppointment = () => {
           </div>
         </div>
       </div>
+      <style jsx>{`
+        
+      `}</style>
     </div>
   );
 };

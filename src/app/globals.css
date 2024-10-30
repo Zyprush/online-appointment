@@ -71,78 +71,69 @@ body {
   text-decoration: underline;
 }
 
+.loading-message {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
+.form-select {
+  width: 100%;
+  max-width: 20rem;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  border: 1px solid #d1d5db;
+  font-weight: bold;
+}
 
-
-.fc {
+.calendar-contain .fc {
   height: calc(100vh - 200px) !important;
 }
 
-.fc-timegrid-slot {
+.calendar-contain .fc-timegrid-slot {
   height: 55px !important;
   border: 1px solid #e2e8f0 !important;
 }
 
-.fc-timegrid-slot-lane {
-  border: 1px solid #e2e8f0 !important;
-  background-color: #ffffff;
-}
-
-.fc-timegrid-col {
+/* .calendar-contain .fc-timegrid-slot-lane,
+.calendar-contain .fc-timegrid-col {
   border: 2px solid #e2e8f0 !important;
-}
-
-.fc-timegrid-col-frame {
   background-color: #ffffff;
+} */
+
+.calendar-contain .fc-timegrid-event-harness {
+  display: flex;
+  justify-content: flex-start;
 }
 
-.fc-timegrid-event-harness {
-  margin: auto !important; 
-  display: flex !important;
-  flex-direction: row !important;
-  justify-content: flex-start !important; 
+.calendar-contain .fc-event {
+  border: 1px solid #244e8a;
+  background-color: #244e8a;
+  width: 55px;
+  height: 55px;
+  color: #2b6cb0;
 }
 
-.fc-event {
-  border: 1px solid #244e8a !important;
-  background-color: #244e8a !important;
-  width: 55px !important;
-  height: 55px !important;
-  color: #2b6cb0 !important;
-  padding: 2px 4px !important;
+.calendar-contain .fc-col-header-cell {
+  background-color: #f7fafc;
+  border: 1px solid #e2e8f0;
+  padding: 8px;
 }
 
-.fc-event-main {
-  padding: 0 !important;
+.calendar-contain .fc-toolbar-title {
+  font-size: 2rem;
+  font-weight: 600;
 }
 
-.fc-event-title {
-  padding: 0 !important;
-}
-
-.fc-col-header-cell {
-  background-color: #f7fafc !important;
-  border: 1px solid #e2e8f0 !important;
-  padding: 8px !important;
-}
-
-.fc-toolbar-title {
-  font-size: 2rem !important;
-  font-weight: 600 !important;
-}
-
-.fc-button-active {
-  background-color: #6F7D42 !important;
-  border-color: #6F7D42 !important;
-}
-
-.fc .fc-toolbar {
-  flex-wrap: wrap;
-  gap: 1rem;
+.calendar-contain .fc-button-active {
+  background-color: #6f7d42;
+  border-color: #6f7d42;
 }
 
 @media (max-width: 640px) {
-  .fc .fc-toolbar {
+  .calendar-contain .fc .fc-toolbar {
     flex-direction: column;
     align-items: stretch;
   }

@@ -30,7 +30,6 @@ const ClientPendingAppointment: React.FC = () => {
   const [error, setError] = useState<string | null>(null); // Error state
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null); // State for selected appointment in modal
   const [isModalOpen, setIsModalOpen] = useState(false); // State to handle modal visibility
-  const [filterDate, setFilterDate] = useState(""); // State for filtering by date
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -61,14 +60,7 @@ const ClientPendingAppointment: React.FC = () => {
           officeCode: doc.data().officeCode || ""
         }));
 
-        // Filter appointments by date if filterDate is set
-        const filteredAppointments = filterDate
-          ? appointmentList.filter((appointment) =>
-              appointment.selectedDate.includes(filterDate)
-            )
-          : appointmentList;
-
-        setAppointments(filteredAppointments as Appointment[]);
+        setAppointments(appointmentList as Appointment[]);
       } catch (error) {
         setError("Error fetching appointments: " + (error as Error).message);
       } finally {
@@ -79,7 +71,7 @@ const ClientPendingAppointment: React.FC = () => {
     if (userData?.uid) { // Ensure user UID is available before fetching
       fetchAppointments();
     }
-  }, [userData, filterDate]); // Also re-run the effect when the filterDate changes
+  }, [userData]); // Also re-run the effect when the filterDate changes
 
   // Handler to delete an appointment
   const handleDelete = async (appointmentId: string) => {
@@ -123,17 +115,6 @@ const ClientPendingAppointment: React.FC = () => {
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">Pending Appointments</h2>
-
-      {/* Date Filter */}
-      <div className="mb-4">
-        <label className="block mb-1 font-bold text-sm">Filter by Date:</label>
-        <input
-          type="date"
-          className="border border-gray-300 px-4 py-2 rounded"
-          value={filterDate}
-          onChange={(e) => setFilterDate(e.target.value)} // Update filter date state
-        />
-      </div>
 
       {/* Appointments Table */}
       <table className="min-w-full bg-white text-sm">
@@ -195,3 +176,4 @@ const ClientPendingAppointment: React.FC = () => {
 };
 
 export default ClientPendingAppointment;
+

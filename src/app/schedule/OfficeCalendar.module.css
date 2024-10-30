@@ -1,0 +1,45 @@
+.fc {
+    height: calc(100vh - 200px) !important;
+  }
+  
+  .fc-timegrid-slot,
+  .fc-timegrid-slot-lane,
+  .fc-timegrid-col {
+    border: 1px solid #e2e8f0 !important;
+    background-color: #ffffff;
+  }
+  
+  .fc-timegrid-event-harness {
+    margin: auto !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+  }
+  
+  .fc-event {
+    border: 1px solid #244e8a !important;
+    background-color: #244e8a !important;
+    color: #2b6cb0 !important;
+    padding: 2px 4px !important;
+  }
+  
+  .fc-col-header-cell,
+  .fc-toolbar-title {
+    background-color: #f7fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    padding: 8px !important;
+    font-size: 2rem !important;
+    font-weight: 600 !important;
+  }
+  
+  .fc-button-active {
+    background-color: #6F7D42 !important;
+    border-color: #6F7D42 !important;
+  }
+  
+  @media (max-width: 640px) {
+    .fc .fc-toolbar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+  
