@@ -265,7 +265,7 @@ const ClientRequestAppointment: React.FC = () => {
           </div>
         )}
 
-        {appointmentType && (
+        {appointmentType === "visit" && (
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
               * Select Office
@@ -275,7 +275,6 @@ const ClientRequestAppointment: React.FC = () => {
               value={selectedOffice}
               onChange={(e) => setSelectedOffice(e.target.value)}
               required
-              disabled={appointmentType === "service"}
             >
               <option value="">Select an office</option>
               {offices.map((office) => (
@@ -284,6 +283,18 @@ const ClientRequestAppointment: React.FC = () => {
                 </option>
               ))}
             </select>
+          </div>
+        )}
+        {appointmentType === "service" && (
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              * Office
+            </label>
+            <input
+              className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              value={selectedOffice}
+              disabled
+            />
           </div>
         )}
 

@@ -1,14 +1,16 @@
 "use client";
 import NavLayout from "@/components/NavLayout";
 import React, { useState, useEffect } from "react";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc, query, where } from "firebase/firestore";
 import { ref, deleteObject } from "firebase/storage";
 import { db, storage } from "@/firebase"; 
 import { format } from "date-fns";
 import AddAnnounce from "./AddAnnounce";
+import { useOffice } from "@/hooks/useOffice";
 
 interface Announcement {
   id: string;
+  office: string;
   what: string;
   when: string;
   who: string;
@@ -21,6 +23,7 @@ const Announce: React.FC = (): JSX.Element => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedAnnouncements, setSelectedAnnouncements] = useState<string[]>([]);
+  const officeData = useOffice();
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -33,7 +36,13 @@ const Announce: React.FC = (): JSX.Element => {
 
   const fetchAnnouncements = async () => {
     setLoading(true);
-    const querySnapshot = await getDocs(collection(db, "announce"));
+    const office = officeData?.office ? officeData.office : "";
+    const querySnapshot = await getDocs(
+      query(
+        collection(db, "announce"),
+        where("office", "==", office)
+      )
+    );
     const announcementsData = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
@@ -80,6 +89,7 @@ const Announce: React.FC = (): JSX.Element => {
 
   useEffect(() => {
     fetchAnnouncements();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

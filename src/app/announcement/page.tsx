@@ -8,6 +8,7 @@ import { getRelativeTime } from "@/helper/time";
 
 interface Announcement {
   id: string;
+  office: string;
   what: string;
   when: string;
   who: string;
@@ -100,6 +101,9 @@ const Announce: React.FC = (): JSX.Element => {
                 )}
 
                 <div className="flex-1 w-full">
+                <h3 className="font-bold text-lg text-gray-700 mb-2">
+                    {announce.office}
+                  </h3>
                   <h3 className="font-bold text-lg text-gray-700 mb-2">
                     {announce.what}
                   </h3>

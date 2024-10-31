@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { collection, addDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/firebase";
+import { useOffice } from "@/hooks/useOffice";
 
 interface AddAnnounceProps {
   onClose: () => void; // Prop to handle modal close
@@ -15,6 +16,7 @@ const AddAnnounce: React.FC<AddAnnounceProps> = ({ onClose }) => {
   const [files, setFiles] = useState<FileList | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const officeData = useOffice();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFiles(e.target.files);
@@ -51,6 +53,7 @@ const AddAnnounce: React.FC<AddAnnounceProps> = ({ onClose }) => {
         where,
         files: uploadedFiles,
         createdAt: currentTime,
+        office: officeData?.office,
       });
 
       setWhat("");

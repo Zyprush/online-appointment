@@ -22,17 +22,11 @@ const AdminNavLink: React.FC<AdminNavLinkProps> = ({ isMobile = false }) => {
 
   return (
     <div className={isMobile ? "flex flex-col" : "flex gap-5 ml-auto mr-5"}>
-      {/* <Link href="/admin/appointment" className={linkClass}>
-        Appointment
-      </Link> */}
       <Link href="/admin/calendar" className={linkClass}>
-        Calendar
+        Calendar/Holiday
       </Link>
       <Link href="/admin/client" className={linkClass}>
         Client
-      </Link>
-      <Link href="/admin/announcement" className={linkClass}>
-        Announcement
       </Link>
       <Link href="/admin/setting" className={linkClass}>
         Setting

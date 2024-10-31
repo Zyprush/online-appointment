@@ -32,6 +32,9 @@ const OfficeNavLink: React.FC<OfficeNavLinkProps> = ({ isMobile = false }) => {
       <Link href="/office/calendar" className={linkClass}>
         Calendar
       </Link>
+      <Link href="/office/announcement" className={linkClass}>
+        Announcement
+      </Link>
       <button onClick={handleLogout} className={linkClass}>
         Logout
       </button>

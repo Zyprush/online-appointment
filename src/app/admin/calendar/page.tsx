@@ -105,7 +105,7 @@ const AdminCalendar = () => {
   return (
     <NavLayout>
       <div className="container mx-auto p-4">
-        <h1 className="text-xl font-bold mb-4">Admin Calendar</h1>
+        <h1 className="text-xl font-bold mb-4">List of Unavailable Date</h1>
 
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin]} // Use interaction plugin for date click

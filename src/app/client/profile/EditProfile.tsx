@@ -6,10 +6,8 @@ import { onAuthStateChanged } from "firebase/auth";
 
 interface ClientData {
   barangay: string;
-  birthdate: string;
   city: string;
   contact: string;
-  extensionName: string;
   firstName: string;
   homeAddress: string;
   lastName: string;
@@ -89,10 +87,8 @@ const EditProfile = ({
         const docRef = doc(db, "users", userId);
         await updateDoc(docRef, {
           barangay: clientData.barangay,
-          birthdate: clientData.birthdate,
           city: clientData.city,
           contact: clientData.contact,
-          extensionName: clientData.extensionName || "",
           firstName: clientData.firstName,
           homeAddress: clientData.homeAddress,
           lastName: clientData.lastName,
@@ -178,22 +174,6 @@ const EditProfile = ({
               <div className="mb-4">
                 <label
                   className="block text-sm font-medium mb-1"
-                  htmlFor="extensionName"
-                >
-                  Extension Name:
-                </label>
-                <input
-                  type="text"
-                  name="extensionName"
-                  id="extensionName"
-                  value={clientData.extensionName || ""}
-                  onChange={handleChange}
-                  className="border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  className="block text-sm font-medium mb-1"
                   htmlFor="contact"
                 >
                   Contact Number:
@@ -203,23 +183,6 @@ const EditProfile = ({
                   name="contact"
                   id="contact"
                   value={clientData.contact}
-                  onChange={handleChange}
-                  required
-                  className="border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  className="block text-sm font-medium mb-1"
-                  htmlFor="birthdate"
-                >
-                  Birthdate:
-                </label>
-                <input
-                  type="date"
-                  name="birthdate"
-                  id="birthdate"
-                  value={clientData.birthdate}
                   onChange={handleChange}
                   required
                   className="border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
