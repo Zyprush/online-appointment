@@ -12,6 +12,7 @@ import { useOffice } from "@/hooks/useOffice"; // Import the custom hook
 import ViewAppointment from "@/components/ViewAppointment";
 import { db } from "@/firebase";
 import { useSendSMS } from "@/hooks/useSendSMS";
+import Link from "next/link";
 
 type AppointmentType = {
   id: string;
@@ -29,10 +30,11 @@ type AppointmentType = {
   dateCreated: string;
   status: string;
   officeCode: string;
+  declineReason?: string;
 };
 
 const OfficePendingAppointment = () => {
-  const officeData = useOffice(); // Use the custom hook to get office data
+  const officeData = useOffice();
   const [appointments, setAppointments] = useState<AppointmentType[]>([]);
   const [filteredAppointments, setFilteredAppointments] = useState<
     AppointmentType[]
@@ -93,14 +95,19 @@ const OfficePendingAppointment = () => {
 
   const handleDecline = async (id: string) => {
     const appointment = appointments.find((appt) => appt.id === id);
-    
+
     if (!appointment) return; // If no appointment is found, exit function
-  
-    if (window.confirm("Are you sure you want to decline this appointment?")) {
+    const declineReason = window.prompt(
+      "Reason for declining the appointment?"
+    );
+    if (declineReason) {
       try {
         const appointmentRef = doc(db, "appointments", id);
-        await updateDoc(appointmentRef, { status: "declined" });
-        
+        await updateDoc(appointmentRef, {
+          status: "declined",
+          declineReason: declineReason,
+        });
+
         // Send SMS notification
         const smsResponse = await sendDeclineSMS({
           appointmentId: appointment.id,
@@ -109,22 +116,24 @@ const OfficePendingAppointment = () => {
           timeRange: appointment.timeRange,
           selectedOffice: appointment.selectedOffice,
           selectedPersonnel: appointment.selectedPersonnel,
+          declineReason: declineReason,
         });
-  
+
         if (!smsResponse.success) {
           setError("Failed to send SMS: " + smsResponse.error);
         }
-  
         // Update state after SMS
         setAppointments(appointments.filter((appt) => appt.id !== id));
-        setFilteredAppointments(filteredAppointments.filter((appt) => appt.id !== id));
-        
+        setFilteredAppointments(
+          filteredAppointments.filter((appt) => appt.id !== id)
+        );
       } catch (err) {
         setError("Error declining appointment: " + (err as Error).message);
       }
+    } else {
+      alert("You didn't enter a Reason.");
     }
   };
-  
 
   const checkExistingAppointments = async (
     selectedDate: string,
@@ -155,13 +164,13 @@ const OfficePendingAppointment = () => {
           appointment.selectedDate,
           appointment.timeRange
         );
-  
+
         if (appointmentCount >= 4) {
           alert("There are already 4 (four) appointments for that time range.");
           setApproving(false);
           return;
         }
-  
+
         const response = await sendApproveSMS({
           appointmentId: appointment.id,
           contact: appointment.contact,
@@ -169,8 +178,9 @@ const OfficePendingAppointment = () => {
           timeRange: appointment.timeRange,
           selectedOffice: appointment.selectedOffice,
           selectedPersonnel: appointment.selectedPersonnel,
+          declineReason: "",
         });
-  
+
         if (response.success) {
           const appointmentRef = doc(db, "appointments", id);
           await updateDoc(appointmentRef, { status: "approved" });
@@ -185,6 +195,7 @@ const OfficePendingAppointment = () => {
       }
     }
   };
+
 
   const handleView = (appointment: AppointmentType) => {
     setSelectedAppointment(appointment);
@@ -209,7 +220,7 @@ const OfficePendingAppointment = () => {
   }
 
   return (
-    <div className="bg-white p-4 rounded shadow overflow-x-auto">
+    <div className="bg-white h-full p-4 rounded shadow overflow-x-auto">
       <input
         type="text"
         placeholder="Search by Name"
@@ -238,27 +249,56 @@ const OfficePendingAppointment = () => {
                 </td>
                 <td className="border px-4 py-2">{`${appointment.selectedDate} ${appointment.timeRange}`}</td>
                 <td className="border px-4 py-2">
-                  <button
-                    className="text-blue-500 hover:underline"
-                    onClick={() => handleView(appointment)}
-                  >
-                    View
-                  </button>
-                  <button
-                    className={`text-green-500 hover:underline ml-2 ${
-                      approving ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
-                    onClick={() => handleApprove(appointment.id, appointment)}
-                    disabled={approving}
-                  >
-                    {approving ? "Approving..." : "Approve"}
-                  </button>
-                  <button
-                    className="text-red-500 hover:underline ml-2"
-                    onClick={() => handleDecline(appointment.id)}
-                  >
-                    Decline
-                  </button>
+                  <div className="dropdown dropdown-end">
+                    <summary
+                      tabIndex={0}
+                      className="btn btn-primary rounded-sm text-white btn-sm"
+                    >
+                      Actions
+                    </summary>
+                    <ul
+                      tabIndex={0}
+                      className="dropdown-content menu flex gap-5 flex-row bg-base-100 z-[1] w-72 p-4 shadow-lg border rounded-sm"
+                    >
+                      <li>
+                        <button
+                          className="btn btn-primary rounded-sm text-white btn-sm"
+                          onClick={() => handleView(appointment)}
+                        >
+                          View
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          className={`btn-success btn text-white btn-sm rounded-sm ${
+                            approving ? "opacity-50 cursor-not-allowed" : ""
+                          }`}
+                          onClick={() =>
+                            handleApprove(appointment.id, appointment)
+                          }
+                          disabled={approving}
+                        >
+                          {approving ? "Approving..." : "Approve"}
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          className="btn btn-error text-white btn-sm rounded-sm"
+                          onClick={() => handleDecline(appointment.id)}
+                        >
+                          Decline
+                        </button>
+                      </li>
+                      <li>
+                        <Link
+                          className="btn btn-secondary text-white btn-sm rounded-sm"
+                          href={`/office/appointment/${appointment.id}/`}
+                        >
+                          Reschedule
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
                 </td>
               </tr>
             ))

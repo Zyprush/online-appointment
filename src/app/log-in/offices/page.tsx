@@ -66,7 +66,7 @@ const OfficesLogin = () => {
       setLoading(false);
 
       // Navigate to the dashboard after successful login
-      router.push("/office/dashboard");
+      router.push("/office/appointment");
     } else {
       setError("Incorrect office, username, or password. Please try again.");
       setSuccess(null);

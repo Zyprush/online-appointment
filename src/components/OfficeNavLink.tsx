@@ -26,7 +26,7 @@ const OfficeNavLink: React.FC<OfficeNavLinkProps> = ({ isMobile = false }) => {
 
   return (
     <div className={isMobile ? "flex flex-col" : "flex gap-5 ml-auto mr-5"}>
-      <Link href="/office/dashboard" className={linkClass}>
+      <Link href="/office/appointment" className={linkClass}>
         Appointment
       </Link>
       <Link href="/office/calendar" className={linkClass}>

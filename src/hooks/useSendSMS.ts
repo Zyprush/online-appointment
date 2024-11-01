@@ -9,6 +9,7 @@ interface AppointmentDetails {
   timeRange: string;
   selectedOffice: string;
   selectedPersonnel: string;
+  declineReason?: string;
 }
 
 interface SendSMSResponse {
