@@ -5,6 +5,7 @@ import ClientPendingAppointment from "./ClientPendingAppointment"; // Import Cli
 import NavLayout from "@/components/NavLayout";
 import ClientApprovedAppointment from "./ClientApprovedAppointment";
 import ClientDeclinedAppointment from "./ClientDeclinedAppointment";
+import ClientCompletedAppointment from "./ClientCompletedAppointment";
 
 const Page: React.FC = () => {
   const [activeComponent, setActiveComponent] = useState<string>(
@@ -65,6 +66,18 @@ const Page: React.FC = () => {
                 Declined Appointment
               </button>
             </li>
+            <li className="mb-2">
+              <button
+                className={`w-full flex items-center justify-start py-2 px-4 rounded ${
+                  activeComponent === "completedAppointments"
+                    ? "bg-primary text-white"
+                    : "text-gray-600 hover:bg-gray-200"
+                }`}
+                onClick={() => setActiveComponent("completedAppointments")}
+              >
+                Completed Appointment
+              </button>
+            </li>
           </ul>
         </div>
 
@@ -81,6 +94,9 @@ const Page: React.FC = () => {
           )}
           {activeComponent === "declinedAppointments" && (
             <ClientDeclinedAppointment />
+          )}
+          {activeComponent === "completedAppointments" && (
+            <ClientCompletedAppointment />
           )}
         </div>
       </div>

@@ -45,7 +45,6 @@ const OfficePendingAppointment = () => {
   const [selectedAppointment, setSelectedAppointment] =
     useState<AppointmentType | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [approving, setApproving] = useState<boolean>(false); // Loading state for approval
   const { sendApproveSMS, sendDeclineSMS } = useSendSMS();
 
   // Fetch Appointments
@@ -158,7 +157,7 @@ const OfficePendingAppointment = () => {
 
   const handleApprove = async (id: string, appointment: AppointmentType) => {
     if (window.confirm("Do you want to approve this appointment?")) {
-      setApproving(true); // Set approving state to true
+      setLoading(true); // Set loading state to true
       try {
         const appointmentCount = await checkExistingAppointments(
           appointment.selectedDate,
@@ -167,7 +166,7 @@ const OfficePendingAppointment = () => {
 
         if (appointmentCount >= 4) {
           alert("There are already 4 (four) appointments for that time range.");
-          setApproving(false);
+          setLoading(false);
           return;
         }
 
@@ -189,9 +188,9 @@ const OfficePendingAppointment = () => {
           setError("Failed to send SMS: " + response.error);
         }
       } catch (err) {
-        setError("Error approving appointment: " + (err as Error).message);
+        setError("Error loading appointment: " + (err as Error).message);
       } finally {
-        setApproving(false); // Reset approving state after the operation
+        setLoading(false); // Reset loading state after the operation
       }
     }
   };
@@ -233,7 +232,7 @@ const OfficePendingAppointment = () => {
           <tr className="bg-gray-200">
             <th className="px-4 py-2">Code</th>
             <th className="px-4 py-2">Name</th>
-            <th className="px-4 py-2">Appointment Type</th>
+            <th className="px-4 py-2">Email</th>
             <th className="px-4 py-2">Schedule</th>
             <th className="px-4 py-2">Action</th>
           </tr>
@@ -245,7 +244,7 @@ const OfficePendingAppointment = () => {
                 <td className="border px-4 py-2">{`${appointment.officeCode}${appointment.id}`}</td>
                 <td className="border px-4 py-2">{appointment.name}</td>
                 <td className="border px-4 py-2">
-                  {appointment.appointmentType}
+                  {appointment.email}
                 </td>
                 <td className="border px-4 py-2">{`${appointment.selectedDate} ${appointment.timeRange}`}</td>
                 <td className="border px-4 py-2">
@@ -264,6 +263,7 @@ const OfficePendingAppointment = () => {
                         <button
                           className="btn btn-primary rounded-sm text-white btn-sm"
                           onClick={() => handleView(appointment)}
+                          disabled={loading}
                         >
                           View
                         </button>
@@ -271,20 +271,21 @@ const OfficePendingAppointment = () => {
                       <li>
                         <button
                           className={`btn-success btn text-white btn-sm rounded-sm ${
-                            approving ? "opacity-50 cursor-not-allowed" : ""
+                            loading ? "opacity-50 cursor-not-allowed" : ""
                           }`}
                           onClick={() =>
                             handleApprove(appointment.id, appointment)
                           }
-                          disabled={approving}
+                          disabled={loading}
                         >
-                          {approving ? "Approving..." : "Approve"}
+                          {loading ? "Loading..." : "Approve"}
                         </button>
                       </li>
                       <li>
                         <button
                           className="btn btn-error text-white btn-sm rounded-sm"
                           onClick={() => handleDecline(appointment.id)}
+                          disabled={loading}
                         >
                           Decline
                         </button>

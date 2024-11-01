@@ -11,6 +11,7 @@ import {
 import { db } from "@/firebase";
 import { useUserData } from "@/hooks/useUserData";
 import ViewRequirements from "./ViewRequirements";
+import { useSendSMS } from "@/hooks/useSendSMS";
 
 interface Option {
   name: string;
@@ -48,6 +49,7 @@ const ClientRequestAppointment: React.FC = () => {
   const [otherReason, setOtherReason] = useState("");
   const [loading, setLoading] = useState(false);
   const { userData } = useUserData();
+  const { sendAppointSMS } = useSendSMS();
 
   // Fetch data from Firestore
   const services = useFirestoreData("services", "services");
@@ -63,25 +65,25 @@ const ClientRequestAppointment: React.FC = () => {
   }, [appointmentType, selectedService, services]);
 
   const checkExistingAppointments = async (
-  selectedDate: string,
-  timeRange: string,
-): Promise<number> => {
-  try {
-    const appointmentsRef = query(
-      collection(db, "appointments"),
-      where("selectedOffice", "==", selectedOffice),
-      where("selectedDate", "==", selectedDate),
-      where("timeRange", "==", timeRange),
-      where("status", "==", "approved")
-    );
-    const snapshot = await getDocs(appointmentsRef);
-    return snapshot.size;
-  } catch (err) {
-    console.error("Error checking existing appointments:", err);
-    throw err;
-  }
-};
-  
+    selectedDate: string,
+    timeRange: string
+  ): Promise<number> => {
+    try {
+      const appointmentsRef = query(
+        collection(db, "appointments"),
+        where("selectedOffice", "==", selectedOffice),
+        where("selectedDate", "==", selectedDate),
+        where("timeRange", "==", timeRange),
+        where("status", "==", "approved")
+      );
+      const snapshot = await getDocs(appointmentsRef);
+      return snapshot.size;
+    } catch (err) {
+      console.error("Error checking existing appointments:", err);
+      throw err;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -89,7 +91,7 @@ const ClientRequestAppointment: React.FC = () => {
       selectedDate,
       selectedTime
     );
-    console.log('appointmentCount', appointmentCount)
+    console.log("appointmentCount", appointmentCount);
     if (appointmentCount >= 4) {
       alert("There are already 4 (four) appointments for that time range.");
       setLoading(false);
@@ -170,6 +172,12 @@ const ClientRequestAppointment: React.FC = () => {
     try {
       const appointmentsRef = collection(db, "appointments");
       await setDoc(doc(appointmentsRef), appointmentData);
+      sendAppointSMS({
+        timeRange: selectedTime,
+        selectedDate: selectedDate,
+        phoneNumber: office?.phoneNumber,
+        name: `${userData?.firstName} ${userData?.lastName}`,
+      });
       setAppointmentType(null);
       setSelectedDate("");
       setSelectedTime("");
@@ -348,10 +356,10 @@ const ClientRequestAppointment: React.FC = () => {
             </select>
           </div>
         </div>
-        <ViewRequirements 
-      selectedService={selectedService} 
-      services={services}
-    />
+        <ViewRequirements
+          selectedService={selectedService}
+          services={services}
+        />
         <div className="flex items-center justify-between">
           <button
             type="submit"

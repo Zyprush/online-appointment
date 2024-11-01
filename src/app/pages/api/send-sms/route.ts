@@ -18,15 +18,10 @@ export async function POST(req: Request) {
   try {
     // Parse request body
     const {
-      appointmentId,
       contact, // Use this contact field for sending the SMS
-      selectedDate,
-      timeRange,
-      selectedOffice,
+      messageBody,
     } = await req.json();
 
-    // Construct the SMS message
-    const messageBody = `Your appointment has been approved.\n \nCode: ${appointmentId} \nDetails:\nDate: ${selectedDate}\nTime: ${timeRange}\nOffice: ${selectedOffice}.`;
 
     // Send the SMS
     const message = await client.messages.create({

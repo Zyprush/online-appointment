@@ -7,6 +7,7 @@ import OfficePendingAppointment from "./OfficePendingAppointment";
 import { useOffice } from "@/hooks/useOffice";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/firebase";
+import OfficeCompletedAppointment from "./OfficeCompletedAppointment";
 
 const AdminAppointments: React.FC = () => {
   const [status, setStatus] = useState<string>("pending");
@@ -73,10 +74,19 @@ const AdminAppointments: React.FC = () => {
           >
             Declined
           </button>
+          <button
+            className={`px-4 py-2 rounded ${
+              status === "completed" ? "bg-primary text-white" : "bg-gray-200"
+            }`}
+            onClick={() => setStatus("completed")}
+          >
+            Completed
+          </button>
         </div>
         {status === "pending" && <OfficePendingAppointment />}
         {status === "approved" && <ApprovedAppointments />}
         {status === "declined" && <DeclinedAppointments />}
+        {status === "completed" && <OfficeCompletedAppointment />}
       </div>
     </NavLayout>
   );

@@ -3,10 +3,8 @@
 import React, { useEffect, useState } from "react";
 import {
   collection,
-  doc,
   getDocs,
   query,
-  updateDoc,
   where,
 } from "firebase/firestore";
 import { useOffice } from "@/hooks/useOffice";
@@ -31,7 +29,7 @@ type AppointmentType = {
   officeCode: string;
 };
 
-const OfficeApproveAppointment = () => {
+const OfficeCompletedAppointment = () => {
   const officeData = useOffice();
   const [appointments, setAppointments] = useState<AppointmentType[]>([]);
   const [filteredAppointments, setFilteredAppointments] = useState<
@@ -56,7 +54,7 @@ const OfficeApproveAppointment = () => {
       const appointmentsRef = query(
         collection(db, "appointments"),
         where("selectedOffice", "==", officeData.office),
-        where("status", "==", "approved")
+        where("status", "==", "completed")
       );
       const snapshot = await getDocs(appointmentsRef);
       const appointmentsList = snapshot.docs.map((doc) => ({
@@ -106,26 +104,6 @@ const OfficeApproveAppointment = () => {
   const handleView = (appointment: AppointmentType) => {
     setSelectedAppointment(appointment);
     setIsModalOpen(true);
-  };
-
-  const handleCompleted = async (id: string) => {
-    if (window.confirm("Do you want to mark this appointment as completed?")) {
-      setLoading(true);
-      try {
-        const appointmentRef = doc(db, "appointments", id);
-        await updateDoc(appointmentRef, { status: "completed" });
-        setAppointments((prev) =>
-          prev.filter((appointment) => appointment.id !== id)
-        );
-        setFilteredAppointments((prev) =>
-          prev.filter((appointment) => appointment.id !== id)
-        );
-      } catch (err) {
-        setError("Error completing appointment: " + (err as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    }
   };
 
   const closeModal = () => {
@@ -191,12 +169,6 @@ const OfficeApproveAppointment = () => {
                   >
                     details
                   </button>
-                  <button
-                    className="btn btn-xs rounded-sm text-white btn-primary"
-                    onClick={() => handleCompleted(appointment.id)}
-                  >
-                    completed
-                  </button>
                 </td>
               </tr>
             ))
@@ -220,4 +192,4 @@ const OfficeApproveAppointment = () => {
   );
 };
 
-export default OfficeApproveAppointment;
+export default OfficeCompletedAppointment;

@@ -23,7 +23,7 @@ interface Appointment {
   officeCode: string;
 }
 
-const ClientApprovedAppointment: React.FC = () => {
+const ClientCompletedAppointment: React.FC = () => {
   const { userData } = useUserData(); // Get current user data
   const [appointments, setAppointments] = useState<Appointment[]>([]); // State to hold appointments
   const [loading, setLoading] = useState(true); // Loading state
@@ -40,7 +40,7 @@ const ClientApprovedAppointment: React.FC = () => {
         const q = query(
           appointmentsRef,
           where("submittedUid", "==", userData?.uid),
-          where("status", "==", "approved")
+          where("status", "==", "completed")
         );
         const snapshot = await getDocs(q);
         const appointmentList = snapshot.docs.map((doc) => ({
@@ -151,5 +151,5 @@ const ClientApprovedAppointment: React.FC = () => {
   );
 };
 
-export default ClientApprovedAppointment;
+export default ClientCompletedAppointment;
 
