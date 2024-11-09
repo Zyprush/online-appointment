@@ -146,6 +146,7 @@ const ClientRequestAppointment: React.FC = () => {
     const office = offices.find((o) => o.name === selectedOffice);
     const officeCode = office?.officeCode || "";
 
+    
     const appointmentData = {
       submittedUid: userData?.uid,
       appointmentType,
