@@ -12,6 +12,8 @@ import {
 import { useOffice } from "@/hooks/useOffice";
 import ViewAppointment from "@/components/ViewAppointment";
 import { db } from "@/firebase";
+import { useFeedback } from "@/hooks/useFeedback";
+import { currentTime } from "@/helper/time";
 
 type AppointmentType = {
   id: string;
@@ -29,6 +31,7 @@ type AppointmentType = {
   dateCreated: string;
   status: string;
   officeCode: string;
+  submittedUid: string;
 };
 
 const OfficeApproveAppointment = () => {
@@ -44,6 +47,7 @@ const OfficeApproveAppointment = () => {
   const [selectedAppointment, setSelectedAppointment] =
     useState<AppointmentType | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const { addFeedback } = useFeedback();
 
   // Extracted fetchAppointments function
   const fetchAppointments = async () => {
@@ -100,7 +104,7 @@ const OfficeApproveAppointment = () => {
   // Fetch appointments when the component mounts
   useEffect(() => {
     fetchAppointments();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [officeData]);
 
   const handleView = (appointment: AppointmentType) => {
@@ -109,6 +113,7 @@ const OfficeApproveAppointment = () => {
   };
 
   const handleCompleted = async (id: string) => {
+    const appointment = appointments.find(app => app.id === id);
     if (window.confirm("Do you want to mark this appointment as completed?")) {
       setLoading(true);
       try {
@@ -120,6 +125,12 @@ const OfficeApproveAppointment = () => {
         setFilteredAppointments((prev) =>
           prev.filter((appointment) => appointment.id !== id)
         );
+        addFeedback({
+          clientId: appointment?.submittedUid || "defaultClientId",
+          office: officeData?.office || "",
+          date: currentTime,
+          completed: false,
+        });
       } catch (err) {
         setError("Error completing appointment: " + (err as Error).message);
       } finally {

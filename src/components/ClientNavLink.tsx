@@ -28,6 +28,9 @@ const ClientNavLink: React.FC<ClientNavLinkProps> = ({ isMobile = false }) => {
       <Link href="/client/calendar" className={linkClass}>
         Calendar
       </Link>
+      <Link href="/client/feedback" className={linkClass}>
+        Feedback
+      </Link>
       <Link href="/client/profile" className={linkClass}>
         Profile
       </Link>

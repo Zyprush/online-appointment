@@ -2,7 +2,7 @@
 import { db } from "@/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import Image from "next/image";
-// import QrComponent from "./QrComponent";
+import QrComponent from "./QrComponent";
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from 'next/navigation'; // Import useRouter
 
@@ -149,7 +149,7 @@ const AppointmentSlip: React.FC<InfoProps> = ({ params }) => {
           {/* Header Section */}
           <div className="flex p-0">
             <div className="bg-primary w-1/5 h-32 mt-10 flex justify-center items-center">
-              {/* <QrComponent /> */}
+              <QrComponent />
             </div>
             <div className="w-3/5 bg-zinc-200 mt-10 flex flex-col justify-center p-4">
               <p className="text-4xl font-bold text-primary">
