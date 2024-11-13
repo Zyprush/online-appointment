@@ -27,15 +27,15 @@ interface OfficeData {
 }
 
 const questions = [
-  "How satisfied were you with the service?",
-  "Was the staff professional and courteous?",
-  "How would you rate the cleanliness?",
-  "How was the waiting time?",
-  "Would you recommend our service?",
-  "How was the overall experience?",
-  "Rate the clarity of information provided",
-  "How would you rate staff knowledge?",
-  "Was the process efficient?"
+  "I am satisfied with the service that I availed.",
+  "I spent a reasonable amount of time for my transaction.",
+  "The office allowed the transaction's requirements and steps based on the information provided.",
+  "The steps (including payment) I needed to do for my transaction were easy and simple.",
+  "I easily found information about my transaction from the office or its website.",
+  "I paid a reasonable amount of fees for my transaction.",
+  "I feel the office was fair to everyone, or 'walang palakasan', during my transaction.",
+  "I was treated courteously by the staff, and (if I asked for help) the staff was helpful.",
+  "I got what I needed from the government office, or (if denied) denial of request was sufficiently explained to me.",
 ];
 
 // const options = ["Very Poor", "Poor", "Fair", "Good", "Excellent"];
