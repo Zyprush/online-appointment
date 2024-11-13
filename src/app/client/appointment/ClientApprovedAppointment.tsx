@@ -3,7 +3,6 @@ import { db } from "@/firebase"; // Import Firestore
 import { collection, getDocs, query, where } from "firebase/firestore"; // Import query and where
 import { useUserData } from "@/hooks/useUserData";
 import ViewAppointment from "@/components/ViewAppointment";
-import Link from "next/link";
 
 interface Appointment {
   id: string;
@@ -125,7 +124,16 @@ const ClientApprovedAppointment: React.FC = () => {
                 </td>
                 <td className="px-4 py-2">{appointment.selectedDate}</td>
                 <td className="px-4 py-2">{appointment.timeRange}</td>
-                <td className="px-4 py-2"><Link className="text-blue-500 font-semibold underline" href={`/slip/${appointment.id}`}>Link</Link></td>
+                <td className="px-4 py-2">
+                  <a
+                    className="text-blue-500 font-semibold underline"
+                    href={`/slip/${appointment.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Link
+                  </a>
+                </td>
                 <td className="px-4 py-2">
                   <button
                     className="btn btn-xs rounded-sm btn-outline text-primary"
@@ -152,4 +160,3 @@ const ClientApprovedAppointment: React.FC = () => {
 };
 
 export default ClientApprovedAppointment;
-

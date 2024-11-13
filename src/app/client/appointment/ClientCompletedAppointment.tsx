@@ -125,7 +125,7 @@ const ClientCompletedAppointment: React.FC = () => {
                 </td>
                 <td className="px-4 py-2">{appointment.selectedDate}</td>
                 <td className="px-4 py-2">{appointment.timeRange}</td>
-                <td className="px-4 py-2"><Link className="text-blue-500 font-semibold underline" href={`/slip/${appointment.id}`}>Link</Link></td>
+                <td className="px-4 py-2"><Link className="text-blue-500 font-semibold underline" href={`/slip/${appointment.id}`} target="_blank" rel="noopener noreferrer">Link</Link></td>
                 <td className="px-4 py-2">
                   <button
                     className="btn btn-xs rounded-sm btn-outline text-primary"

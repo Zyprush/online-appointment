@@ -47,7 +47,7 @@ const OfficeCalendarAppointment = () => {
       const appointmentsRef = query(
         collection(db, "appointments"),
         where("selectedOffice", "==", officeData.office),
-        where("status", "==", "approved")
+        where("status", "in", ["approved", "completed"])
       );
       const snapshot = await getDocs(appointmentsRef);
       const appointmentsList = snapshot.docs.map((doc) => ({

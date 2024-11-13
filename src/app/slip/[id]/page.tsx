@@ -4,7 +4,7 @@ import { doc, getDoc } from "firebase/firestore";
 import Image from "next/image";
 import QrComponent from "./QrComponent";
 import { useState, useEffect, useMemo } from "react";
-import { useRouter } from 'next/navigation'; // Import useRouter
+import { useRouter } from "next/navigation"; // Import useRouter
 
 interface InfoProps {
   params: {
@@ -89,7 +89,12 @@ const AppointmentSlip: React.FC<InfoProps> = ({ params }) => {
   };
 
   // Show loading state
-  if (loading) return <div className="flex w-screen h-screen justify-center items-center">Loading...</div>;
+  if (loading)
+    return (
+      <div className="flex w-screen h-screen justify-center items-center">
+        Loading...
+      </div>
+    );
 
   // Show error state
   if (error) return <div>{error}</div>;
@@ -215,6 +220,15 @@ const AppointmentSlip: React.FC<InfoProps> = ({ params }) => {
                 label="Created At"
                 value={new Date(appointment.dateCreated).toLocaleString()}
               />
+
+              <p className="mt-5 border p-3 mr-auto bg-primary ">
+                <span className="text-lg font-bold capitalize text-white">
+                  {appointment.status}
+                </span>
+                <span className="text-xs text-zinc-200 block">
+                  Appointment Status
+                </span>
+              </p>
             </div>
           </div>
           <div className="mt-auto mb-0 p-8 text-sm text-zinc-700">

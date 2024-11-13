@@ -69,6 +69,7 @@ export const useSendSMS = () => {
       const errorMessage =
         err instanceof Error ? err.message : "Unknown error occurred";
       setError("Failed to send SMS: " + errorMessage);
+      console.log('err', err)
       return { success: false, error: errorMessage };
     } finally {
       setIsSending(false);

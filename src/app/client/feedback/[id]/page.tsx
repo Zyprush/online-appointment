@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { format} from "date-fns";
+import { useRouter } from "next/navigation";
 
 interface InfoProps {
   params: {
@@ -29,6 +30,7 @@ interface Feedback {
 }
 
 const AnswerFeedback: React.FC<InfoProps> = ({ params }) => {
+  const router = useRouter();
   const { id } = params;
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [loading, setLoading] = useState(false);
@@ -109,6 +111,8 @@ const AnswerFeedback: React.FC<InfoProps> = ({ params }) => {
             }
           : prevFeedback
       );
+
+      router.push("/client/feedback");
     } catch (error) {
       console.log("Error updating feedback:", error);
     } finally {
