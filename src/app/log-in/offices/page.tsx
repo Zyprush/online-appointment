@@ -75,7 +75,8 @@ const OfficesLogin = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-full overflow-scroll fixed top-0 bottom-0 right-0 left-0 p-5 bg-[url('/img/omsc.jpg')]  bg-center sm:p-10 md:p-20">
+    <div className="flex justify-center items-center h-full overflow-scroll fixed top-0 bottom-0 right-0 left-0 p-5 bg-[url('/img/omsc.jpg')] bg-cover bg-center sm:p-10 md:p-20">
+      <div className="hidden lg:block w-2/3 h-full"></div>
       <div className="w-full max-w-sm sm:mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -123,7 +124,10 @@ const OfficesLogin = () => {
                 </div>
 
                 <div className="relative">
-                  <label htmlFor="username" className="block mb-1 font-semibold">
+                  <label
+                    htmlFor="username"
+                    className="block mb-1 font-semibold"
+                  >
                     Username
                   </label>
                   <input
@@ -138,7 +142,10 @@ const OfficesLogin = () => {
                 </div>
 
                 <div className="relative">
-                  <label htmlFor="password" className="block mb-1 font-semibold">
+                  <label
+                    htmlFor="password"
+                    className="block mb-1 font-semibold"
+                  >
                     Password
                   </label>
                   <input
@@ -154,32 +161,33 @@ const OfficesLogin = () => {
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
                     className="absolute inset-y-0 right-1 flex items-end pb-3"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
 
                 <div className="flex gap-4 w-full">
-                <Link
-                  className="flex-1 text-center bg-gray-200 text-gray-800 py-2 sm:py-3 rounded-md hover:bg-gray-300 transition duration-300 w-1/2"
-                  href={"/log-in"}
-                >
-                  Back
-                </Link>
-                <motion.button
-                  type="submit"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`w-1/2 ${
-                    loading ? "bg-gray-400" : "bg-primary"
-                  } text-white py-2 rounded-md transition duration-300`}
-                  disabled={loading}
-                >
-                  {loading ? "Signing in..." : "Sign in"}
-                </motion.button>
+                  <Link
+                    className="flex-1 text-center bg-gray-200 text-gray-800 py-2 sm:py-3 rounded-md hover:bg-gray-300 transition duration-300 w-1/2"
+                    href={"/log-in"}
+                  >
+                    Back
+                  </Link>
+                  <motion.button
+                    type="submit"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`w-1/2 ${
+                      loading ? "bg-gray-400" : "bg-primary"
+                    } text-white py-2 rounded-md transition duration-300`}
+                    disabled={loading}
+                  >
+                    {loading ? "Signing in..." : "Sign in"}
+                  </motion.button>
                 </div>
-
               </form>
             </div>
             <div className="px-8 py-4 bg-gray-50 border-t border-gray-200">
