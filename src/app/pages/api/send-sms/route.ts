@@ -4,7 +4,7 @@ import axios from "axios";
 // Replace with your Semaphore API key
 const apiKey = process.env.SEMAPHORE_API_KEY;
 // const senderName = process.env.SEMAPHORE_SENDER_NAME || 'SEMAPHORE';
-const senderName = "Semaphore";
+const senderName = "OMSCApp";
 
 export async function POST(req: Request) {
   if (!apiKey) {
