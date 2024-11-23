@@ -12,6 +12,7 @@ interface AppointmentDetails {
   declineReason?: string;
   phoneNumber?: string;
   name?: string;
+  officeCode?: string;
 }
 
 interface SendSMSResponse {
@@ -33,7 +34,7 @@ export const useSendSMS = () => {
         "/pages/api/send-sms",
         {
           contact: appointment.phoneNumber,
-          messageBody: `${appointment.name} wants to book an appointment on ${appointment.selectedDate} at ${appointment.timeRange}.`,
+          messageBody: `${appointment.name} wants to book an appointment on ${appointment.selectedDate} at ${appointment.timeRange}.\n\nCODE: ${appointment.officeCode || ""}${appointment.appointmentId}\nOFFICE${appointment.selectedOffice}`,
         },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -59,7 +60,7 @@ export const useSendSMS = () => {
         "/pages/api/send-sms",
         {
           contact: appointment.contact,
-          messageBody: `Your appointment has been approved.\n \nCode: ${appointment.appointmentId} \nDetails:\nDate: ${appointment.selectedDate}\nTime: ${appointment.timeRange}\nOffice: ${appointment.selectedOffice}.`,
+          messageBody: `Your appointment has been approved.\n \nCode: ${appointment.officeCode || ""}${appointment.appointmentId}\nDetails:\nDate: ${appointment.selectedDate}\nTime: ${appointment.timeRange}\nOffice: ${appointment.selectedOffice}.`,
         },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -86,7 +87,7 @@ export const useSendSMS = () => {
         "/pages/api/send-sms",
         {
           contact: appointment.contact,
-          messageBody: `Your appointment has been declined.\n \nCode: ${appointment.appointmentId} \nDetails:\nDate: ${appointment.selectedDate}\nTime: ${appointment.timeRange}\nOffice: ${appointment.selectedOffice}\n\nReason of Decline: ${appointment.declineReason}.`,
+          messageBody: `Your appointment has been declined.\n \nCode: ${appointment.officeCode || ""}${appointment.appointmentId} \nDetails:\nDate: ${appointment.selectedDate}\nTime: ${appointment.timeRange}\nOffice: ${appointment.selectedOffice}\n\nReason of Decline: ${appointment.declineReason}.`,
         },
         { headers: { "Content-Type": "application/json" } }
       );

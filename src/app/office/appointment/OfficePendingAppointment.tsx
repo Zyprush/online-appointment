@@ -116,6 +116,7 @@ const OfficePendingAppointment = () => {
           selectedOffice: appointment.selectedOffice,
           selectedPersonnel: appointment.selectedPersonnel,
           declineReason: declineReason,
+          officeCode: appointment.officeCode,
         });
 
         if (!smsResponse.success) {
@@ -178,6 +179,7 @@ const OfficePendingAppointment = () => {
           selectedOffice: appointment.selectedOffice,
           selectedPersonnel: appointment.selectedPersonnel,
           declineReason: "",
+          officeCode: appointment.officeCode,
         });
 
         if (response.success) {
