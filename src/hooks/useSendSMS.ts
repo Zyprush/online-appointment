@@ -34,7 +34,7 @@ export const useSendSMS = () => {
         "/pages/api/send-sms",
         {
           contact: appointment.phoneNumber,
-          messageBody: `${appointment.name} wants to book an appointment on ${appointment.selectedDate} at ${appointment.timeRange}.\n\nCODE: ${appointment.officeCode || ""}${appointment.appointmentId}\nOFFICE${appointment.selectedOffice}`,
+          messageBody: `${appointment.name} wants to book an appointment on ${appointment.selectedDate} at ${appointment.timeRange}.\n\nCODE: ${appointment.officeCode || ""}${appointment.appointmentId}\nOFFICE: ${appointment.selectedOffice}`,
         },
         { headers: { "Content-Type": "application/json" } }
       );

@@ -177,8 +177,10 @@ const ClientRequestAppointment: React.FC = () => {
         timeRange: selectedTime,
         selectedDate: selectedDate,
         phoneNumber: office?.phoneNumber,
+        appointmentId: appointmentsRef.id,
         name: `${userData?.firstName} ${userData?.lastName}`,
         officeCode: officeCode,
+        selectedOffice: selectedOffice,
       });
       setAppointmentType(null);
       setSelectedDate("");
