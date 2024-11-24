@@ -171,13 +171,13 @@ const ClientRequestAppointment: React.FC = () => {
 
     // Save the appointment
     try {
-      const appointmentsRef = collection(db, "appointments");
-      await setDoc(doc(appointmentsRef), appointmentData);
+      const appointmentDocRef = doc(collection(db, "appointments"));
+      await setDoc(appointmentDocRef, appointmentData);
       sendAppointSMS({
         timeRange: selectedTime,
         selectedDate: selectedDate,
         phoneNumber: office?.phoneNumber,
-        appointmentId: appointmentsRef.id,
+        appointmentId: appointmentDocRef.id,
         name: `${userData?.firstName} ${userData?.lastName}`,
         officeCode: officeCode,
         selectedOffice: selectedOffice,

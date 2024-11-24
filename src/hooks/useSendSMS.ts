@@ -30,6 +30,7 @@ export const useSendSMS = () => {
     setIsSending(true);
     setError(null);
     try {
+      console.log('appointmentID', appointment.appointmentId)
       const response = await axios.post(
         "/pages/api/send-sms",
         {
