@@ -3,7 +3,7 @@ import { db } from "@/firebase"; // Import Firestore
 import { collection, getDocs, query, where } from "firebase/firestore"; // Import query and where
 import { useUserData } from "@/hooks/useUserData";
 import ViewAppointment from "@/components/ViewAppointment";
-import Link from "next/link";
+// import Link from "next/link";
 
 interface Appointment {
   id: string;
@@ -105,7 +105,7 @@ const ClientCompletedAppointment: React.FC = () => {
             <th className="px-4 py-2 text-left">Appointment Code</th>
             <th className="px-4 py-2 text-left">Date</th>
             <th className="px-4 py-2 text-left">Time</th>
-            <th className="px-4 py-2 text-left">Printable Slip</th>
+            {/* <th className="px-4 py-2 text-left">Printable Slip</th> */}
             <th className="px-4 py-2 text-left">Actions</th>
           </tr>
         </thead>
@@ -125,7 +125,7 @@ const ClientCompletedAppointment: React.FC = () => {
                 </td>
                 <td className="px-4 py-2">{appointment.selectedDate}</td>
                 <td className="px-4 py-2">{appointment.timeRange}</td>
-                <td className="px-4 py-2"><Link className="text-blue-500 font-semibold underline" href={`/slip/${appointment.id}`} target="_blank" rel="noopener noreferrer">Link</Link></td>
+                {/* <td className="px-4 py-2"><Link className="text-blue-500 font-semibold underline" href={`/slip/${appointment.id}`} target="_blank" rel="noopener noreferrer">Link</Link></td> */}
                 <td className="px-4 py-2">
                   <button
                     className="btn btn-xs rounded-sm btn-outline text-primary"
