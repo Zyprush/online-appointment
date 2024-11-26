@@ -132,6 +132,17 @@ export default function LogIn() {
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
+
+              <span className="block mt-4">
+                <Link
+                  href="/forgot-password"
+                  className="text-sm hover:underline text-gray-600 hover:text-gray-800 transition duration-300"
+                >
+                  Forgot Password?
+                </Link>
+              </span>
+
+              
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                 <Link
                   className="flex-1 text-center bg-gray-200 text-gray-800 py-2 sm:py-3 rounded-md hover:bg-gray-300 transition duration-300"
