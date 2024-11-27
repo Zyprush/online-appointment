@@ -1,12 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { useOffice } from "@/hooks/useOffice";
 import ViewAppointment from "@/components/ViewAppointment";
 import { db } from "@/firebase";
@@ -98,7 +93,7 @@ const OfficeCompletedAppointment = () => {
   // Fetch appointments when the component mounts
   useEffect(() => {
     fetchAppointments();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [officeData]);
 
   const handleView = (appointment: AppointmentType) => {
@@ -123,9 +118,12 @@ const OfficeCompletedAppointment = () => {
     return <div>No office data available. Please log in.</div>;
   }
 
+  const handlePrintTable = () => {
+    window.print();
+  };
   return (
-    <div className="bg-white p-4 rounded shadow overflow-x-auto">
-      <div className="flex items-center mb-4 gap-5">
+    <div className="bg-white p-4 rounded shadow overflow-x-auto print:text-xs">
+      <div className="flex items-center mb-4 gap-5 print:hidden">
         <input
           type="text"
           placeholder="Search by Name"
@@ -142,6 +140,12 @@ const OfficeCompletedAppointment = () => {
             className="border rounded w-40 px-2 py-1"
           />
         </span>
+        <button
+          className="btn rounded-sm text-white btn-primary"
+          onClick={handlePrintTable}
+        >
+          Print Appointements
+        </button>
       </div>
 
       <table className="table-auto w-full text-left">
@@ -151,7 +155,7 @@ const OfficeCompletedAppointment = () => {
             <th className="px-4 py-2">Name</th>
             <th className="px-4 py-2">Email</th>
             <th className="px-4 py-2">Schedule</th>
-            <th className="px-4 py-2">Action</th>
+            <th className="px-4 py-2 print:hidden">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -162,7 +166,7 @@ const OfficeCompletedAppointment = () => {
                 <td className="border px-4 py-2">{appointment.name}</td>
                 <td className="border px-4 py-2">{appointment.email}</td>
                 <td className="border px-4 py-2">{`${appointment.selectedDate} ${appointment.timeRange}`}</td>
-                <td className="border px-4 py-2 space-x-3">
+                <td className="border px-4 py-2 space-x-3 print:hidden">
                   <button
                     className="btn btn-xs rounded-sm text-primary btn-outline"
                     onClick={() => handleView(appointment)}

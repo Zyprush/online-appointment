@@ -76,7 +76,9 @@ const OfficeApproveAppointment = () => {
       setLoading(false);
     }
   };
-
+  const handlePrintTable = () => {
+    window.print();
+  };
   // Filter appointments by search query and selected date
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value.toLowerCase();
@@ -113,7 +115,7 @@ const OfficeApproveAppointment = () => {
   };
 
   const handleCompleted = async (id: string) => {
-    const appointment = appointments.find(app => app.id === id);
+    const appointment = appointments.find((app) => app.id === id);
     if (window.confirm("Do you want to mark this appointment as completed?")) {
       setLoading(true);
       try {
@@ -158,7 +160,7 @@ const OfficeApproveAppointment = () => {
 
   return (
     <div className="bg-white p-4 rounded shadow overflow-x-auto">
-      <div className="flex items-center mb-4 gap-5">
+      <div className="flex items-center mb-4 gap-5 print:hidden">
         <input
           type="text"
           placeholder="Search by Name"
@@ -175,16 +177,22 @@ const OfficeApproveAppointment = () => {
             className="border rounded w-40 px-2 py-1"
           />
         </span>
+        <button
+          className="btn rounded-sm text-white btn-primary"
+          onClick={handlePrintTable}
+        >
+          Print Appointements
+        </button>
       </div>
 
-      <table className="table-auto w-full text-left">
+      <table className="table-auto w-full text-left print:text-xs">
         <thead>
           <tr className="bg-gray-200">
             <th className="px-4 py-2">Code</th>
             <th className="px-4 py-2">Name</th>
             <th className="px-4 py-2">Email</th>
             <th className="px-4 py-2">Schedule</th>
-            <th className="px-4 py-2">Action</th>
+            <th className="px-4 py-2 print:hidden">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -195,7 +203,7 @@ const OfficeApproveAppointment = () => {
                 <td className="border px-4 py-2">{appointment.name}</td>
                 <td className="border px-4 py-2">{appointment.email}</td>
                 <td className="border px-4 py-2">{`${appointment.selectedDate} ${appointment.timeRange}`}</td>
-                <td className="border px-4 py-2 space-x-3">
+                <td className="border px-4 py-2 space-x-3 print:hidden">
                   <button
                     className="btn btn-xs rounded-sm text-primary btn-outline"
                     onClick={() => handleView(appointment)}

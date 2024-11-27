@@ -1,10 +1,8 @@
 "use client"; // Ensure this component is a client component
 import React, { useState } from "react";
 import ClientRequestAppointment from "./ClientRequestAppointment";
-import ClientPendingAppointment from "./ClientPendingAppointment"; // Import ClientPendingAppointment component
 import NavLayout from "@/components/NavLayout";
 import ClientApprovedAppointment from "./ClientApprovedAppointment";
-import ClientDeclinedAppointment from "./ClientDeclinedAppointment";
 import ClientCompletedAppointment from "./ClientCompletedAppointment";
 
 const Page: React.FC = () => {
@@ -33,37 +31,13 @@ const Page: React.FC = () => {
             <li className="mb-2">
               <button
                 className={`w-full flex items-center justify-start py-2 px-4 rounded ${
-                  activeComponent === "pendingAppointments"
-                    ? "bg-primary text-white"
-                    : "text-gray-600 hover:bg-gray-200"
-                }`}
-                onClick={() => setActiveComponent("pendingAppointments")} // Add button for pending appointments
-              >
-                Pending Appointments
-              </button>
-            </li>
-            <li className="mb-2">
-              <button
-                className={`w-full flex items-center justify-start py-2 px-4 rounded ${
                   activeComponent === "approvedAppointments"
                     ? "bg-primary text-white"
                     : "text-gray-600 hover:bg-gray-200"
                 }`}
                 onClick={() => setActiveComponent("approvedAppointments")}
               >
-                Approved Appointment
-              </button>
-            </li>
-            <li className="mb-2">
-              <button
-                className={`w-full flex items-center justify-start py-2 px-4 rounded ${
-                  activeComponent === "declinedAppointments"
-                    ? "bg-primary text-white"
-                    : "text-gray-600 hover:bg-gray-200"
-                }`}
-                onClick={() => setActiveComponent("declinedAppointments")}
-              >
-                Declined Appointment
+                Appointment
               </button>
             </li>
             <li className="mb-2">
@@ -86,14 +60,8 @@ const Page: React.FC = () => {
           {activeComponent === "requestAppointment" && (
             <ClientRequestAppointment />
           )}
-          {activeComponent === "pendingAppointments" && (
-            <ClientPendingAppointment />
-          )}
           {activeComponent === "approvedAppointments" && (
             <ClientApprovedAppointment />
-          )}
-          {activeComponent === "declinedAppointments" && (
-            <ClientDeclinedAppointment />
           )}
           {activeComponent === "completedAppointments" && (
             <ClientCompletedAppointment />

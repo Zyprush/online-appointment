@@ -93,7 +93,7 @@ const ClientRequestAppointment: React.FC = () => {
     );
     console.log("appointmentCount", appointmentCount);
     if (appointmentCount >= 4) {
-      alert("There are already 4 (four) appointments for that time range.");
+      alert("There are already 4 (four) appointments for that time range. Please select different time range or date.");
       setLoading(false);
       return;
     }
@@ -128,6 +128,33 @@ const ClientRequestAppointment: React.FC = () => {
       return;
     }
 
+    const dayOfWeek = selectedDateObj.getDay();
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      alert(
+        "Appointments cannot be scheduled on weekends (Saturday or Sunday)."
+      );
+      setLoading(false);
+      return;
+    }
+
+    const existingAppointmentQuery = query(
+      collection(db, "appointments"),
+      where("submittedUid", "==", userData?.uid),
+      where("selectedDate", "==", selectedDate),
+      where("timeRange", "==", selectedTime),
+      where("status", "==", "approved")
+    );
+
+    const existingAppointmentSnapshot = await getDocs(existingAppointmentQuery);
+
+    if (!existingAppointmentSnapshot.empty) {
+      alert(
+        "You already have an appointment scheduled for this date and time."
+      );
+      setLoading(false);
+      return;
+    }
+
     // Check if the selected date is a holiday
     const holidaysRef = collection(db, "holidays");
     const holidayQuery = query(holidaysRef, where("date", "==", selectedDate));
@@ -146,7 +173,6 @@ const ClientRequestAppointment: React.FC = () => {
     const office = offices.find((o) => o.name === selectedOffice);
     const officeCode = office?.officeCode || "";
 
-    
     const appointmentData = {
       submittedUid: userData?.uid,
       appointmentType,
@@ -165,7 +191,7 @@ const ClientRequestAppointment: React.FC = () => {
       email: userData?.email,
       role: userData?.role,
       dateCreated: new Date().toISOString(),
-      status: "pending",
+      status: "approved",
       officeCode,
     };
 
