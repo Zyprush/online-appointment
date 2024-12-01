@@ -14,6 +14,8 @@ import ViewAppointment from "@/components/ViewAppointment";
 import { db } from "@/firebase";
 import { useFeedback } from "@/hooks/useFeedback";
 import { currentTime } from "@/helper/time";
+import { useSendSMS } from "@/hooks/useSendSMS";
+import { useLogs } from "@/hooks/useLogs";
 
 type AppointmentType = {
   id: string;
@@ -48,6 +50,9 @@ const OfficeApproveAppointment = () => {
     useState<AppointmentType | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { addFeedback } = useFeedback();
+  const { sendDeclineSMS } = useSendSMS();
+  const {addLog} = useLogs();
+
 
   const fetchAppointments = async () => {
     if (!officeData) {
@@ -72,7 +77,10 @@ const OfficeApproveAppointment = () => {
       appointmentsList.sort((a, b) => {
         if (a.selectedDate === today && b.selectedDate !== today) return -1;
         if (a.selectedDate !== today && b.selectedDate === today) return 1;
-        return new Date(a.selectedDate).getTime() - new Date(b.selectedDate).getTime();
+        return (
+          new Date(a.selectedDate).getTime() -
+          new Date(b.selectedDate).getTime()
+        );
       });
 
       setAppointments(appointmentsList);
@@ -111,11 +119,55 @@ const OfficeApproveAppointment = () => {
 
   useEffect(() => {
     fetchAppointments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [officeData]);
 
   const handleView = (appointment: AppointmentType) => {
     setSelectedAppointment(appointment);
     setIsModalOpen(true);
+  };
+
+  const handleCancel = async (id: string) => {
+    const appointment = appointments.find((appt) => appt.id === id);
+
+    if (!appointment) return; // If no appointment is found, exit function
+    const declineReason = window.prompt(
+      "Reason for cancelling the appointment?"
+    );
+    if (declineReason) {
+      try {
+        const appointmentRef = doc(db, "appointments", id);
+        await updateDoc(appointmentRef, {
+          status: "declined",
+          declineReason: declineReason,
+        });
+
+        // Send SMS notification
+        const smsResponse = await sendDeclineSMS({
+          appointmentId: appointment.id,
+          contact: appointment.contact,
+          selectedDate: appointment.selectedDate,
+          timeRange: appointment.timeRange,
+          selectedOffice: appointment.selectedOffice,
+          selectedPersonnel: appointment.selectedPersonnel,
+          declineReason: declineReason,
+          officeCode: appointment.officeCode,
+        });
+
+        if (!smsResponse.success) {
+          setError("Failed to send SMS: " + smsResponse.error);
+        }
+        // Update state after SMS
+        setAppointments(appointments.filter((appt) => appt.id !== id));
+        setFilteredAppointments(
+          filteredAppointments.filter((appt) => appt.id !== id)
+        );
+      } catch (err) {
+        setError("Error declining appointment: " + (err as Error).message);
+      }
+    } else {
+      alert("You didn't enter a Reason.");
+    }
   };
 
   const handleCompleted = async (id: string) => {
@@ -137,6 +189,12 @@ const OfficeApproveAppointment = () => {
           date: currentTime,
           completed: false,
         });
+        addLog({
+          name: `Completed ${appointment?.name} appointment`,
+          appointmentDate: appointment?.selectedDate || "",
+          office: officeData?.office || "",
+          date: currentTime,
+        })
       } catch (err) {
         setError("Error completing appointment: " + (err as Error).message);
       } finally {
@@ -161,6 +219,8 @@ const OfficeApproveAppointment = () => {
   if (!officeData) {
     return <div>No office data available. Please log in.</div>;
   }
+
+
 
   return (
     <div className="bg-white p-4 rounded shadow overflow-x-auto">
@@ -220,6 +280,13 @@ const OfficeApproveAppointment = () => {
                   >
                     completed
                   </button>
+                  <button
+                    className="btn btn-error text-white btn-xs rounded-sm"
+                    onClick={() => handleCancel(appointment.id)}
+                    disabled={loading}
+                  >
+                    Decline
+                  </button>
                 </td>
               </tr>
             ))
@@ -244,4 +311,3 @@ const OfficeApproveAppointment = () => {
 };
 
 export default OfficeApproveAppointment;
-

@@ -139,61 +139,63 @@ const OfficeServices: React.FC = () => {
           </div>
         )}
         {services.length > 0 &&
-          services.map((service, index) => (
-            <div key={index} className="flex gap-3">
-              {isEditing ? (
-                <div className="flex gap-3 items-center">
-                  <input
-                    type="text"
-                    placeholder="Service Name"
-                    value={service.name}
-                    onChange={(e) =>
-                      handleServiceChange(index, "name", e.target.value)
-                    }
-                    className="p-2 text-sm border-primary border-2 rounded-sm w-80"
-                  />
-                  <input
-                    type="text"
-                    value={service.office}
-                    readOnly
-                    disabled
-                    className="p-2 text-sm border-primary opacity-50 border-2 rounded-sm w-80"
-                  />
-                  <button
-                    onClick={() => openRequirementsModal(service)}
-                    className="btn btn-sm btn-primary text-white rounded-sm"
-                  >
-                    Requirements
-                  </button>
-                  <button
-                    onClick={() => deleteService(index)}
-                    className="btn btn-sm rounded-sm text-white btn-error"
-                  >
-                    Delete
-                  </button>
-                </div>
-              ) : (
-                <div className="w-full">
-                  <table className="table w-full">
-                    <tbody>
-                      <tr>
-                        <td className="w-80">{service.name}</td>
-                        <td>{service.office}</td>
-                        <td className="text-right">
-                          <button
-                            onClick={() => openRequirementsModal(service)}
-                            className="btn btn-sm btn-primary text-white rounded-sm"
-                          >
-                            View Requirements
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          ))}
+          services
+            .filter((service) => service.office === officeData?.office)
+            .map((service, index) => (
+              <div key={index} className="flex gap-3">
+                {isEditing ? (
+                  <div className="flex gap-3 items-center">
+                    <input
+                      type="text"
+                      placeholder="Service Name"
+                      value={service.name}
+                      onChange={(e) =>
+                        handleServiceChange(index, "name", e.target.value)
+                      }
+                      className="p-2 text-sm border-primary border-2 rounded-sm w-80"
+                    />
+                    <input
+                      type="text"
+                      value={service.office}
+                      readOnly
+                      disabled
+                      className="p-2 text-sm border-primary opacity-50 border-2 rounded-sm w-80"
+                    />
+                    <button
+                      onClick={() => openRequirementsModal(service)}
+                      className="btn btn-sm btn-primary text-white rounded-sm"
+                    >
+                      Requirements
+                    </button>
+                    <button
+                      onClick={() => deleteService(index)}
+                      className="btn btn-sm rounded-sm text-white btn-error"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                ) : (
+                  <div className="w-full">
+                    <table className="table w-full">
+                      <tbody>
+                        <tr>
+                          <td className="w-80">{service.name}</td>
+                          <td>{service.office}</td>
+                          <td className="text-right">
+                            <button
+                              onClick={() => openRequirementsModal(service)}
+                              className="btn btn-sm btn-primary text-white rounded-sm"
+                            >
+                              View Requirements
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            ))}
 
         {selectedService && (
           <RequirementsModal

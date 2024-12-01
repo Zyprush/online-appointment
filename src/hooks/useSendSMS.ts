@@ -88,7 +88,7 @@ export const useSendSMS = () => {
         "/pages/api/send-sms",
         {
           contact: appointment.contact,
-          messageBody: `Your appointment has been declined.\n \nCode: ${appointment.officeCode || ""}${appointment.appointmentId} \nDetails:\nDate: ${appointment.selectedDate}\nTime: ${appointment.timeRange}\nOffice: ${appointment.selectedOffice}\n\nReason of Decline: ${appointment.declineReason}.`,
+          messageBody: `Your appointment has been Cancelled.\n \nCode: ${appointment.officeCode || ""}${appointment.appointmentId} \nDetails:\nDate: ${appointment.selectedDate}\nTime: ${appointment.timeRange}\nOffice: ${appointment.selectedOffice}\n\nReason of Cancellation: ${appointment.declineReason}.`,
         },
         { headers: { "Content-Type": "application/json" } }
       );

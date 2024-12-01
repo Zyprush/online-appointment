@@ -50,6 +50,9 @@ const ClientRequestAppointment: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { userData } = useUserData();
   const { sendAppointSMS } = useSendSMS();
+  const [serviceSearch, setServiceSearch] = useState<string>("");
+  const [filteredServices, setFilteredServices] = useState<Option[]>([]);
+  const [isServiceDropdownOpen, setIsServiceDropdownOpen] = useState(false);
 
   // Fetch data from Firestore
   const services = useFirestoreData("services", "services");
@@ -93,7 +96,9 @@ const ClientRequestAppointment: React.FC = () => {
     );
     console.log("appointmentCount", appointmentCount);
     if (appointmentCount >= 4) {
-      alert("There are already 4 (four) appointments for that time range. Please select different time range or date.");
+      alert(
+        "There are already 4 (four) appointments for that time range. Please select different time range or date."
+      );
       setLoading(false);
       return;
     }
@@ -222,6 +227,17 @@ const ClientRequestAppointment: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (serviceSearch) {
+      const filtered = services.filter((service) =>
+        service.name.toLowerCase().includes(serviceSearch.toLowerCase())
+      );
+      setFilteredServices(filtered);
+    } else {
+      setFilteredServices(services);
+    }
+  }, [serviceSearch, services]);
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-4">Request Appointment</h2>
@@ -283,23 +299,56 @@ const ClientRequestAppointment: React.FC = () => {
         </div>
 
         {appointmentType === "service" && (
-          <div className="mb-4">
+          <div className="mb-4 relative">
             <label className="block text-gray-700 text-sm font-bold mb-2">
               * Select Service
             </label>
-            <select
-              className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              value={selectedService}
-              onChange={(e) => setSelectedService(e.target.value)}
-              required
-            >
-              <option value="">Select a service</option>
-              {services.map((service) => (
-                <option key={service.name} value={service.name}>
-                  {service.name}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <input
+                type="text"
+                className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                placeholder="Search and select a service"
+                value={serviceSearch}
+                onChange={(e) => {
+                  setServiceSearch(e.target.value);
+                  setSelectedService("");
+                  setIsServiceDropdownOpen(true);
+                }}
+                onFocus={() => setIsServiceDropdownOpen(true)}
+              />
+              {isServiceDropdownOpen && (
+                <ul className="absolute z-10 w-full max-h-60 overflow-y-auto bg-white border rounded shadow-lg mt-1">
+                  {filteredServices.length === 0 ? (
+                    <li className="px-3 py-2 text-gray-500">
+                      No services found
+                    </li>
+                  ) : (
+                    filteredServices.map((service) => (
+                      <li
+                        key={service.name}
+                        className={`px-3 py-2 cursor-pointer hover:bg-gray-100 ${
+                          selectedService === service.name ? "bg-gray-200" : ""
+                        }`}
+                        onClick={() => {
+                          setSelectedService(service.name);
+                          setServiceSearch(service.name);
+                          setIsServiceDropdownOpen(false);
+                        }}
+                      >
+                        {service.name}
+                      </li>
+                    ))
+                  )}
+                </ul>
+              )}
+            </div>
+            {/* Optional: Close dropdown when clicking outside */}
+            {isServiceDropdownOpen && (
+              <div
+                className="fixed inset-0 z-0"
+                onClick={() => setIsServiceDropdownOpen(false)}
+              />
+            )}
           </div>
         )}
 
