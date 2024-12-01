@@ -10,7 +10,7 @@ const fixedOffices: { name: string; username: string; password: string }[] = [
   { name: "BSIT Faculty", username: "", password: "" },
   { name: "BEED Faculty", username: "", password: "" },
   { name: "BSBA OM Faculty", username: "", password: "" },
-  { name: "BSBA FA Faculty", username: "", password: "" },
+  { name: "BSBA FM Faculty", username: "", password: "" },
   { name: "BSOA Faculty", username: "", password: "" },
 ];
 

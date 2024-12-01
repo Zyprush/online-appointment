@@ -17,7 +17,7 @@ const Offices: React.FC = () => {
     "BSIT Faculty",
     "BEED Faculty",
     "BSBA OM Faculty",
-    "BSBA FA Faculty",
+    "BSBA FM Faculty",
     "BSOA Faculty"
   ];
 
