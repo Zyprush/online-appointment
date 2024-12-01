@@ -272,20 +272,20 @@ const OfficeApproveAppointment = () => {
                     className="btn btn-xs rounded-sm text-primary btn-outline"
                     onClick={() => handleView(appointment)}
                   >
-                    details
+                    Details
                   </button>
                   <button
                     className="btn btn-xs rounded-sm text-white btn-primary"
                     onClick={() => handleCompleted(appointment.id)}
                   >
-                    completed
+                    Completed
                   </button>
                   <button
                     className="btn btn-error text-white btn-xs rounded-sm"
                     onClick={() => handleCancel(appointment.id)}
                     disabled={loading}
                   >
-                    Decline
+                    Cancel
                   </button>
                 </td>
               </tr>

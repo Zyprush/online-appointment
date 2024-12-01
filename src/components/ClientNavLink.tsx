@@ -41,9 +41,6 @@ const ClientNavLink: React.FC<ClientNavLinkProps> = ({ isMobile = false }) => {
       <Link href="/client/schedule" className={getLinkClass('/client/schedule')}>
         Schedule
       </Link>
-      <Link href="/client/logs" className={getLinkClass('/client/logs')}>
-        Logs
-      </Link>
       <Link href="/client/profile" className={getLinkClass('/client/profile')}>
         Profile
       </Link>
