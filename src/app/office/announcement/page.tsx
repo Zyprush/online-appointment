@@ -16,6 +16,7 @@ interface Announcement {
   who: string;
   where: string;
   files: string[];
+  isPriority: boolean;
 }
 
 const Announce: React.FC = (): JSX.Element => {

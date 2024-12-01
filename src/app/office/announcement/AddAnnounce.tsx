@@ -16,6 +16,7 @@ const AddAnnounce: React.FC<AddAnnounceProps> = ({ onClose }) => {
   const [files, setFiles] = useState<FileList | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isPriority, setIsPriority] = useState(false);
   const officeData = useOffice();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,6 +54,7 @@ const AddAnnounce: React.FC<AddAnnounceProps> = ({ onClose }) => {
         where,
         files: uploadedFiles,
         createdAt: currentTime,
+        isPriority,
         office: officeData?.office,
       });
 
@@ -128,6 +130,15 @@ const AddAnnounce: React.FC<AddAnnounceProps> = ({ onClose }) => {
               multiple
               onChange={handleFileChange}
               className="w-full p-2 border rounded"
+            />
+          </div>
+          <div className="mb-4">
+            <label>Priority:</label>
+            <input
+              type="checkbox"
+              checked={isPriority}
+              onChange={(e) => setIsPriority(e.target.checked)}
+              className="w-4 h-4 p-2 border rounded"
             />
           </div>
           {error && <p style={{ color: "red" }}>{error}</p>}

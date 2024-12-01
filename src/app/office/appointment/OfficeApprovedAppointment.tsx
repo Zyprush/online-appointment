@@ -49,7 +49,6 @@ const OfficeApproveAppointment = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { addFeedback } = useFeedback();
 
-  // Extracted fetchAppointments function
   const fetchAppointments = async () => {
     if (!officeData) {
       setLoading(false);
@@ -68,6 +67,14 @@ const OfficeApproveAppointment = () => {
         ...doc.data(),
       })) as AppointmentType[];
 
+      // Sort appointments, moving today's appointments to the top
+      const today = new Date().toISOString().split("T")[0];
+      appointmentsList.sort((a, b) => {
+        if (a.selectedDate === today && b.selectedDate !== today) return -1;
+        if (a.selectedDate !== today && b.selectedDate === today) return 1;
+        return new Date(a.selectedDate).getTime() - new Date(b.selectedDate).getTime();
+      });
+
       setAppointments(appointmentsList);
       setFilteredAppointments(appointmentsList);
     } catch (err) {
@@ -76,24 +83,23 @@ const OfficeApproveAppointment = () => {
       setLoading(false);
     }
   };
+
   const handlePrintTable = () => {
     window.print();
   };
-  // Filter appointments by search query and selected date
+
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
     filterAppointments(query, selectedDate);
   };
 
-  // Handle date change
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const date = event.target.value;
     setSelectedDate(date);
     filterAppointments(searchQuery, date);
   };
 
-  // Filter appointments based on search query and selected date
   const filterAppointments = (query: string, date: string) => {
     const filtered = appointments.filter((appointment) => {
       const matchesName = appointment.name.toLowerCase().includes(query);
@@ -103,10 +109,8 @@ const OfficeApproveAppointment = () => {
     setFilteredAppointments(filtered);
   };
 
-  // Fetch appointments when the component mounts
   useEffect(() => {
     fetchAppointments();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [officeData]);
 
   const handleView = (appointment: AppointmentType) => {
@@ -240,3 +244,4 @@ const OfficeApproveAppointment = () => {
 };
 
 export default OfficeApproveAppointment;
+

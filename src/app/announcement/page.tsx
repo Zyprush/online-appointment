@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { collection, query, orderBy, getDocs, limit } from "firebase/firestore";
+import { collection, query, orderBy, getDocs, limit, where } from "firebase/firestore";
 import { db } from "@/firebase";
 import { format } from "date-fns";
 import Navbar from "@/components/topNavbar";
@@ -31,6 +31,7 @@ const Announce: React.FC = (): JSX.Element => {
         const q = query(
           collection(db, "announce"),
           orderBy("when", "desc"),
+          where("isPriority", "==", true),
           limit(30)
         );
 

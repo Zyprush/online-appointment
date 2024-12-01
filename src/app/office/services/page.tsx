@@ -1,14 +1,11 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import RequirementsModal from "@/app/admin/setting/RequirementsModal";
 import NavLayout from "@/components/NavLayout";
+import { useOffice } from "@/hooks/useOffice";
 
-interface Office {
-  name: string;
-  phoneNumber: string;
-  designatedPersonnel: string;
-}
 
 interface Service {
   name: string;
@@ -16,28 +13,26 @@ interface Service {
   requirements: string;
 }
 
-const Services: React.FC = () => {
+const OfficeServices: React.FC = () => {
   const [services, setServices] = useState<Service[]>([]);
-  const [offices, setOffices] = useState<Office[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const officeData = useOffice();
 
   useEffect(() => {
     const fetchServicesAndOffices = async () => {
       const servicesDoc = await getDoc(doc(db, "settings", "services"));
-      const officesDoc = await getDoc(doc(db, "settings", "offices"));
 
       if (servicesDoc.exists()) {
         setServices(servicesDoc.data().services || []);
       }
-      if (officesDoc.exists()) {
-        setOffices(officesDoc.data().offices || []);
-      }
+
     };
     fetchServicesAndOffices();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const saveServices = async () => {
@@ -55,7 +50,8 @@ const Services: React.FC = () => {
 
   const isFormValid = () => {
     return services.every(
-      (service) => service.name?.trim() !== "" && service.office?.trim() !== ""
+      (service) => service.name?.trim() !== "" 
+      // && service.office?.trim() !== ""
     );
   };
 
@@ -65,7 +61,12 @@ const Services: React.FC = () => {
     value: string
   ) => {
     setServices((prevServices) =>
-      prevServices.map((s, i) => (i === index ? { ...s, [field]: value } : s))
+      prevServices.map((s, i) => {
+        if (i === index && s.office === officeData?.office) {
+          return { ...s, [field]: value };
+        }
+        return s; // Return unchanged service if office doesn't match
+      })
     );
   };
 
@@ -89,12 +90,12 @@ const Services: React.FC = () => {
 
   const addService = () =>
     setServices([
-      ...services,
       {
         name: "",
-        office: "",
+        office: officeData?.office || "Office",
         requirements: "",
       },
+      ...services,
     ]);
 
   const toggleEdit = () => {
@@ -151,20 +152,13 @@ const Services: React.FC = () => {
                     }
                     className="p-2 text-sm border-primary border-2 rounded-sm w-80"
                   />
-                  <select
+                  <input
+                    type="text"
                     value={service.office}
-                    onChange={(e) =>
-                      handleServiceChange(index, "office", e.target.value)
-                    }
-                    className="p-2 text-sm border-primary border-2 rounded-sm"
-                  >
-                    <option value="">Select Office</option>
-                    {offices?.map((office, i) => (
-                      <option key={i} value={office?.name}>
-                        {office?.name}
-                      </option>
-                    ))}
-                  </select>
+                    readOnly
+                    disabled
+                    className="p-2 text-sm border-primary opacity-50 border-2 rounded-sm w-80"
+                  />
                   <button
                     onClick={() => openRequirementsModal(service)}
                     className="btn btn-sm btn-primary text-white rounded-sm"
@@ -215,4 +209,4 @@ const Services: React.FC = () => {
   );
 };
 
-export default Services;
+export default OfficeServices;

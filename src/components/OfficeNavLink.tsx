@@ -43,6 +43,9 @@ const OfficeNavLink: React.FC<OfficeNavLinkProps> = ({ isMobile = false }) => {
       <Link href="/office/feedback" className={getLinkClass("/office/feedback")}>
         Feedback
       </Link>
+      <Link href="/office/services" className={getLinkClass("/office/services")}>
+        Services
+      </Link>
       <Link href="/office/announcement" className={getLinkClass("/office/announcement")}>
         Announcement
       </Link>
