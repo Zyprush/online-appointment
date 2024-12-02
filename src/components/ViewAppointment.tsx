@@ -15,6 +15,7 @@ interface AppointmentProps {
     email: string;
     role: string;
     dateCreated: string;
+    officeCode: string;
   };
   onClose: () => void;
 }
@@ -45,6 +46,7 @@ const ViewAppointment: React.FC<AppointmentProps> = ({
     contact,
     email,
     dateCreated,
+    officeCode
   } = appointment;
 
   return (
@@ -55,7 +57,11 @@ const ViewAppointment: React.FC<AppointmentProps> = ({
       <div className="flex flex-col bg-white p-6 rounded-lg shadow-lg z-50">
         {/* <h2 className="text-2xl font-bold mb-4 text-primary">Appointment Details</h2> */}
         <div className="grid gap-6 gap-x-7 grid-cols-2 md:gap-x-10 rounded z-50">
-          <DetailRow label="Appointment Code" value={id} />
+          {/* <DetailRow label="Appointment Code" value={id} /> */}
+          <span className="flex flex-col gap-1">
+    <span className="text-primary font-bold">Appointment Code</span>
+    <span className="text-sm text-gray-600 font-normal capitalize">{officeCode + id}</span>
+  </span>
           <DetailRow label="Type" value={appointmentType} />
           <DetailRow label="Date" value={selectedDate} />
           <DetailRow label="Time" value={timeRange} />
