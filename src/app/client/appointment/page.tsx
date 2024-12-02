@@ -7,7 +7,7 @@ import ClientCompletedAppointment from "./ClientCompletedAppointment";
 
 const Page: React.FC = () => {
   const [activeComponent, setActiveComponent] = useState<string>(
-    "pendingAppointments"
+    "approvedAppointments"
   );
 
   return (

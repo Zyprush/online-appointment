@@ -226,8 +226,9 @@ const SignupPage = () => {
                   className="input input-bordered input-sm rounded-sm"
                   value={formData.contact}
                   onChange={handleInputChange}
+                  placeholder="9XXXXXXXXX"
                   required
-                  maxLength={11}
+                  maxLength={10}
                 />
               </div>
               <div className="form-control">

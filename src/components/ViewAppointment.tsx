@@ -44,7 +44,6 @@ const ViewAppointment: React.FC<AppointmentProps> = ({
     name,
     contact,
     email,
-    role,
     dateCreated,
   } = appointment;
 
@@ -66,7 +65,7 @@ const ViewAppointment: React.FC<AppointmentProps> = ({
           <DetailRow label="Name" value={name} />
           <DetailRow label="Contact" value={contact} />
           <DetailRow label="Email" value={email} />
-          <DetailRow label="Role" value={role} />
+          {/* <DetailRow label="Role" value={role} /> */}
           <DetailRow label="Date Created" value={dateCreated} />
         </div>
 
