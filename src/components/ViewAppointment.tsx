@@ -26,7 +26,9 @@ const DetailRow: React.FC<{ label: string; value: string }> = ({
 }) => (
   <span className="flex flex-col gap-1">
     <span className="text-primary font-bold">{label}:</span>
-    <span className="text-sm text-gray-600 font-normal capitalize">{value}</span>
+    <span className="text-sm text-gray-600 font-normal capitalize">
+      {value}
+    </span>
   </span>
 );
 
@@ -46,7 +48,7 @@ const ViewAppointment: React.FC<AppointmentProps> = ({
     contact,
     email,
     dateCreated,
-    officeCode
+    officeCode,
   } = appointment;
 
   return (
@@ -59,15 +61,21 @@ const ViewAppointment: React.FC<AppointmentProps> = ({
         <div className="grid gap-6 gap-x-7 grid-cols-2 md:gap-x-10 rounded z-50">
           {/* <DetailRow label="Appointment Code" value={id} /> */}
           <span className="flex flex-col gap-1">
-    <span className="text-primary font-bold">Appointment Code</span>
-    <span className="text-sm text-gray-600 font-normal capitalize">{officeCode + id}</span>
-  </span>
+            <span className="text-primary font-bold">Appointment Code</span>
+            <span className="text-sm text-gray-600 font-normal capitalize">
+              {officeCode + id}
+            </span>
+          </span>
           <DetailRow label="Type" value={appointmentType} />
           <DetailRow label="Date" value={selectedDate} />
           <DetailRow label="Time" value={timeRange} />
-          {appointmentType === "service" && <DetailRow label="Service" value={selectedService} />}
+          {appointmentType === "service" && (
+            <DetailRow label="Service" value={selectedService} />
+          )}
           <DetailRow label="Office" value={selectedOffice} />
-          {otherReason && <DetailRow label="Other Reason" value={otherReason} /> }
+          {otherReason && (
+            <DetailRow label="Other Reason" value={otherReason} />
+          )}
           <DetailRow label="Name" value={name} />
           <DetailRow label="Contact" value={contact} />
           <DetailRow label="Email" value={email} />
