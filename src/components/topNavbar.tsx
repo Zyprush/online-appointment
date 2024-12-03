@@ -19,28 +19,43 @@ const Navbar = () => {
         {/* Desktop Menu */}
         <ul className="hidden md:flex space-x-8 text-gray-700">
           <li>
-            <Link href="/" className="hover:text-primary hover:font-bold hover:underline">
+            <Link
+              href="/"
+              className="hover:text-primary hover:font-bold hover:underline"
+            >
               Home
             </Link>
           </li>
           <li>
-            <Link href="/announcement" className="hover:text-primary hover:font-bold hover:underline">
+            <Link
+              href="/announcement"
+              className="hover:text-primary hover:font-bold hover:underline"
+            >
               Announcement
             </Link>
           </li>
           <li>
-            <Link href="/about" className="hover:text-primary hover:font-bold hover:underline">
+            <Link
+              href="/about"
+              className="hover:text-primary hover:font-bold hover:underline"
+            >
               About Us
             </Link>
           </li>
           <li>
-            <a href="mailto:mambuappoint@gmail.com" className="hover:text-primary hover:font-bold hover:underline">
+            <a
+              href="mailto:mambuappoint@gmail.com"
+              className="hover:text-primary hover:font-bold hover:underline"
+            >
               Contact
             </a>
           </li>
         </ul>
         <div className="hidden md:block space-x-8">
-          <Link href="/log-in" className="text-primary font-bold hover:text-blue-600 hover:font-bold hover:underline">
+          <Link
+            href="/log-in"
+            className="text-primary font-bold hover:text-blue-600 hover:font-bold hover:underline"
+          >
             Login
           </Link>
         </div>
@@ -80,6 +95,11 @@ const Navbar = () => {
                 onClick={toggleMenu}
               >
                 Home
+              </Link>
+            </li>
+            <li>
+              <Link href="/announcement" className="hover:text-blue-600">
+                Announcement
               </Link>
             </li>
             <li>

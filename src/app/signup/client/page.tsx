@@ -161,10 +161,10 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-full overflow-scroll fixed top-0 bottom-0 right-0 left-0 p-5 bg-[url('/img/omsc.jpg')]">
+    <div className="flex justify-center items-center min-h-screen p-5 bg-[url('/img/omsc.jpg')] bg-cover bg-center fixed inset-0">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-5 md:p-10 rounded-2xl shadow-md w-full max-w-2xl"
+        className="bg-white p-5 md:p-10 rounded-2xl shadow-2xl w-full max-w-2xl"
       >
         <h2 className="text-3xl font-bold mb-4 text-primary">
           Signup as Client
@@ -228,7 +228,9 @@ const SignupPage = () => {
                   onChange={handleInputChange}
                   placeholder="9XXXXXXXXX"
                   required
+                  title="must be 10 digits"
                   maxLength={10}
+                  pattern="^9\d{9}$"
                 />
               </div>
               <div className="form-control">
@@ -260,7 +262,7 @@ const SignupPage = () => {
             </div>
             <div className="mt-6 w-full flex">
               <button
-                type="button"
+                type="submit"
                 onClick={nextStep}
                 className="btn btn-primary mr-0 ml-auto"
                 disabled={!isStepValid()}
