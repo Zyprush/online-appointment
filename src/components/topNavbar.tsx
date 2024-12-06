@@ -42,14 +42,6 @@ const Navbar = () => {
               About Us
             </Link>
           </li>
-          <li>
-            <a
-              href="mailto:mambuappoint@gmail.com"
-              className="hover:text-primary hover:font-bold hover:underline"
-            >
-              Contact
-            </a>
-          </li>
         </ul>
         <div className="hidden md:block space-x-8">
           <Link
@@ -109,15 +101,6 @@ const Navbar = () => {
                 onClick={toggleMenu}
               >
                 About Us
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/contact"
-                className="hover:text-blue-600"
-                onClick={toggleMenu}
-              >
-                Contact
               </Link>
             </li>
             <li>
