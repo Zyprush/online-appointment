@@ -36,6 +36,16 @@ export default function Home() {
               Schedule
             </Link>
 
+
+            <a
+              href="/guide"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn mt-10 btn-primary rounded-md text-white px-6 py-3 font-normal"
+            >
+              Guide
+            </a>
+
             <Link
               href="/signup/client"
               className="btn btn-primary rounded-md mt-10 text-white px-6 py-3 font-normal"

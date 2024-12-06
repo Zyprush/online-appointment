@@ -164,7 +164,7 @@ const SignupPage = () => {
     <div className="flex justify-center items-center min-h-screen p-5 bg-[url('/img/omsc.jpg')] bg-cover bg-center fixed inset-0">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-5 md:p-10 rounded-2xl shadow-2xl w-full max-w-2xl"
+        className="bg-white p-5 md:p-10 rounded-none shadow-2xl w-full max-w-2xl"
       >
         <h2 className="text-3xl font-bold mb-4 text-primary">
           Signup as Client
@@ -173,7 +173,7 @@ const SignupPage = () => {
         {step === 1 && (
           <>
             <div className="grid grid-cols-2 gap-4">
-              <div className="form-control col-span-2 text-lg font-semibold">
+              <div className="form-control text-primary col-span-2 text-lg font-bold">
                 Personal Information
               </div>
               <div className="form-control">
@@ -276,7 +276,7 @@ const SignupPage = () => {
         {step === 2 && (
           <>
             <div className="grid grid-cols-2 gap-4">
-              <div className="form-control col-span-2 text-lg font-semibold">
+              <div className="form-control text-primary col-span-2 text-lg font-bold">
                 Address Information
               </div>
               <div className="form-control col-span-2">
@@ -359,7 +359,7 @@ const SignupPage = () => {
         {step === 3 && (
           <>
             <div className="grid grid-cols-2 gap-4">
-              <div className="form-control col-span-2 text-lg font-semibold">
+              <div className="form-control text-primary col-span-2 text-lg font-bold">
                 Account Information
               </div>
               <div className="form-control col-span-2">

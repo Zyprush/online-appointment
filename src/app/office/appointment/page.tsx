@@ -6,6 +6,7 @@ import { useOffice } from "@/hooks/useOffice";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/firebase";
 import OfficeCompletedAppointment from "./OfficeCompletedAppointment";
+import OfficeDeclinedAppointment from "./OfficeDeclinedAppointment";
 
 const AdminAppointments: React.FC = () => {
   const [status, setStatus] = useState<string>("approved");
@@ -65,9 +66,20 @@ const AdminAppointments: React.FC = () => {
           >
             Completed
           </button>
+
+          <button
+            className={`px-4 py-2 rounded ${
+              status === "cancelled" ? "bg-primary text-white" : "bg-gray-200"
+            }`}
+            onClick={() => setStatus("cancelled")}
+          >
+            Cancelled
+          </button>
         </div>
         {status === "approved" && <ApprovedAppointments />}
         {status === "completed" && <OfficeCompletedAppointment />}
+        {status === "cancelled" && <OfficeDeclinedAppointment />}
+
       </div>
     </NavLayout>
   );

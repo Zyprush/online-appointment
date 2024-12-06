@@ -22,7 +22,6 @@ type AppointmentType = {
   dateCreated: string;
   status: string;
   officeCode: string;
-  declineReason: string;
 };
 
 const OfficeDeclinedAppointment = () => {
@@ -69,7 +68,6 @@ const OfficeDeclinedAppointment = () => {
         dateCreated: doc.data().dateCreated || "",
         status: doc.data().status || "",
         officeCode: doc.data().officeCode || "",
-        declineReason: doc.data().declineReason || "",
       }));
       setAppointments(appointmentsList);
       setFilteredAppointments(appointmentsList); // Initialize filtered list
@@ -159,7 +157,7 @@ const OfficeDeclinedAppointment = () => {
             <th className="px-4 py-2">Code</th>
             <th className="px-4 py-2">Name</th>
             <th className="px-4 py-2">Email</th>
-            <th className="px-4 py-2">Remarks</th>
+            <th className="px-4 py-2">Schedule</th>
             <th className="px-4 py-2">Action</th>
           </tr>
         </thead>
@@ -172,7 +170,7 @@ const OfficeDeclinedAppointment = () => {
                 <td className="border px-4 py-2">
                   {appointment.email}
                 </td>
-                <td className="border px-4 py-2">{appointment.declineReason}</td>
+                <td className="border px-4 py-2">{`${appointment.selectedDate} ${appointment.timeRange}`}</td>
                 <td className="border px-4 py-2">
                   <button
                     className="btn-xs btn-outline text-primary rounded-sm btn"
