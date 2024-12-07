@@ -20,6 +20,7 @@ interface Appointment {
   role: string;
   dateCreated: string;
   officeCode: string;
+  declineReason: string;
 }
 
 const ClientDeclinedAppointment: React.FC = () => {
@@ -28,17 +29,19 @@ const ClientDeclinedAppointment: React.FC = () => {
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState<string | null>(null); // Error state
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null); // State for selected appointment
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null); // State for selected appointment
 
   useEffect(() => {
     const fetchAppointments = async () => {
       setLoading(true); // Set loading to true
       try {
         const appointmentsRef = collection(db, "appointments");
-        const q = query(appointmentsRef, 
+        const q = query(
+          appointmentsRef,
           where("submittedUid", "==", userData?.uid),
           where("status", "==", "declined")
-        ); 
+        );
         const snapshot = await getDocs(q);
         const appointmentList = snapshot.docs.map((doc) => ({
           id: doc.id,
@@ -56,6 +59,7 @@ const ClientDeclinedAppointment: React.FC = () => {
           role: doc.data().role || "",
           dateCreated: doc.data().dateCreated || "",
           officeCode: doc.data().officeCode || "",
+          declineReason: doc.data().declineReason || "",
         }));
         setAppointments(appointmentList);
       } catch (error) {
@@ -65,7 +69,8 @@ const ClientDeclinedAppointment: React.FC = () => {
       }
     };
 
-    if (userData?.uid) { // Ensure user UID is available before fetching
+    if (userData?.uid) {
+      // Ensure user UID is available before fetching
       fetchAppointments();
     }
   }, [userData]);
@@ -101,40 +106,36 @@ const ClientDeclinedAppointment: React.FC = () => {
             <th className="px-4 py-2 text-left">Appointment Code</th>
             <th className="px-4 py-2 text-left">Date</th>
             <th className="px-4 py-2 text-left">Time</th>
-            <th className="px-4 py-2 text-left">Status</th>
+            <th className="px-4 py-2 text-left">Remarks</th>
             <th className="px-4 py-2 text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
           {appointments.length === 0 ? (
             <tr>
-              <td colSpan={6} className="px-4 py-2 text-center">No appointment history found.</td>
+              <td colSpan={6} className="px-4 py-2 text-center">
+                No appointment history found.
+              </td>
             </tr>
           ) : (
             appointments.map((appointment) => (
               <tr key={appointment.id} className="border-b">
-                <td className="px-4 py-2 uppercase">{`${appointment.officeCode}${appointment.id}` || appointment.id}</td>
+                <td className="px-4 py-2 uppercase">
+                  {`${appointment.officeCode}${appointment.id}` ||
+                    appointment.id}
+                </td>
                 <td className="px-4 py-2">{appointment.selectedDate}</td>
                 <td className="px-4 py-2">{appointment.timeRange}</td>
                 <td className="px-4 py-2">
-                  <span
-                    className={`px-2 py-1 rounded ${
-                      appointment.status === "declined"
-                        ? "bg-red-200 text-red-800"
-                        : appointment.status === "approved"
-                        ? "bg-green-200 text-green-800"
-                        : "bg-yellow-200 text-yellow-800"
-                    }`}
-                  >
-                    {appointment.status}
-                  </span>
+                  {appointment.declineReason}
                 </td>
+
                 <td className="px-4 py-2">
                   <button
-                    className="btn btn-xs rounded-sm btn-primary text-white"
+                    className="btn btn-outline btn-xs rounded-none text-primary"
                     onClick={() => handleView(appointment)}
                   >
-                    View
+                    details
                   </button>
                 </td>
               </tr>
@@ -145,11 +146,13 @@ const ClientDeclinedAppointment: React.FC = () => {
 
       {/* Modal for viewing appointment details */}
       {isModalOpen && selectedAppointment && (
-        <ViewAppointment appointment={selectedAppointment} onClose={closeModal} />
+        <ViewAppointment
+          appointment={selectedAppointment}
+          onClose={closeModal}
+        />
       )}
     </div>
   );
 };
 
 export default ClientDeclinedAppointment;
-
