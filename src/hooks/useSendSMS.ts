@@ -30,12 +30,16 @@ export const useSendSMS = () => {
     setIsSending(true);
     setError(null);
     try {
-      console.log('appointmentID', appointment.appointmentId)
+      console.log("appointmentID", appointment.appointmentId);
       const response = await axios.post(
         "/pages/api/send-sms",
         {
           contact: appointment.phoneNumber,
-          messageBody: `${appointment.name} book an appointment on ${appointment.selectedDate} at ${appointment.timeRange}.\n\nCODE: ${appointment.officeCode || ""}${appointment.appointmentId}\nOFFICE: ${appointment.selectedOffice}`,
+          messageBody: `${appointment.name} book an appointment on ${
+            appointment.selectedDate
+          } at ${appointment.timeRange}.\n\nCODE: ${
+            appointment.officeCode || ""
+          }${appointment.appointmentId}\nOFFICE: ${appointment.selectedOffice}`,
         },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -61,7 +65,13 @@ export const useSendSMS = () => {
         "/pages/api/send-sms",
         {
           contact: appointment.contact,
-          messageBody: `Your appointment has been approved.\n \nCode: ${appointment.officeCode || ""}${appointment.appointmentId}\nDetails:\nDate: ${appointment.selectedDate}\nTime: ${appointment.timeRange}\nOffice: ${appointment.selectedOffice}.`,
+          messageBody: `Your appointment has been approved.\n \nCode: ${
+            appointment.officeCode || ""
+          }${appointment.appointmentId}\n\nDate: ${
+            appointment.selectedDate
+          }\nTime: ${appointment.timeRange}\nOffice: ${
+            appointment.selectedOffice
+          }.`,
         },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -71,7 +81,7 @@ export const useSendSMS = () => {
       const errorMessage =
         err instanceof Error ? err.message : "Unknown error occurred";
       setError("Failed to send SMS: " + errorMessage);
-      console.log('err', err)
+      console.log("err", err);
       return { success: false, error: errorMessage };
     } finally {
       setIsSending(false);
@@ -88,7 +98,13 @@ export const useSendSMS = () => {
         "/pages/api/send-sms",
         {
           contact: appointment.contact,
-          messageBody: `Your appointment has been Cancelled.\n \nCode: ${appointment.officeCode || ""}${appointment.appointmentId} \nDetails:\nDate: ${appointment.selectedDate}\nTime: ${appointment.timeRange}\nOffice: ${appointment.selectedOffice}\n\nReason of Cancellation: ${appointment.declineReason}.`,
+          messageBody: `Your appointment has been Cancelled.\n \nCode: ${
+            appointment.officeCode || ""
+          }${appointment.appointmentId} \nDetails:\nDate: ${
+            appointment.selectedDate
+          }\nTime: ${appointment.timeRange}\nOffice: ${
+            appointment.selectedOffice
+          }\n\nReason of Cancellation: ${appointment.declineReason}.`,
         },
         { headers: { "Content-Type": "application/json" } }
       );
