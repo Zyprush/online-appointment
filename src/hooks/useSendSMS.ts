@@ -100,7 +100,7 @@ export const useSendSMS = () => {
           contact: appointment.contact,
           messageBody: `Your appointment has been Cancelled.\n \nCode: ${
             appointment.officeCode || ""
-          }${appointment.appointmentId} \nDetails:\nDate: ${
+          }${appointment.appointmentId} \n\nDate: ${
             appointment.selectedDate
           }\nTime: ${appointment.timeRange}\nOffice: ${
             appointment.selectedOffice
