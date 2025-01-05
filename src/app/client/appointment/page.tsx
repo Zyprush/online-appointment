@@ -5,6 +5,7 @@ import NavLayout from "@/components/NavLayout";
 import ClientApprovedAppointment from "./ClientApprovedAppointment";
 import ClientCompletedAppointment from "./ClientCompletedAppointment";
 import ClientDeclinedAppointment from "./ClientDeclinedAppointment";
+import ClientPendingAppointment from "./ClientPendingAppointment";
 
 const Page: React.FC = () => {
   const [activeComponent, setActiveComponent] = useState<string>(
@@ -29,6 +30,20 @@ const Page: React.FC = () => {
                 Request Appointment
               </button>
             </li>
+
+            <li className="mb-2">
+              <button
+                className={`w-full flex items-center justify-start py-2 px-4 rounded ${
+                  activeComponent === "pendingAppointments"
+                    ? "bg-primary text-white"
+                    : "text-gray-600 hover:bg-gray-200"
+                }`}
+                onClick={() => setActiveComponent("pendingAppointments")}
+              >
+                Pending Appointment
+              </button>
+            </li>
+
             <li className="mb-2">
               <button
                 className={`w-full flex items-center justify-start py-2 px-4 rounded ${
@@ -38,9 +53,10 @@ const Page: React.FC = () => {
                 }`}
                 onClick={() => setActiveComponent("approvedAppointments")}
               >
-                Appointment
+                Approved Appointment
               </button>
             </li>
+
             <li className="mb-2">
               <button
                 className={`w-full flex items-center justify-start py-2 px-4 rounded ${
@@ -73,6 +89,9 @@ const Page: React.FC = () => {
         <div className="w-full md:w-3/4 p-4 md:p-6">
           {activeComponent === "requestAppointment" && (
             <ClientRequestAppointment />
+          )}
+          {activeComponent === "pendingAppointments" && (
+            <ClientPendingAppointment />
           )}
           {activeComponent === "approvedAppointments" && (
             <ClientApprovedAppointment />

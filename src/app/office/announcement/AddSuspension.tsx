@@ -1,33 +1,68 @@
 import React, { useState } from "react";
-import { collection, addDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "@/firebase";
 import { useOffice } from "@/hooks/useOffice";
 
 interface AddAnnounceProps {
-  onClose: () => void; // Prop to handle modal close
+  onClose: () => void;
 }
 
-const AddAnnounce: React.FC<AddAnnounceProps> = ({ onClose }) => {
+const AddSuspension: React.FC<AddAnnounceProps> = ({ onClose }) => {
   const [what, setWhat] = useState("");
   const [whenStart, setWhenStart] = useState("");
   const [whenEnd, setWhenEnd] = useState("");
-  const [who, setWho] = useState("");
-  const [where, setWhere] = useState("");
   const [files, setFiles] = useState<FileList | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isPriority, setIsPriority] = useState(false);
   const officeData = useOffice();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFiles(e.target.files);
   };
 
+  const cancelAppointmentsInRange = async (startDate: Date, endDate: Date) => {
+    try {
+      // Query for pending and approved appointments within the date range
+      const appointmentsRef = collection(db, "appointments");
+      const q = query(
+        appointmentsRef,
+        where("status", "in", ["pending", "approved"]),
+        where("appointmentDate", ">=", startDate),
+        where("appointmentDate", "<=", endDate)
+      );
+
+      const querySnapshot = await getDocs(q);
+      
+      // Update each appointment's status to cancelled
+      const updatePromises = querySnapshot.docs.map(async (document) => {
+        const appointmentRef = doc(db, "appointments", document.id);
+        await updateDoc(appointmentRef, {
+          status: "declined",
+          declineReason: `Your appointment has been cancelled due to Class suspension: ${what}`
+        });
+      });
+
+      await Promise.all(updatePromises);
+      console.log(`Cancelled ${querySnapshot.size} appointments`);
+    } catch (error) {
+      console.error("Error cancelling appointments:", error);
+      throw error;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!what || !whenStart || !whenEnd || !who || !where) {
+    if (!what || !whenStart || !whenEnd) {
       setError("All fields are required.");
       return;
     }
@@ -47,28 +82,34 @@ const AddAnnounce: React.FC<AddAnnounceProps> = ({ onClose }) => {
           uploadedFiles.push(downloadURL);
         }
       }
-      const currentTime = new Date().toISOString(); // Get current time in ISO format
+
+      const startDate = new Date(whenStart);
+      const endDate = new Date(whenEnd);
+      
+      // Cancel appointments before creating the announcement
+      await cancelAppointmentsInRange(startDate, endDate);
+
+      const currentTime = new Date().toISOString();
       await addDoc(collection(db, "announce"), {
         what,
         whenStart,
         whenEnd,
-        who,
-        where,
+        who: "OMSC Students",
+        where: "Occidental Mindoro State College",
         files: uploadedFiles,
         createdAt: currentTime,
-        isPriority,
+        isPriority: true,
         office: officeData?.office,
       });
 
       setWhat("");
       setWhenStart("");
       setWhenEnd("");
-      setWho("");
-      setWhere("");
       setFiles(null);
-      onClose(); // Close the modal after successful submission
+      onClose();
     } catch (err) {
-      setError("Failed to submit announcement.");
+      setError("Failed to submit announcement and cancel appointments.");
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -83,13 +124,13 @@ const AddAnnounce: React.FC<AddAnnounceProps> = ({ onClose }) => {
         >
           &times;
         </button>
-        <h2 className="text-2xl font-bold mt-10 md:mt-0 mb-4 text-primary  drop-shadow">
-          Add Announcement
+        <h2 className="text-2xl font-bold mt-10 md:mt-0 mb-4 text-primary drop-shadow">
+          Add Class Suspension
         </h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-bold mb-2" htmlFor="what">
-              What:
+              Why:
             </label>
             <input
               type="text"
@@ -122,32 +163,7 @@ const AddAnnounce: React.FC<AddAnnounceProps> = ({ onClose }) => {
               id="when-end"
             />
           </div>
-          <div className="mb-4">
-            <label className="block text-sm font-bold mb-2" htmlFor="who">
-              Who:
-            </label>
-            <input
-              type="text"
-              value={who}
-              onChange={(e) => setWho(e.target.value)}
-              required
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="who"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-bold mb-2" htmlFor="where">
-              Where:
-            </label>
-            <input
-              type="text"
-              value={where}
-              onChange={(e) => setWhere(e.target.value)}
-              required
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="where"
-            />
-          </div>
+
           <div className="mb-4">
             <label className="block text-sm font-bold mb-2" htmlFor="files">
               Attach Files:
@@ -158,18 +174,6 @@ const AddAnnounce: React.FC<AddAnnounceProps> = ({ onClose }) => {
               onChange={handleFileChange}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="files"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-bold mb-2" htmlFor="priority">
-              Priority:
-            </label>
-            <input
-              type="checkbox"
-              checked={isPriority}
-              onChange={(e) => setIsPriority(e.target.checked)}
-              className="shadow appearance-none border rounded h-4 w-4 p-2 focus:outline-none focus:shadow-outline"
-              id="priority"
             />
           </div>
           {error && <p style={{ color: "red" }}>{error}</p>}
@@ -186,4 +190,4 @@ const AddAnnounce: React.FC<AddAnnounceProps> = ({ onClose }) => {
   );
 };
 
-export default AddAnnounce;
+export default AddSuspension;

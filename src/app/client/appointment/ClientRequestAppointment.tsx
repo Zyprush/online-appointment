@@ -196,7 +196,7 @@ const ClientRequestAppointment: React.FC = () => {
       email: userData?.email,
       role: userData?.role,
       dateCreated: new Date().toISOString(),
-      status: "approved",
+      status: "pending",
       officeCode,
     };
 

@@ -10,11 +10,13 @@ interface Announcement {
   id: string;
   office: string;
   what: string;
-  when: string;
+  whenStart: string;
+  whenEnd: string;
   who: string;
   where: string;
   createdAt: string;
   files: string[];
+  isPriority: boolean;
 }
 
 const Announce: React.FC = (): JSX.Element => {
@@ -31,7 +33,7 @@ const Announce: React.FC = (): JSX.Element => {
         const q = query(
           collection(db, "announce"),
           orderBy("isPriority", "desc"),
-          orderBy("when", "desc"),
+          orderBy("whenStart", "asc"),
           limit(30)
         );
 
@@ -117,6 +119,9 @@ const Announce: React.FC = (): JSX.Element => {
                   <p className="text-sm text-gray-600">
                     <strong>Where:</strong> {announce.where}
                   </p>
+                  <p className="text-sm text-gray-600">
+                    <strong>When:</strong> {format(new Date(announce.whenStart), "MMM dd, yyyy")} - {format(new Date(announce.whenEnd), "MMM dd, yyyy")}
+                  </p>
                 </div>
               </div>
             ))}
@@ -144,7 +149,7 @@ const Announce: React.FC = (): JSX.Element => {
               <div className="space-y-3 mb-6 text-gray-700">
                 <p className="text-sm">
                   <strong className="text-primary-500">When:</strong>{" "}
-                  {format(new Date(selectedAnnouncement.when), "MMM dd, yyyy")}
+                  {format(new Date(selectedAnnouncement.whenStart), "MMM dd, yyyy")} - {format(new Date(selectedAnnouncement.whenEnd), "MMM dd, yyyy")}
                 </p>
                 <p className="text-sm">
                   <strong className="text-primary-500">Who:</strong>{" "}

@@ -120,5 +120,45 @@ export const useSendSMS = () => {
     }
   };
 
-  return { sendAppointSMS, sendApproveSMS, sendDeclineSMS, isSending, error };
+  const sendReschedSMS = async (
+    appointment: AppointmentDetails
+  ): Promise<SendSMSResponse> => {
+    setIsSending(true);
+    setError(null);
+    try {
+      const response = await axios.post(
+        "/pages/api/send-sms",
+        {
+          contact: appointment.contact,
+          messageBody: `Your appointment has been Rescheduled.\n \nCode: ${
+            appointment.officeCode || ""
+          }${appointment.appointmentId} \n\nDate: ${
+            appointment.selectedDate
+          }\nTime: ${appointment.timeRange}\nOffice: ${
+            appointment.selectedOffice
+          }\n\nYou can cancel the appointment in the appointment page and choose another time slot or date if needed.`,
+        },
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      return response.data;
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Unknown error occurred";
+      setError("Failed to send SMS: " + errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  
+  return {
+    sendAppointSMS,
+    sendApproveSMS,
+    sendDeclineSMS,
+    sendReschedSMS,
+    isSending,
+    error,
+  };
 };
