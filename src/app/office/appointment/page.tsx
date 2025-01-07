@@ -7,6 +7,7 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/firebase";
 import OfficeCompletedAppointment from "./OfficeCompletedAppointment";
 import OfficeDeclinedAppointment from "./OfficeDeclinedAppointment";
+import OfficePendingAppointment from "./OfficePendingAppointment";
 
 const AdminAppointments: React.FC = () => {
   const [status, setStatus] = useState<string>("approved");
@@ -20,7 +21,7 @@ const AdminAppointments: React.FC = () => {
       const appointmentsRef = query(
         collection(db, "appointments"),
         where("selectedOffice", "==", officeData.office),
-        where("status", "==", "approved")
+        where("status", "==", "pending")
       );
 
       const snapshot = await getDocs(appointmentsRef);
@@ -34,8 +35,8 @@ const AdminAppointments: React.FC = () => {
     if (officeData) {
       countAppAppointments();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [officeData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [officeData,status]);
 
   return (
     <NavLayout>
@@ -46,16 +47,25 @@ const AdminAppointments: React.FC = () => {
         <div className="mb-4 flex gap-5 print:hidden">
           <button
             className={`mr-2 px-4 py-2 rounded ${
-              status === "approved" ? "bg-primary text-white" : "bg-gray-200"
+              status === "pending" ? "bg-primary text-white" : "bg-gray-200"
             } relative`}
-            onClick={() => setStatus("approved")}
+            onClick={() => setStatus("pending")}
           >
-            Appointment
+            Pending
             {appCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs font-semibold font-mono p-2 border border-white">
                 {appCount}
               </span>
             )}
+          </button>
+
+          <button
+            className={`mr-2 px-4 py-2 rounded ${
+              status === "approved" ? "bg-primary text-white" : "bg-gray-200"
+            } relative`}
+            onClick={() => setStatus("approved")}
+          >
+            Approved
           </button>
 
           <button
@@ -76,10 +86,10 @@ const AdminAppointments: React.FC = () => {
             Cancelled
           </button>
         </div>
+        {status === "pending" && <OfficePendingAppointment />}
         {status === "approved" && <ApprovedAppointments />}
         {status === "completed" && <OfficeCompletedAppointment />}
         {status === "cancelled" && <OfficeDeclinedAppointment />}
-
       </div>
     </NavLayout>
   );
