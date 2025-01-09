@@ -100,6 +100,7 @@ const AddSuspension: React.FC<AddAnnounceProps> = ({ onClose }) => {
         createdAt: currentTime,
         isPriority: true,
         office: officeData?.office,
+        status: "pending",
       });
 
       setWhat("");

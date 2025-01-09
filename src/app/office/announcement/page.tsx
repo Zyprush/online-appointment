@@ -27,6 +27,7 @@ interface Announcement {
   files: string[];
   createdAt: string;
   isPriority: boolean;
+  status: string;
 }
 
 const Announce: React.FC = (): JSX.Element => {

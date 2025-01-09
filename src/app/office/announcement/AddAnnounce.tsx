@@ -58,6 +58,7 @@ const AddAnnounce: React.FC<AddAnnounceProps> = ({ onClose }) => {
         createdAt: currentTime,
         isPriority,
         office: officeData?.office,
+        status: "pending",
       });
 
       setWhat("");

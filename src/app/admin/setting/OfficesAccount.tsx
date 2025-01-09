@@ -12,6 +12,7 @@ const fixedOffices: { name: string; username: string; password: string }[] = [
   { name: "BSBA OM Faculty", username: "", password: "" },
   { name: "BSBA FM Faculty", username: "", password: "" },
   { name: "BSOA Faculty", username: "", password: "" },
+  { name: "Campus Director", username: "", password: "" },
 ];
 
 const OfficesAccount = () => {
