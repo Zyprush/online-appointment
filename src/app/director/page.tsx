@@ -1,24 +1,21 @@
 "use client";
-import NavLayout from "@/components/NavLayout";
+
 import React, { useState, useEffect } from "react";
 import {
   collection,
   getDocs,
-  deleteDoc,
-  doc,
   query,
   where,
+  updateDoc,
+  deleteDoc,
+  doc,
 } from "firebase/firestore";
-import { ref, deleteObject } from "firebase/storage";
-import { db, storage } from "@/firebase";
+import { db } from "@/firebase";
 import { format } from "date-fns";
-import AddAnnounce from "./AddAnnounce";
-import AddSuspension from "./AddSuspension";
-import { useOffice } from "@/hooks/useOffice";
+import DirectorRouteGuard from "@/components/DirectorRouteGuard";
 
 interface Announcement {
   id: string;
-  office: string;
   what: string;
   whenStart: string;
   whenEnd: string;
@@ -30,46 +27,17 @@ interface Announcement {
   status: string;
 }
 
-const Announce: React.FC = (): JSX.Element => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSuspensionModalOpen, setIsSuspensionModalOpen] = useState(false);
+const PendingAnnouncements: React.FC = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-  const [loading, setLoading] = useState(true);
   const [selectedAnnouncements, setSelectedAnnouncements] = useState<string[]>(
     []
   );
-  const [statusFilter, setStatusFilter] = useState<"pending" | "approved">(
-    "pending"
-  );
-  const officeData = useOffice();
+  const [loading, setLoading] = useState(true);
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    fetchAnnouncements();
-  };
-
-  const openSuspensionModal = () => {
-    setIsSuspensionModalOpen(true);
-  };
-
-  const closeSuspensionModal = () => {
-    setIsSuspensionModalOpen(false);
-    fetchAnnouncements();
-  };
-
-  const fetchAnnouncements = async () => {
+  const fetchPendingAnnouncements = async () => {
     setLoading(true);
-    const office = officeData?.office ? officeData.office : "";
     const querySnapshot = await getDocs(
-      query(
-        collection(db, "announce"),
-        where("office", "==", office),
-        where("status", "==", statusFilter)
-      )
+      query(collection(db, "announce"), where("status", "==", "pending"))
     );
     const announcementsData = querySnapshot.docs.map((doc) => ({
       id: doc.id,
@@ -77,18 +45,6 @@ const Announce: React.FC = (): JSX.Element => {
     })) as Announcement[];
     setAnnouncements(announcementsData);
     setLoading(false);
-  };
-
-  const deleteAnnouncement = async (id: string, files: string[]) => {
-    try {
-      await deleteDoc(doc(db, "announce", id));
-      for (const fileUrl of files) {
-        const fileRef = ref(storage, fileUrl);
-        await deleteObject(fileRef);
-      }
-    } catch (error) {
-      console.error("Error deleting announcement or files: ", error);
-    }
   };
 
   const handleCheckboxChange = (id: string) => {
@@ -99,87 +55,93 @@ const Announce: React.FC = (): JSX.Element => {
     );
   };
 
-  const handleDeleteSelected = async () => {
+  const markAsApproved = async () => {
+    try {
+      for (const id of selectedAnnouncements) {
+        const docRef = doc(db, "announce", id);
+        await updateDoc(docRef, { status: "approved" });
+      }
+      alert("Selected announcements marked as approved.");
+      setSelectedAnnouncements([]);
+      fetchPendingAnnouncements();
+    } catch (error) {
+      console.error("Error updating announcements: ", error);
+    }
+  };
+
+  const deleteSelectedAnnouncements = async () => {
     const confirmed = window.confirm(
       "Are you sure you want to delete the selected announcements?"
     );
     if (confirmed) {
-      for (const id of selectedAnnouncements) {
-        const announcement = announcements.find(
-          (announce) => announce.id === id
-        );
-        if (announcement) {
-          await deleteAnnouncement(announcement.id, announcement.files);
+      try {
+        for (const id of selectedAnnouncements) {
+          await deleteDoc(doc(db, "announce", id));
         }
+        alert("Selected announcements deleted successfully.");
+        setSelectedAnnouncements([]);
+        fetchPendingAnnouncements();
+      } catch (error) {
+        console.error("Error deleting announcements: ", error);
       }
-      setSelectedAnnouncements([]);
-      fetchAnnouncements();
     }
   };
 
-  const toggleStatusFilter = () => {
-    setStatusFilter((prevStatus) =>
-      prevStatus === "pending" ? "approved" : "pending"
-    );
-  };
-
   useEffect(() => {
-    fetchAnnouncements();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFilter]);
+    fetchPendingAnnouncements();
+  }, []);
 
   return (
-    <NavLayout>
-      <div className="flex flex-col p-8">
-        <div className="flex self-start gap-4">
-          <button
-            onClick={openModal}
-            className="btn-primary btn-sm btn text-xs font-base text-white px-4 rounded-none mb-4"
-          >
-            Add Announcement
-          </button>
+    <DirectorRouteGuard>
+      <div className="p-8">
+        <h1 className="text-2xl font-bold mb-4">Pending Announcements</h1>
 
-          {officeData?.office === "Student Affairs and Services" && (
-            <button
-              onClick={openSuspensionModal}
-              className="btn-primary btn-sm btn text-xs font-base text-white px-4 rounded-none mb-4"
-            >
-              Add Class Suspension Announcement
-            </button>
-          )}
+        <div className="flex gap-4 mb-4">
           <button
-            onClick={handleDeleteSelected}
+            onClick={markAsApproved}
             disabled={selectedAnnouncements.length === 0}
-            className="btn-error btn btn-sm text-xs font-base text-white px-4 rounded-none mb-4"
+            className="btn-primary btn-sm btn text-xs font-base text-white px-4 rounded-none"
+          >
+            Mark as Approved
+          </button>
+          <button
+            onClick={deleteSelectedAnnouncements}
+            disabled={selectedAnnouncements.length === 0}
+            className="btn-error btn-sm btn text-xs font-base text-white px-4 rounded-none"
           >
             Delete
-          </button>
-          <button
-            onClick={toggleStatusFilter}
-            className={
-              statusFilter === "pending"
-                ? "btn-secondary btn btn-sm text-xs font-base text-white px-4 rounded-none mb-4"
-                : "btn-error btn btn-sm text-xs font-base text-white px-4 rounded-none mb-4"
-            }
-          >
-            Show {statusFilter === "pending" ? "Approved" : "Pending"} Announcements
           </button>
         </div>
 
         {loading ? (
-          <span className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6 m-auto md:ml-0 md:mr-auto">
+          <span className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6">
             <span className="loading loading-spinner loading-md"></span> Loading
-            announcements...
+            pending announcements...
           </span>
         ) : announcements.length === 0 ? (
-          <span className="text-sm font-semibold text-zinc-600 border rounded-sm p-2 px-6 block m-auto md:ml-0 md:mr-auto">
-            No announcements available.
+          <span className="text-sm font-semibold text-zinc-600 border rounded-sm p-2 px-6">
+            No pending announcements available.
           </span>
         ) : (
           <table className="min-w-full bg-white shadow rounded-md border border-gray-300 border-collapse">
             <thead>
               <tr>
-                <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300"></th>
+                <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300">
+                  <input
+                    type="checkbox"
+                    onChange={(e) =>
+                      setSelectedAnnouncements(
+                        e.target.checked
+                          ? announcements.map((announce) => announce.id)
+                          : []
+                      )
+                    }
+                    checked={
+                      announcements.length > 0 &&
+                      selectedAnnouncements.length === announcements.length
+                    }
+                  />
+                </th>
                 <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300">
                   What
                 </th>
@@ -244,7 +206,7 @@ const Announce: React.FC = (): JSX.Element => {
                         ))}
                       </ul>
                     ) : (
-                      ""
+                      "No files"
                     )}
                   </td>
                 </tr>
@@ -253,10 +215,8 @@ const Announce: React.FC = (): JSX.Element => {
           </table>
         )}
       </div>
-      {isModalOpen && <AddAnnounce onClose={closeModal} />}
-      {isSuspensionModalOpen && <AddSuspension onClose={closeSuspensionModal} />}
-    </NavLayout>
+    </DirectorRouteGuard>
   );
 };
 
-export default Announce;
+export default PendingAnnouncements;

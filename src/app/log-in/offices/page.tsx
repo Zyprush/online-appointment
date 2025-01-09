@@ -66,7 +66,11 @@ const OfficesLogin = () => {
       setLoading(false);
 
       // Navigate to the dashboard after successful login
-      router.push("/office/appointment");
+      if (office === "Campus Director") {
+        router.push("/director");
+      } else {
+        router.push("/office/appointment");
+      }
     } else {
       setError("Incorrect office, username, or password. Please try again.");
       setSuccess(null);
