@@ -1,3 +1,4 @@
+import { Bell } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation"; // Use Next.js pathname for active page logic
 
@@ -34,6 +35,9 @@ const OfficeNavLink: React.FC<OfficeNavLinkProps> = ({ isMobile = false }) => {
 
   return (
     <div className={isMobile ? "flex flex-col" : "flex gap-5 ml-auto mr-5"}>
+      <Link href="/office/notif" className={getLinkClass('/office/notif')}>
+        <Bell className="h-5 w-5 my-auto" />
+      </Link>
       <Link href="/office/appointment" className={getLinkClass("/office/appointment")}>
         Appointment
       </Link>
@@ -46,6 +50,7 @@ const OfficeNavLink: React.FC<OfficeNavLinkProps> = ({ isMobile = false }) => {
       <Link href="/office/logs" className={getLinkClass('/office/logs')}>
         Logs
       </Link>
+
       <Link href="/office/services" className={getLinkClass("/office/services")}>
         Services
       </Link>

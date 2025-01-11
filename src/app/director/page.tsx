@@ -13,6 +13,7 @@ import {
 import { db } from "@/firebase";
 import { format } from "date-fns";
 import DirectorRouteGuard from "@/components/DirectorRouteGuard";
+import NavLayout from "@/components/NavLayout";
 
 interface Announcement {
   id: string;
@@ -93,128 +94,133 @@ const PendingAnnouncements: React.FC = () => {
 
   return (
     <DirectorRouteGuard>
-      <div className="p-8">
-        <h1 className="text-2xl font-bold mb-4">Pending Announcements</h1>
+      <NavLayout>
+        <div className="p-8">
+          <h1 className="text-2xl font-bold mb-4">Pending Announcements</h1>
 
-        <div className="flex gap-4 mb-4">
-          <button
-            onClick={markAsApproved}
-            disabled={selectedAnnouncements.length === 0}
-            className="btn-primary btn-sm btn text-xs font-base text-white px-4 rounded-none"
-          >
-            Mark as Approved
-          </button>
-          <button
-            onClick={deleteSelectedAnnouncements}
-            disabled={selectedAnnouncements.length === 0}
-            className="btn-error btn-sm btn text-xs font-base text-white px-4 rounded-none"
-          >
-            Delete
-          </button>
-        </div>
+          <div className="flex gap-4 mb-4">
+            <button
+              onClick={markAsApproved}
+              disabled={selectedAnnouncements.length === 0}
+              className="btn-primary btn-sm btn text-xs font-base text-white px-4 rounded-none"
+            >
+              Mark as Approved
+            </button>
+            <button
+              onClick={deleteSelectedAnnouncements}
+              disabled={selectedAnnouncements.length === 0}
+              className="btn-error btn-sm btn text-xs font-base text-white px-4 rounded-none"
+            >
+              Delete
+            </button>
+          </div>
 
-        {loading ? (
-          <span className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6">
-            <span className="loading loading-spinner loading-md"></span> Loading
-            pending announcements...
-          </span>
-        ) : announcements.length === 0 ? (
-          <span className="text-sm font-semibold text-zinc-600 border rounded-sm p-2 px-6">
-            No pending announcements available.
-          </span>
-        ) : (
-          <table className="min-w-full bg-white shadow rounded-md border border-gray-300 border-collapse">
-            <thead>
-              <tr>
-                <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300">
-                  <input
-                    type="checkbox"
-                    onChange={(e) =>
-                      setSelectedAnnouncements(
-                        e.target.checked
-                          ? announcements.map((announce) => announce.id)
-                          : []
-                      )
-                    }
-                    checked={
-                      announcements.length > 0 &&
-                      selectedAnnouncements.length === announcements.length
-                    }
-                  />
-                </th>
-                <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300">
-                  What
-                </th>
-                <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300">
-                  When
-                </th>
-                <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300">
-                  Who
-                </th>
-                <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300">
-                  Where
-                </th>
-                <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300">
-                  Attachments
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {announcements.map((announce) => (
-                <tr key={announce.id} className="text-xs text-start align-top">
-                  <td className="p-4 border-b border-gray-300 align-top">
+          {loading ? (
+            <span className="text-sm font-semibold flex items-center gap-3 text-zinc-600 border rounded-sm p-2 px-6">
+              <span className="loading loading-spinner loading-md"></span>{" "}
+              Loading pending announcements...
+            </span>
+          ) : announcements.length === 0 ? (
+            <span className="text-sm font-semibold text-zinc-600 border rounded-sm p-2 px-6">
+              No pending announcements available.
+            </span>
+          ) : (
+            <table className="min-w-full bg-white shadow rounded-md border border-gray-300 border-collapse">
+              <thead>
+                <tr>
+                  <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300">
                     <input
                       type="checkbox"
-                      checked={selectedAnnouncements.includes(announce.id)}
-                      onChange={() => handleCheckboxChange(announce.id)}
+                      onChange={(e) =>
+                        setSelectedAnnouncements(
+                          e.target.checked
+                            ? announcements.map((announce) => announce.id)
+                            : []
+                        )
+                      }
+                      checked={
+                        announcements.length > 0 &&
+                        selectedAnnouncements.length === announcements.length
+                      }
                     />
-                  </td>
-                  <td className="p-4 border-b border-gray-300 align-top w-40 font-bold">
-                    {announce.what}
-                  </td>
-                  <td className="p-4 border-b border-gray-300 align-top">
-                    {format(
-                      new Date(announce.whenStart),
-                      "MMM dd, yyyy 'at' hh:mm a"
-                    )}{" "}
-                    -{" "}
-                    {format(
-                      new Date(announce.whenEnd),
-                      "MMM dd, yyyy 'at' hh:mm a"
-                    )}
-                  </td>
-                  <td className="p-4 border-b border-gray-300 align-top">
-                    {announce.who}
-                  </td>
-                  <td className="p-4 border-b border-gray-300 align-top">
-                    {announce.where}
-                  </td>
-                  <td className="p-4 border-b border-gray-300 align-top w-40 font-bold">
-                    {announce.files.length > 0 ? (
-                      <ul className="list-none pl-5">
-                        {announce.files.map((file, index) => (
-                          <li key={index}>
-                            <a
-                              href={file}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-500"
-                            >
-                              File {index + 1}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      "No files"
-                    )}
-                  </td>
+                  </th>
+                  <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300">
+                    What
+                  </th>
+                  <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300">
+                    When
+                  </th>
+                  <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300">
+                    Who
+                  </th>
+                  <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300">
+                    Where
+                  </th>
+                  <th className="p-4 text-left text-sm font-semibold text-gray-800 border-b border-gray-300">
+                    Attachments
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+              </thead>
+              <tbody>
+                {announcements.map((announce) => (
+                  <tr
+                    key={announce.id}
+                    className="text-xs text-start align-top"
+                  >
+                    <td className="p-4 border-b border-gray-300 align-top">
+                      <input
+                        type="checkbox"
+                        checked={selectedAnnouncements.includes(announce.id)}
+                        onChange={() => handleCheckboxChange(announce.id)}
+                      />
+                    </td>
+                    <td className="p-4 border-b border-gray-300 align-top w-40 font-bold">
+                      {announce.what}
+                    </td>
+                    <td className="p-4 border-b border-gray-300 align-top">
+                      {format(
+                        new Date(announce.whenStart),
+                        "MMM dd, yyyy 'at' hh:mm a"
+                      )}{" "}
+                      -{" "}
+                      {format(
+                        new Date(announce.whenEnd),
+                        "MMM dd, yyyy 'at' hh:mm a"
+                      )}
+                    </td>
+                    <td className="p-4 border-b border-gray-300 align-top">
+                      {announce.who}
+                    </td>
+                    <td className="p-4 border-b border-gray-300 align-top">
+                      {announce.where}
+                    </td>
+                    <td className="p-4 border-b border-gray-300 align-top w-40 font-bold">
+                      {announce.files.length > 0 ? (
+                        <ul className="list-none pl-5">
+                          {announce.files.map((file, index) => (
+                            <li key={index}>
+                              <a
+                                href={file}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-500"
+                              >
+                                File {index + 1}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        "No files"
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </NavLayout>
     </DirectorRouteGuard>
   );
 };

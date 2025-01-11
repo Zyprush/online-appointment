@@ -12,6 +12,7 @@ import { db } from "@/firebase";
 import { useUserData } from "@/hooks/useUserData";
 import ViewRequirements from "./ViewRequirements";
 import { useSendSMS } from "@/hooks/useSendSMS";
+import { useNotifs } from "@/hooks/useNotif";
 
 interface Option {
   name: string;
@@ -53,6 +54,7 @@ const ClientRequestAppointment: React.FC = () => {
   const [serviceSearch, setServiceSearch] = useState<string>("");
   const [filteredServices, setFilteredServices] = useState<Option[]>([]);
   const [isServiceDropdownOpen, setIsServiceDropdownOpen] = useState(false);
+  const {addNotif} = useNotifs()
 
   // Fetch data from Firestore
   const services = useFirestoreData("services", "services");
@@ -219,6 +221,13 @@ const ClientRequestAppointment: React.FC = () => {
       setSelectedService("");
       setSelectedOffice("");
       setOtherReason("");
+      addNotif({
+        name: "New Appointment Request",
+        date: new Date().toISOString(),
+        seen: false,
+        office: selectedOffice,
+        text: `New appointment request from ${userData?.firstName} ${userData?.lastName}.`,
+      })
       alert("Appointment request submitted successfully.");
     } catch (error) {
       console.error("Error saving appointment:", error);

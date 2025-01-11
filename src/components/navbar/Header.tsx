@@ -9,6 +9,7 @@ import { doc, getDoc } from "firebase/firestore";
 import ClientNavLink from "../ClientNavLink";
 import { motion, AnimatePresence } from "framer-motion";
 import OfficeNavLink from "../OfficeNavLink";
+import DirectorNavLink from "../DirectorNavLink";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,8 +19,15 @@ const Header = () => {
   useEffect(() => {
     const checkOfficeLogin = () => {
       const officeLoginData = localStorage.getItem("officeLoginData");
+
       if (officeLoginData) {
-        setUserRole("office"); // Set role as 'office' if office login data exists
+        const { office } = JSON.parse(officeLoginData);
+        console.log("office:", office);
+        if (office === "Campus Director") {
+          setUserRole("director");
+        } else {
+          setUserRole("office"); // Set role to the office name from localStorage
+        }
       }
     };
 
@@ -47,6 +55,8 @@ const Header = () => {
       ? AdminNavLink
       : userRole === "client"
       ? ClientNavLink
+      : userRole === "director"
+      ? DirectorNavLink
       : userRole === "student" || userRole === "alumni"
       ? StudentNavLink
       : userRole === "office"
