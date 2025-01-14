@@ -31,30 +31,45 @@ const AddSuspension: React.FC<AddAnnounceProps> = ({ onClose }) => {
 
   const cancelAppointmentsInRange = async (startDate: Date, endDate: Date) => {
     try {
-      // Query for pending and approved appointments within the date range
+      // Convert dates to formatted date strings for comparison
+      const startDateString = startDate.toISOString().split('T')[0];
+      const endDateString = endDate.toISOString().split('T')[0];
+
+      // Query for approved appointments within the date range
       const appointmentsRef = collection(db, "appointments");
       const q = query(
         appointmentsRef,
-        where("status", "in", ["pending", "approved"]),
-        where("appointmentDate", ">=", startDate),
-        where("appointmentDate", "<=", endDate)
+        where("status", "==", "approved"),
+        where("selectedDate", ">=", startDateString),
+        where("selectedDate", "<=", endDateString)
       );
 
       const querySnapshot = await getDocs(q);
       
+      if (querySnapshot.empty) {
+        console.log("No appointments found to cancel");
+        return;
+      }
+
       // Update each appointment's status to cancelled
       const updatePromises = querySnapshot.docs.map(async (document) => {
         const appointmentRef = doc(db, "appointments", document.id);
-        await updateDoc(appointmentRef, {
-          status: "declined",
-          declineReason: `Your appointment has been cancelled due to Class suspension: ${what}`
-        });
+        try {
+          await updateDoc(appointmentRef, {
+            status: "declined",
+            declineReason: `Cancelled due to class suspension: ${what}`,
+            cancelledAt: new Date().toISOString()
+          });
+        } catch (updateError) {
+          console.error(`Failed to update appointment ${document.id}:`, updateError);
+        }
       });
 
-      await Promise.all(updatePromises);
-      console.log(`Cancelled ${querySnapshot.size} appointments`);
+      await Promise.allSettled(updatePromises);
+      
+      console.log(`Processed cancellation for ${querySnapshot.size} appointments`);
     } catch (error) {
-      console.error("Error cancelling appointments:", error);
+      console.error("Comprehensive error in cancelling appointments:", error);
       throw error;
     }
   };
@@ -100,7 +115,7 @@ const AddSuspension: React.FC<AddAnnounceProps> = ({ onClose }) => {
         createdAt: currentTime,
         isPriority: true,
         office: officeData?.office,
-        status: "pending",
+        status: "approved",
       });
 
       setWhat("");
