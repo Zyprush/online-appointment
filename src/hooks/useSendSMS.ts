@@ -8,6 +8,7 @@ interface AppointmentDetails {
   selectedDate?: string;
   timeRange?: string;
   selectedOffice?: string;
+  selectedService?: string;
   selectedPersonnel?: string;
   declineReason?: string;
   phoneNumber?: string;
@@ -39,7 +40,7 @@ export const useSendSMS = () => {
             appointment.selectedDate
           } at ${appointment.timeRange}.\n\nCODE: ${
             appointment.officeCode || ""
-          }${appointment.appointmentId}\nOFFICE: ${appointment.selectedOffice}`,
+          }${appointment.appointmentId}\nOFFICE: ${appointment.selectedOffice}\nSERVICE: ${appointment.selectedService}`,
         },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -104,7 +105,7 @@ export const useSendSMS = () => {
             appointment.selectedDate
           }\nTime: ${appointment.timeRange}\nOffice: ${
             appointment.selectedOffice
-          }\n\nReason of Cancellation: ${appointment.declineReason}.`,
+          }\n\nReason of Cancellation: ${appointment.declineReason}.\nService: ${appointment.selectedService} .`,
         },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -134,9 +135,9 @@ export const useSendSMS = () => {
             appointment.officeCode || ""
           }${appointment.appointmentId} \n\nDate: ${
             appointment.selectedDate
-          }\nTime: ${appointment.timeRange}\nOffice: ${
+          }\nTime: ${appointment.timeRange}\nOffice:  ${
             appointment.selectedOffice
-          }\n\nYou can cancel the appointment in the appointment page and choose another time slot or date if needed.`,
+          }\n\n You can cancel the appointment in the appointment page and choose another time slot or date if needed.\nService: ${appointment.selectedService} .`,
         },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -152,7 +153,6 @@ export const useSendSMS = () => {
     }
   };
 
-  
   return {
     sendAppointSMS,
     sendApproveSMS,

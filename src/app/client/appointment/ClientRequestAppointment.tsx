@@ -214,6 +214,7 @@ const ClientRequestAppointment: React.FC = () => {
         name: `${userData?.firstName} ${userData?.lastName}`,
         officeCode: officeCode,
         selectedOffice: selectedOffice,
+        selectedService: selectedService,
       });
       setAppointmentType(null);
       setSelectedDate("");

@@ -152,6 +152,7 @@ const OfficeApproveAppointment = () => {
           selectedPersonnel: appointment.selectedPersonnel,
           declineReason: declineReason,
           officeCode: appointment.officeCode,
+          selectedService: appointment.selectedService,
         });
 
         if (!smsResponse.success) {
