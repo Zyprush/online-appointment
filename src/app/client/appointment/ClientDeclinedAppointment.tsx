@@ -3,6 +3,7 @@ import { db } from "@/firebase"; // Import Firestore
 import { collection, getDocs, query, where } from "firebase/firestore"; // Import query and where
 import { useUserData } from "@/hooks/useUserData";
 import ViewAppointment from "@/components/ViewAppointment";
+import Link from "next/link";
 
 interface Appointment {
   id: string;
@@ -137,6 +138,12 @@ const ClientDeclinedAppointment: React.FC = () => {
                   >
                     details
                   </button>
+                  <Link
+                    className="btn btn-outline btn-xs rounded-none text-primary"
+                    href={`/client/appointment/${appointment.id}`}
+                  >
+                    Reschedule
+                  </Link>
                 </td>
               </tr>
             ))
