@@ -14,6 +14,7 @@ interface AppointmentDetails {
   phoneNumber?: string;
   name?: string;
   officeCode?: string;
+  purpose?: string;
 }
 
 interface SendSMSResponse {
@@ -40,7 +41,11 @@ export const useSendSMS = () => {
             appointment.selectedDate
           } at ${appointment.timeRange}.\n\nCODE: ${
             appointment.officeCode || ""
-          }${appointment.appointmentId}\nOFFICE: ${appointment.selectedOffice}\nSERVICE: ${appointment.selectedService}`,
+          }${appointment.appointmentId}\nOFFICE: ${
+            appointment.selectedOffice
+          }\nSERVICE: ${appointment.selectedService}\nPurpose: ${
+            appointment.purpose
+          }`,
         },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -72,6 +77,8 @@ export const useSendSMS = () => {
             appointment.selectedDate
           }\nTime: ${appointment.timeRange}\nOffice: ${
             appointment.selectedOffice
+          }\nPurpose: ${appointment.purpose}\nService: ${
+            appointment.selectedService
           }.`,
         },
         { headers: { "Content-Type": "application/json" } }
@@ -105,7 +112,11 @@ export const useSendSMS = () => {
             appointment.selectedDate
           }\nTime: ${appointment.timeRange}\nOffice: ${
             appointment.selectedOffice
-          }\n\nReason of Cancellation: ${appointment.declineReason}.\nService: ${appointment.selectedService} .`,
+          }\n\nReason of Cancellation: ${
+            appointment.declineReason
+          }.\nService: ${appointment.selectedService}\nPurpose: ${
+            appointment.purpose
+          } .`,
         },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -137,7 +148,9 @@ export const useSendSMS = () => {
             appointment.selectedDate
           }\nTime: ${appointment.timeRange}\nOffice:  ${
             appointment.selectedOffice
-          }\n\n You can cancel the appointment in the appointment page and choose another time slot or date if needed.\nService: ${appointment.selectedService} .`,
+          }\n\n You can cancel the appointment in the appointment page and choose another time slot or date if needed.\nService: ${
+            appointment.selectedService
+          }\nPurpose: ${appointment.purpose} .`,
         },
         { headers: { "Content-Type": "application/json" } }
       );

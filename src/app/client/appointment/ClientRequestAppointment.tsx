@@ -215,6 +215,7 @@ const ClientRequestAppointment: React.FC = () => {
         officeCode: officeCode,
         selectedOffice: selectedOffice,
         selectedService: selectedService,
+        purpose: appointmentType === "visit" ? "Visit OMSC Office" : "Avail OMSC services",
       });
       setAppointmentType(null);
       setSelectedDate("");

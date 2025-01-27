@@ -34,6 +34,7 @@ type AppointmentType = {
   status: string;
   officeCode: string;
   submittedUid: string;
+  purpose: string;
 };
 
 const OfficeApproveAppointment = () => {
@@ -153,6 +154,7 @@ const OfficeApproveAppointment = () => {
           declineReason: declineReason,
           officeCode: appointment.officeCode,
           selectedService: appointment.selectedService,
+          purpose: appointment.purpose,
         });
 
         if (!smsResponse.success) {
