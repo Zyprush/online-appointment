@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { collection, query, orderBy, getDocs, limit } from "firebase/firestore";
+import { collection, query, orderBy, getDocs, limit, where } from "firebase/firestore";
 import { db } from "@/firebase";
 import { format } from "date-fns";
 import Navbar from "@/components/topNavbar";
@@ -26,16 +26,32 @@ const Announce: React.FC = (): JSX.Element => {
   const [selectedAnnouncement, setSelectedAnnouncement] =
     useState<Announcement | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [officeFilter, setOfficeFilter] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
-        const q = query(
+        let q = query(
           collection(db, "announce"),
+          where("office", "in", [
+            "Registrar Office",
+            "Cashier",
+            "Admission & Guidance",
+            "Student Affairs and Services",
+            "BSIT Faculty",
+            "BEED Faculty",
+            "BSBA OM Faculty",
+            "BSBA FM Faculty",
+            "BSOA Faculty",
+          ]),
           orderBy("isPriority", "desc"),
           orderBy("whenStart", "asc"),
           limit(30)
         );
+
+        if (officeFilter) {
+          q = query(q, where("office", "==", officeFilter));
+        }
 
         const querySnapshot = await getDocs(q);
         const fetchedAnnouncements: Announcement[] = querySnapshot.docs.map(
@@ -55,7 +71,7 @@ const Announce: React.FC = (): JSX.Element => {
     };
 
     fetchAnnouncements();
-  }, []);
+  }, [officeFilter]);
 
   const openModal = (announcement: Announcement) => {
     setSelectedAnnouncement(announcement);
@@ -65,6 +81,10 @@ const Announce: React.FC = (): JSX.Element => {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedAnnouncement(null);
+  };
+
+  const handleOfficeFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setOfficeFilter(event.target.value === "All" ? null : event.target.value);
   };
 
   return (
@@ -82,6 +102,31 @@ const Announce: React.FC = (): JSX.Element => {
           <h2 className="text-2xl font-bold text-primary drop-shadow">
             Announcements
           </h2>
+        </div>
+
+        <div className="flex items-center mb-6">
+          <label htmlFor="office-filter" className="mr-3">
+            Filter by Office:
+          </label>
+          <select
+            id="office-filter"
+            className="bg-white border border-gray-300 rounded-lg px-4 py-2"
+            value={officeFilter || "All"}
+            onChange={handleOfficeFilterChange}
+          >
+            <option value="All">All</option>
+            <option value="Registrar Office">Registrar Office</option>
+            <option value="Cashier">Cashier</option>
+            <option value="Admission & Guidance">Admission & Guidance</option>
+            <option value="Student Affairs and Services">
+              Student Affairs and Services
+            </option>
+            <option value="BSIT Faculty">BSIT Faculty</option>
+            <option value="BEED Faculty">BEED Faculty</option>
+            <option value="BSBA OM Faculty">BSBA OM Faculty</option>
+            <option value="BSBA FM Faculty">BSBA FM Faculty</option>
+            <option value="BSOA Faculty">BSOA Faculty</option>
+          </select>
         </div>
 
         {!loading && !error && announcements.length > 0 && (
@@ -104,7 +149,7 @@ const Announce: React.FC = (): JSX.Element => {
                 )}
 
                 <div className="flex-1 w-full">
-                <h3 className="font-bold text-lg text-gray-700 mb-2">
+                  <h3 className="font-bold text-lg text-gray-700 mb-2">
                     {announce.office}
                   </h3>
                   <h3 className="font-bold text-lg text-gray-700 mb-2">

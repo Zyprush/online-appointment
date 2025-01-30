@@ -8,13 +8,11 @@ interface AppointmentDetails {
   selectedDate?: string;
   timeRange?: string;
   selectedOffice?: string;
-  selectedService?: string;
   selectedPersonnel?: string;
   declineReason?: string;
   phoneNumber?: string;
   name?: string;
   officeCode?: string;
-  purpose?: string;
 }
 
 interface SendSMSResponse {
@@ -41,11 +39,7 @@ export const useSendSMS = () => {
             appointment.selectedDate
           } at ${appointment.timeRange}.\n\nCODE: ${
             appointment.officeCode || ""
-          }${appointment.appointmentId}\nOFFICE: ${
-            appointment.selectedOffice
-          }\nSERVICE: ${appointment.selectedService}\nPurpose: ${
-            appointment.purpose
-          }`,
+          }${appointment.appointmentId}\nOFFICE: ${appointment.selectedOffice}`,
         },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -77,8 +71,6 @@ export const useSendSMS = () => {
             appointment.selectedDate
           }\nTime: ${appointment.timeRange}\nOffice: ${
             appointment.selectedOffice
-          }\nPurpose: ${appointment.purpose}\nService: ${
-            appointment.selectedService
           }.`,
         },
         { headers: { "Content-Type": "application/json" } }
@@ -106,17 +98,7 @@ export const useSendSMS = () => {
         "/pages/api/send-sms",
         {
           contact: appointment.contact,
-          messageBody: `Your appointment has been Cancelled.\n \nCode: ${
-            appointment.officeCode || ""
-          }${appointment.appointmentId} \n\nDate: ${
-            appointment.selectedDate
-          }\nTime: ${appointment.timeRange}\nOffice: ${
-            appointment.selectedOffice
-          }\n\nReason of Cancellation: ${
-            appointment.declineReason
-          }.\nService: ${appointment.selectedService}\nPurpose: ${
-            appointment.purpose
-          } .`,
+          messageBody: `Hello ${appointment.name}, we’re sorry to inform you that your appointment on ${appointment.selectedDate} at ${appointment.timeRange} has been canceled due to ${appointment.declineReason}. We understand this may be inconvenient, and we appreciate your patience. You may reschedule through http://localhost:3000/client/appointment`,
         },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -146,11 +128,9 @@ export const useSendSMS = () => {
             appointment.officeCode || ""
           }${appointment.appointmentId} \n\nDate: ${
             appointment.selectedDate
-          }\nTime: ${appointment.timeRange}\nOffice:  ${
+          }\nTime: ${appointment.timeRange}\nOffice: ${
             appointment.selectedOffice
-          }\n\n You can cancel the appointment in the appointment page and choose another time slot or date if needed.\nService: ${
-            appointment.selectedService
-          }\nPurpose: ${appointment.purpose} .`,
+          }\n\nYou can cancel the appointment in the appointment page and choose another time slot or date if needed.`,
         },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -166,6 +146,7 @@ export const useSendSMS = () => {
     }
   };
 
+  
   return {
     sendAppointSMS,
     sendApproveSMS,
