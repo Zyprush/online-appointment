@@ -13,6 +13,8 @@ interface AppointmentDetails {
   phoneNumber?: string;
   name?: string;
   officeCode?: string;
+  selectedService?: string;
+  purpose?: string;
 }
 
 interface SendSMSResponse {
@@ -39,7 +41,7 @@ export const useSendSMS = () => {
             appointment.selectedDate
           } at ${appointment.timeRange}.\n\nCODE: ${
             appointment.officeCode || ""
-          }${appointment.appointmentId}\nOFFICE: ${appointment.selectedOffice}`,
+          }${appointment.appointmentId}\nOFFICE: ${appointment.selectedOffice}/nSERVICE: ${appointment.selectedService}/nPURPOSE: ${appointment.purpose}`,
         },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -71,6 +73,8 @@ export const useSendSMS = () => {
             appointment.selectedDate
           }\nTime: ${appointment.timeRange}\nOffice: ${
             appointment.selectedOffice
+          }\nService: ${appointment.selectedService}\nPurpose: ${
+            appointment.purpose
           }.`,
         },
         { headers: { "Content-Type": "application/json" } }
