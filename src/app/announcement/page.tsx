@@ -27,6 +27,17 @@ const Announce: React.FC = (): JSX.Element => {
     useState<Announcement | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [officeFilter, setOfficeFilter] = useState<string | null>(null);
+  const offices = [
+    "Registrar Office",
+    "Cashier",
+    "Admission & Guidance",
+    "Student Affairs and Services",
+    "BSIT Faculty",
+    "BEED Faculty",
+    "BSBA OM Faculty",
+    "BSBA FM Faculty",
+    "BSOA Faculty",
+  ]
 
   useEffect(() => {
     const fetchAnnouncements = async () => {
@@ -105,28 +116,19 @@ const Announce: React.FC = (): JSX.Element => {
         </div>
 
         <div className="flex items-center mb-6">
-          <label htmlFor="office-filter" className="mr-3">
-            Filter by Office:
-          </label>
-          <select
-            id="office-filter"
-            className="bg-white border border-gray-300 rounded-lg px-4 py-2"
-            value={officeFilter || "All"}
-            onChange={handleOfficeFilterChange}
-          >
-            <option value="All">All</option>
-            <option value="Registrar Office">Registrar Office</option>
-            <option value="Cashier">Cashier</option>
-            <option value="Admission & Guidance">Admission & Guidance</option>
-            <option value="Student Affairs and Services">
-              Student Affairs and Services
-            </option>
-            <option value="BSIT Faculty">BSIT Faculty</option>
-            <option value="BEED Faculty">BEED Faculty</option>
-            <option value="BSBA OM Faculty">BSBA OM Faculty</option>
-            <option value="BSBA FM Faculty">BSBA FM Faculty</option>
-            <option value="BSOA Faculty">BSOA Faculty</option>
-          </select>
+          {["All", ...offices].map((office) => (
+            <button
+              className={`inline-flex items-center justify-center px-4 py-2 mr-2 border border-transparent rounded-md shadow-sm text-base font-medium ${
+                officeFilter === office
+                  ? "bg-primary text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark"
+                  : "bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+              }`}
+              onClick={() => handleOfficeFilterChange({ target: { value: office } } as React.ChangeEvent<HTMLSelectElement>)}
+              key={office}
+            >
+              {office}
+            </button>
+          ))}
         </div>
 
         {!loading && !error && announcements.length > 0 && (

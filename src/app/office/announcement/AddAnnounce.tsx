@@ -27,8 +27,8 @@ const AddAnnounce: React.FC<AddAnnounceProps> = ({ onClose }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!what || !whenStart || !whenEnd || !who || !where) {
-      setError("All fields are required.");
+    if (!what || !whenStart || !whenEnd || !who || !where || !files) {
+      setError("All fields and files/images are required.");
       return;
     }
 
