@@ -144,7 +144,7 @@ const Announce: React.FC = (): JSX.Element => {
               onClick={openSuspensionModal}
               className="btn-primary btn-sm btn text-xs font-base text-white px-4 rounded-none mb-4"
             >
-              Add Class Suspension Announcement
+              Add Work Suspension Announcement
             </button>
           )}
           <button

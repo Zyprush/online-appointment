@@ -141,7 +141,7 @@ const AddSuspension: React.FC<AddAnnounceProps> = ({ onClose }) => {
           &times;
         </button>
         <h2 className="text-2xl font-bold mt-10 md:mt-0 mb-4 text-primary drop-shadow">
-          Add Class Suspension
+          Add Work Suspension
         </h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">

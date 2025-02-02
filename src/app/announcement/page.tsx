@@ -56,7 +56,7 @@ const Announce: React.FC = (): JSX.Element => {
             "BSOA Faculty",
           ]),
           orderBy("isPriority", "desc"),
-          orderBy("whenStart", "asc"),
+          orderBy("createdAt", "desc"),
           limit(30)
         );
 
@@ -118,7 +118,7 @@ const Announce: React.FC = (): JSX.Element => {
         <div className="flex items-center mb-6">
           {["All", ...offices].map((office) => (
             <button
-              className={`inline-flex items-center justify-center px-4 py-2 mr-2 border border-transparent rounded-md shadow-sm text-base font-medium ${
+              className={`inline-flex items-center justify-center px-4 py-2 mr-2 border border-transparent rounded-md shadow-sm text-xs font-bold ${
                 officeFilter === office
                   ? "bg-primary text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark"
                   : "bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
@@ -135,7 +135,7 @@ const Announce: React.FC = (): JSX.Element => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {announcements.map((announce) => (
               <div
-                className="flex flex-col items-start mb-6 p-4 bg-white border-2 border-gray-200 rounded-lg hover:shadow-lg cursor-pointer"
+                className={`flex flex-col items-start mb-6 p-4 bg-white border-2 rounded-lg hover:shadow-lg cursor-pointer ${announce.isPriority ? "border-primary bg-primary bg-opacity-40" : "border-gray-200"}`}
                 key={announce.id}
                 onClick={() => openModal(announce)}
               >
