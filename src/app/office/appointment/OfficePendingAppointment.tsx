@@ -31,6 +31,7 @@ type AppointmentType = {
   status: string;
   officeCode: string;
   declineReason?: string;
+  purpose?: string;
 };
 
 const OfficePendingAppointment = () => {
@@ -117,6 +118,9 @@ const OfficePendingAppointment = () => {
           selectedPersonnel: appointment.selectedPersonnel,
           declineReason: declineReason,
           officeCode: appointment.officeCode,
+          selectedService: appointment.selectedService,
+          purpose: appointment.purpose,
+          name: appointment.name,
         });
 
         if (!smsResponse.success) {
@@ -180,6 +184,8 @@ const OfficePendingAppointment = () => {
           selectedPersonnel: appointment.selectedPersonnel,
           declineReason: "",
           officeCode: appointment.officeCode,
+          selectedService: appointment.selectedService,
+          purpose: appointment.purpose,
         });
 
         if (response.success) {

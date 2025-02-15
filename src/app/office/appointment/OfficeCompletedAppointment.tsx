@@ -144,7 +144,7 @@ const OfficeCompletedAppointment = () => {
           className="btn rounded-sm text-white btn-primary"
           onClick={handlePrintTable}
         >
-          Print Appointements
+          Print Appointments
         </button>
       </div>
 

@@ -77,8 +77,8 @@ const AddSuspension: React.FC<AddAnnounceProps> = ({ onClose }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!what || !whenStart || !whenEnd) {
-      setError("All fields are required.");
+    if (!what || !whenStart || !whenEnd || !files) {
+      setError("All fields and files/images are required.");
       return;
     }
 
