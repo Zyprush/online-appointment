@@ -102,7 +102,7 @@ export const useSendSMS = () => {
         "/pages/api/send-sms",
         {
           contact: appointment.contact,
-          messageBody: `Hello ${appointment.name}, we’re sorry to inform you that your appointment on ${appointment.selectedDate} at ${appointment.timeRange} has been canceled due to ${appointment.declineReason}. We understand this may be inconvenient, and we appreciate your patience. You may reschedule through http://localhost:3000/client/appointment`,
+          messageBody: `Hello ${appointment.name}, we’re sorry to inform you that your appointment on ${appointment.selectedDate} at ${appointment.timeRange} has been canceled due to ${appointment.declineReason}. We understand this may be inconvenient, and we appreciate your patience. You may reschedule through ${window.location.origin}/client/appointment`,
         },
         { headers: { "Content-Type": "application/json" } }
       );
