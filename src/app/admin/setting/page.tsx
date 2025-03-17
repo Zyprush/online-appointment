@@ -5,12 +5,14 @@ import Offices from "./Offices";
 import Services from "./Services";
 import ResetPassword from "@/components/ResetPassword";
 import OfficesAccount from "./OfficesAccount";
+import ChangeEmail from "./ChangeEmail";
 
 const AdminAccount = () => {
   const [officeAccOpen, setOfficeAccOpen] = useState(false);
   const [officeOpen, setOfficeOpen] = useState(false);
   const [serviceOpen, setServiceOpen] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
+  const [changeEmailOpen, setChangeEmailOpen] = useState(false);
 
   return (
     <NavLayout>
@@ -72,6 +74,20 @@ const AdminAccount = () => {
             {passwordOpen && (
               <div className="mt-4 space-y-4 p-4 border-gray-200">
                 <ResetPassword />
+              </div>
+            )}
+          </div>
+          <div className="mb-6">
+            <div
+              className="cursor-pointer flex justify-between items-center bg-gray-200 bg-opacity-80 p-4 rounded-lg"
+              onClick={() => setChangeEmailOpen(!changeEmailOpen)}
+            >
+              <h2 className="font-semibold">Change Email</h2>
+              <span>{changeEmailOpen ? "-" : "+"}</span>
+            </div>
+            {changeEmailOpen && (
+              <div className="mt-4 space-y-4 p-4 border-gray-200">
+                <ChangeEmail />
               </div>
             )}
           </div>
