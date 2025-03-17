@@ -40,10 +40,10 @@ const ChangeEmail = () => {
       // Send a verification email to the new email address
       await sendEmailVerification(user);
 
-      alert("A verification email has been sent to your new email address. Please verify it to complete the email change process.");
+      alert("A verification email has been sent to your new email address. Please verify it to complete the email change process. Logout and login again.");
       setCurrentEmail("");
       setNewEmail("");
-      setPassword("");
+      setPassword("");  
     } catch (error: unknown) {
       console.error("Error updating email:", error);
       if (error instanceof FirebaseError) {
