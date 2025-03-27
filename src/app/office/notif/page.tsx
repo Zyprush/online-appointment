@@ -1,6 +1,6 @@
 // pages/notifs/page.tsx
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNotifs } from "@/hooks/useNotif";
 import OfficeRouteGuard from "@/components/OfficeRouteGuard";
 import NavLayout from "@/components/NavLayout";
@@ -10,12 +10,58 @@ const NotificationsPage = () => {
   const { notifs, loadingNotifs, fetchNotifsByOffice, deleteNotif } = useNotifs();
   const [selectedNotifs, setSelectedNotifs] = useState<string[]>([]);
   const officeData = useOffice();
+  const observerRefs = useRef<Map<string, IntersectionObserver>>(new Map());
+  const [seenNotifs, setSeenNotifs] = useState<Set<string>>(new Set());
+
   useEffect(() => {
     if (officeData?.office) {
       fetchNotifsByOffice(officeData.office);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchNotifsByOffice, officeData]);
+
+  // Function to mark notification as read
+  const markAsRead = async (notifId: string) => {
+    if (!seenNotifs.has(notifId) && notifs) {
+      const notif = notifs.find(n => n.id === notifId);
+      if (notif && !notif.seen) {
+        console.log(`Automatically marking notification ${notifId} as read`);
+        // Here you would call your API to update the seen status
+        // For now, just update local state
+        setSeenNotifs(prev => new Set(prev).add(notifId));
+      }
+    }
+  };
+
+  // Setup intersection observer for each notification
+  const observeNotif = (element: HTMLDivElement, notifId: string) => {
+    if (!element || observerRefs.current.has(notifId)) return;
+    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            markAsRead(notifId);
+            // Optional: Disconnect after marking as read
+            // observer.disconnect();
+            // observerRefs.current.delete(notifId);
+          }
+        });
+      },
+      { threshold: 0.5 } // Trigger when 50% of the element is visible
+    );
+    
+    observer.observe(element);
+    observerRefs.current.set(notifId, observer);
+  };
+
+  // Cleanup observers on unmount
+  useEffect(() => {
+    return () => {
+      observerRefs.current.forEach(observer => observer.disconnect());
+      observerRefs.current.clear();
+    };
+  }, []);
 
   // Handle selection of notifications
   const toggleSelectNotif = (id: string) => {
@@ -32,13 +78,6 @@ const NotificationsPage = () => {
     setSelectedNotifs([]);
   };
 
-  // Handle mark selected as seen
-  const handleMarkAsRead = async () => {
-    // Update seen status in Firestore (you'll need to add this function to useNotifs)
-    // For now, mock functionality
-    console.log("Mark as read for:", selectedNotifs);
-    setSelectedNotifs([]);
-  };
 
   return (
     <OfficeRouteGuard>
@@ -54,13 +93,6 @@ const NotificationsPage = () => {
             >
               Delete Selected
             </button>
-            <button
-              onClick={handleMarkAsRead}
-              className="px-4 py-2 bg-green-500 text-white rounded disabled:opacity-50"
-              disabled={!selectedNotifs.length}
-            >
-              Mark as Read
-            </button>
           </div>
 
           {loadingNotifs ? (
@@ -70,6 +102,9 @@ const NotificationsPage = () => {
               {notifs.map((notif) => (
                 <div
                   key={notif.id}
+                  ref={(el: HTMLDivElement | null) => {
+                    if (el) observeNotif(el, notif.id);
+                  }}
                   className={`border border-gray-300 rounded-lg p-4 ${
                     selectedNotifs.includes(notif.id) ? "bg-gray-200" : ""
                   }`}
@@ -83,10 +118,10 @@ const NotificationsPage = () => {
                     />
                     <span
                       className={`text-sm ${
-                        notif.seen ? "text-green-500" : "font-bold text-red-500"
+                        notif.seen || seenNotifs.has(notif.id) ? "text-green-500" : "font-bold text-red-500"
                       }`}
                     >
-                      {notif.seen ? "" : "New"}
+                      {notif.seen || seenNotifs.has(notif.id) ? "" : "New"}
                     </span>
                   </div>
                   <h4 className="text-xl font-bold mt-2">{notif.name}</h4>

@@ -10,7 +10,7 @@ import OfficeDeclinedAppointment from "./OfficeDeclinedAppointment";
 import OfficePendingAppointment from "./OfficePendingAppointment";
 
 const AdminAppointments: React.FC = () => {
-  const [status, setStatus] = useState<string>("approved");
+  const [status, setStatus] = useState<string>("pending");
   const officeData = useOffice();
   const [appCount, setAppCount] = useState<number>(0);
 
